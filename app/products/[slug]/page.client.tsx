@@ -294,4 +294,3 @@ export function ProductPageClient({ params, product }: ProductPageProps) {
 }
 
 export default ProductPageClient
-

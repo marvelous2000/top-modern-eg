@@ -84,6 +84,3 @@ export function ProductsSection() {
     </section>
   )
 }
-
-
-

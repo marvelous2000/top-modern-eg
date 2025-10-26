@@ -1,4 +1,4 @@
-﻿export type Project = {
+export type Project = {
   title: string
   category: string
   location: string

@@ -100,4 +100,3 @@ export default function ProductPage({ params }: ProductPageProps) {
 
   return <ProductPageClient product={product} params={params} />
 }
-
