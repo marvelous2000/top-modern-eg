@@ -1,0 +1,19 @@
+{
+	"geolocation": {
+		"data": {
+			"city": "Abu Dhabi",
+			"country": {
+				"code": "AE",
+				"name": "United Arab Emirates"
+			},
+			"subdivision": {
+				"code": "AZ",
+				"name": "Abu Dhabi"
+			},
+			"timezone": "Asia/Dubai",
+			"latitude": 24.4542,
+			"longitude": 54.406
+		},
+		"timestamp": 1761502540130
+	}
+}
