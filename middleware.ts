@@ -29,7 +29,32 @@ export async function middleware(request: NextRequest) {
     },
   })
 
-  await supabase.auth.getSession()
+  const {
+    data: { session },
+  } = await supabase.auth.getSession()
+
+  // Protect admin routes
+  if (request.nextUrl.pathname.startsWith("/admin") && !request.nextUrl.pathname.startsWith("/admin/login")) {
+    if (!session) {
+      return NextResponse.redirect(new URL("/admin/login", request.url))
+    }
+
+    // Check if user has admin role
+    const { data: userData } = await supabase.from("users").select("role, status").eq("id", session.user.id).single()
+
+    if (
+      !userData ||
+      userData.status !== "active" ||
+      !["super_admin", "admin", "editor", "viewer"].includes(userData.role)
+    ) {
+      return NextResponse.redirect(new URL("/admin/login", request.url))
+    }
+  }
+
+  // Redirect to admin if already logged in and trying to access login page
+  if (request.nextUrl.pathname === "/admin/login" && session) {
+    return NextResponse.redirect(new URL("/admin", request.url))
+  }
 
   return response
 }

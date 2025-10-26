@@ -47,9 +47,15 @@ export function ProjectPageClient({ project, slug }: ProjectPageProps) {
                 />
                 <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#0F0F0F]/90 to-transparent p-8">
                   <div className="flex flex-wrap gap-4 text-sm text-[#FAFAFA]/60">
-                    <span>Client: <span className="text-[#FAFAFA] font-semibold">{project.client}</span></span>
-                    <span>Category: <span className="text-[#FAFAFA] font-semibold">{project.category}</span></span>
-                    <span>Location: <span className="text-[#FAFAFA] font-semibold">{project.location}</span></span>
+                    <span>
+                      Client: <span className="text-[#FAFAFA] font-semibold">{project.client}</span>
+                    </span>
+                    <span>
+                      Category: <span className="text-[#FAFAFA] font-semibold">{project.category}</span>
+                    </span>
+                    <span>
+                      Location: <span className="text-[#FAFAFA] font-semibold">{project.location}</span>
+                    </span>
                   </div>
                 </div>
               </div>
@@ -134,14 +140,16 @@ export function ProjectPageClient({ project, slug }: ProjectPageProps) {
         </section>
 
         <section className="container mx-auto px-6 py-16">
-          <div className="max-w-4xl mx-auto rounded-3xl border border-[#D4AF37]/30 bg-[#141414]/80 p-12 text-center">
+          <div className="max-w-4xl mx-auto text-center rounded-3xl border border-[#D4AF37]/30 bg-[#141414]/80 p-12">
             <h2 className="font-playfair text-3xl md:text-4xl font-bold mb-8">
               Client <span className="text-[#D4AF37]">Testimonial</span>
             </h2>
             <blockquote className="text-2xl md:text-3xl font-playfair italic text-[#FAFAFA]/85 leading-relaxed mb-8">
               "{project.testimonial.quote}"
             </blockquote>
-            <div className="text-sm uppercase tracking-[0.3em] text-[#FAFAFA]/40 mb-2">{project.testimonial.position}</div>
+            <div className="text-sm uppercase tracking-[0.3em] text-[#FAFAFA]/40 mb-2">
+              {project.testimonial.position}
+            </div>
             <div className="text-lg font-semibold text-[#D4AF37]">{project.testimonial.author}</div>
           </div>
         </section>
