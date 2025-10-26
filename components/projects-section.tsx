@@ -1,19 +1,53 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { getActiveProjects } from "@/lib/actions/projects"
 
-const projects = [
+// Fallback project for when DB is not set up yet
+const fallbackProjects = [
   {
     title: "Four Seasons Hotel Cairo",
     description: "Complete marble installation for luxury hotel lobby and suites",
-    image: "/luxury-hotel-lobby-marble-installation-four-season.jpg",
+    images: ["/luxury-hotel-lobby-marble-installation-four-season.jpg"],
     category: "Hospitality",
     location: "Cairo, Egypt",
   },
 ]
 
 export function ProjectsSection() {
+  const [projects, setProjects] = useState<any[]>(fallbackProjects)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      const result = await getActiveProjects()
+      if (result.success && result.data.length > 0) {
+        // Use database projects if available
+        setProjects(result.data.slice(0, 2)) // Show first 2 projects
+      } else {
+        // Use fallback projects if DB not set up or no projects
+        console.log("[v0] Using fallback projects - DB may not be set up yet")
+        setProjects(fallbackProjects)
+      }
+      setLoading(false)
+    }
+    fetchProjects()
+  }, [])
+
+  if (loading) {
+    return (
+      <section id="projects" className="py-20 relative">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <p className="text-xl text-gray-300">Loading projects...</p>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
   return (
     <section id="projects" className="py-20 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -29,13 +63,13 @@ export function ProjectsSection() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {projects.map((project, index) => (
             <Card
-              key={index}
+              key={project.id || index}
               className="bg-card/50 backdrop-blur-sm border-primary/20 hover:border-primary/40 transition-all duration-300 group"
             >
               <CardContent className="p-0">
                 <div className="relative overflow-hidden">
                   <img
-                    src={project.image || "/placeholder.svg"}
+                    src={project.images?.[0] || "/placeholder.svg"}
                     alt={project.title}
                     className="w-full h-80 object-cover group-hover:scale-105 transition-transform duration-300"
                   />

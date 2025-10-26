@@ -1,31 +1,65 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { ArrowRight } from "lucide-react"
+import { getActiveProducts } from "@/lib/actions/products"
 
-const products = [
+// Fallback products for when DB is not set up yet
+const fallbackProducts = [
   {
-    title: "Carrara Marble",
+    name: "Carrara Marble",
     description: "Premium Italian marble with distinctive white and gray veining, perfect for luxury interiors.",
-    image: "/carrara-marble-white-gray-veining-luxury.jpg",
+    images: ["/carrara-marble-white-gray-veining-luxury.jpg"],
     category: "Marble",
   },
   {
-    title: "Black Galaxy Granite",
+    name: "Black Galaxy Granite",
     description: "Stunning black granite with golden speckles, ideal for countertops and flooring.",
-    image: "/black-galaxy-granite-golden-speckles-luxury.jpg",
+    images: ["/black-galaxy-granite-golden-speckles-luxury.jpg"],
     category: "Granite",
   },
   {
-    title: "Calacatta Gold",
+    name: "Calacatta Gold",
     description: "Exquisite marble with bold gold veining, the epitome of luxury and elegance.",
-    image: "/calacatta-gold-marble-bold-veining-luxury.jpg",
+    images: ["/calacatta-gold-marble-bold-veining-luxury.jpg"],
     category: "Marble",
   },
 ]
 
 export function ProductsSection() {
+  const [products, setProducts] = useState<any[]>(fallbackProducts)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      const result = await getActiveProducts()
+      if (result.success && result.data.length > 0) {
+        // Use database products if available
+        setProducts(result.data.slice(0, 3)) // Show first 3 products
+      } else {
+        // Use fallback products if DB not set up or no products
+        console.log("[v0] Using fallback products - DB may not be set up yet")
+        setProducts(fallbackProducts)
+      }
+      setLoading(false)
+    }
+    fetchProducts()
+  }, [])
+
+  if (loading) {
+    return (
+      <section id="products" className="py-20 relative">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <p className="text-xl text-gray-300">Loading products...</p>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
   return (
     <section id="products" className="py-20 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -42,14 +76,14 @@ export function ProductsSection() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
           {products.map((product, index) => (
             <Card
-              key={index}
+              key={product.id || index}
               className="bg-card/50 backdrop-blur-sm border-primary/20 hover:border-primary/40 transition-all duration-300 group"
             >
               <CardContent className="p-0">
                 <div className="relative overflow-hidden">
                   <img
-                    src={product.image || "/placeholder.svg"}
-                    alt={product.title}
+                    src={product.images?.[0] || "/placeholder.svg"}
+                    alt={product.name}
                     className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                   <div className="absolute top-4 left-4">
@@ -59,7 +93,7 @@ export function ProductsSection() {
                   </div>
                 </div>
                 <div className="p-6">
-                  <h3 className="font-serif text-2xl font-bold text-white mb-3">{product.title}</h3>
+                  <h3 className="font-serif text-2xl font-bold text-white mb-3">{product.name}</h3>
                   <p className="text-gray-300 mb-4">{product.description}</p>
                   <Button
                     variant="outline"

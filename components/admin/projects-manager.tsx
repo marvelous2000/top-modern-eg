@@ -1,69 +1,36 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
-
-interface Project {
-  id: string
-  title: string
-  category: string
-  location: string
-  year: string
-  client: string
-  slug: string
-  description: string
-  challenge: string
-  solution: string
-  results: string[]
-  materials: string[]
-  images: string[]
-  testimonial: {
-    quote: string
-    author: string
-    position: string
-  }
-  status: "active" | "draft" | "archived"
-  featured: boolean
-  createdAt: string
-  updatedAt: string
-}
-
-const sampleProjects: Project[] = [
-  {
-    id: "1",
-    title: "Four Seasons Hotel Cairo",
-    category: "Luxury Hotel",
-    location: "Cairo, Egypt",
-    year: "2023",
-    client: "Four Seasons Hotels & Resorts",
-    slug: "four-seasons-cairo",
-    description: "Complete marble installation for the prestigious Four Seasons Hotel Cairo",
-    challenge: "Creating a luxurious yet durable stone installation for high traffic areas",
-    solution: "Selected premium Italian Carrara marble with custom fabrication",
-    results: ["15,000 sqm installation", "Zero maintenance issues", "Featured in AD Middle East"],
-    materials: ["Carrara White Marble - 8,000 sqm", "Nero Marquina Marble - 3,500 sqm"],
-    images: ["/placeholder.svg?height=400&width=600"],
-    testimonial: {
-      quote: "Top Modern delivered exceptional quality and service.",
-      author: "Sarah Johnson",
-      position: "Regional Director, Four Seasons Hotels",
-    },
-    status: "active",
-    featured: true,
-    createdAt: "2024-01-15",
-    updatedAt: "2024-01-20",
-  },
-]
+import { getProjects, createProject, updateProject, deleteProject } from "@/lib/actions/projects"
 
 export function ProjectsManager() {
-  const [projects, setProjects] = useState<Project[]>(sampleProjects)
-  const [selectedProject, setSelectedProject] = useState<Project | null>(null)
+  const [projects, setProjects] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [selectedProject, setSelectedProject] = useState<any | null>(null)
   const [isEditing, setIsEditing] = useState(false)
   const [searchTerm, setSearchTerm] = useState("")
   const [filterStatus, setFilterStatus] = useState<"all" | "active" | "draft" | "archived">("all")
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      setLoading(true)
+      setError(null)
+      const result = await getProjects()
+      if (result.success) {
+        setProjects(result.data)
+      } else {
+        setError(result.error || "Failed to fetch projects")
+        console.error("[v0] Failed to fetch projects:", result.error)
+      }
+      setLoading(false)
+    }
+    fetchProjects()
+  }, [])
 
   const filteredProjects = projects.filter((project) => {
     const matchesSearch =
@@ -75,8 +42,7 @@ export function ProjectsManager() {
   })
 
   const handleCreateProject = () => {
-    const newProject: Project = {
-      id: Date.now().toString(),
+    const newProject = {
       title: "",
       category: "",
       location: "",
@@ -96,33 +62,50 @@ export function ProjectsManager() {
       },
       status: "draft",
       featured: false,
-      createdAt: new Date().toISOString().split("T")[0],
-      updatedAt: new Date().toISOString().split("T")[0],
     }
     setSelectedProject(newProject)
     setIsEditing(true)
   }
 
-  const handleSaveProject = (project: Project) => {
-    if (projects.find((p) => p.id === project.id)) {
-      setProjects(
-        projects.map((p) =>
-          p.id === project.id ? { ...project, updatedAt: new Date().toISOString().split("T")[0] } : p,
-        ),
-      )
-    } else {
-      setProjects([...projects, project])
+  const handleSaveProject = async (project: any) => {
+    try {
+      if (project.id) {
+        // Update existing project
+        const result = await updateProject(project.id, project)
+        if (result.success) {
+          setProjects(projects.map((p) => (p.id === project.id ? result.data : p)))
+        } else {
+          alert(`Failed to update project: ${result.error}`)
+          return
+        }
+      } else {
+        // Create new project
+        const result = await createProject(project)
+        if (result.success) {
+          setProjects([result.data, ...projects])
+        } else {
+          alert(`Failed to create project: ${result.error}`)
+          return
+        }
+      }
+      setSelectedProject(null)
+      setIsEditing(false)
+    } catch (err: any) {
+      alert(`Error saving project: ${err.message}`)
     }
-    setSelectedProject(null)
-    setIsEditing(false)
   }
 
-  const handleDeleteProject = (projectId: string) => {
+  const handleDeleteProject = async (projectId: string) => {
     if (confirm("Are you sure you want to delete this project?")) {
-      setProjects(projects.filter((p) => p.id !== projectId))
-      if (selectedProject?.id === projectId) {
-        setSelectedProject(null)
-        setIsEditing(false)
+      const result = await deleteProject(projectId)
+      if (result.success) {
+        setProjects(projects.filter((p) => p.id !== projectId))
+        if (selectedProject?.id === projectId) {
+          setSelectedProject(null)
+          setIsEditing(false)
+        }
+      } else {
+        alert(`Failed to delete project: ${result.error}`)
       }
     }
   }
@@ -138,6 +121,38 @@ export function ProjectsManager() {
       default:
         return "bg-gray-500/20 text-gray-400"
     }
+  }
+
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <h2 className="font-playfair text-3xl font-bold text-[#D4AF37]">Projects Manager</h2>
+        </div>
+        <div className="text-center py-12">
+          <p className="text-[#FAFAFA]/60 text-lg">Loading projects...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <h2 className="font-playfair text-3xl font-bold text-[#D4AF37]">Projects Manager</h2>
+          <Button onClick={handleCreateProject} className="bg-[#D4AF37] text-[#0F0F0F] hover:bg-[#C41E3A]">
+            Add New Project
+          </Button>
+        </div>
+        <div className="text-center py-12">
+          <p className="text-red-400 text-lg mb-4">Error: {error}</p>
+          <p className="text-[#FAFAFA]/60 text-sm">
+            The projects table may not exist yet. Please create it in your Supabase database.
+          </p>
+        </div>
+      </div>
+    )
   }
 
   return (

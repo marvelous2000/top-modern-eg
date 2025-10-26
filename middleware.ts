@@ -33,6 +33,11 @@ export async function middleware(request: NextRequest) {
     data: { session },
   } = await supabase.auth.getSession()
 
+  // Refresh session if exists
+  if (session) {
+    await supabase.auth.refreshSession()
+  }
+
   // Protect admin routes
   if (request.nextUrl.pathname.startsWith("/admin") && !request.nextUrl.pathname.startsWith("/admin/login")) {
     if (!session) {
