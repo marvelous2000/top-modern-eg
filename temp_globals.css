@@ -323,39 +323,29 @@ a:not([class]):hover {
   inset: 0;
   overflow: hidden;
   pointer-events: none;
-  mix-blend-mode: screen;
-  opacity: 1;
-  z-index: 0;
-  background: radial-gradient(circle at center, rgba(255, 215, 120, 0.25) 0%, rgba(15, 15, 15, 0) 65%);
+  mask-image: radial-gradient(circle at center, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.7) 55%, transparent 85%);
 }
 
 .golden-grid__mesh {
   position: absolute;
-  inset: -10%;
+  inset: 0;
   background-image:
-    linear-gradient(rgba(212, 175, 55, 0.35) 1px, rgba(0, 0, 0, 0) 0),
-    linear-gradient(90deg, rgba(212, 175, 55, 0.35) 1px, rgba(0, 0, 0, 0) 0);
-  background-size: 85px 85px;
-  background-position: center;
-  animation: golden-grid-drift 18s linear infinite;
-  filter: drop-shadow(0 0 22px rgba(212, 175, 55, 0.45));
+    linear-gradient(rgba(26, 26, 26, 0.85) 1px, transparent 0),
+    linear-gradient(90deg, rgba(26, 26, 26, 0.85) 1px, transparent 0);
+  background-size: 110px 110px;
+  mix-blend-mode: lighten;
+  opacity: 0.3;
+  animation: golden-grid-drift 24s linear infinite;
 }
 
 .golden-grid__glow {
   position: absolute;
-  inset: -35%;
-  background: radial-gradient(circle, rgba(255, 235, 185, 0.95) 0%, rgba(212, 175, 55, 0.55) 28%, rgba(15, 15, 15, 0) 62%);
+  inset: -25%;
+  background: radial-gradient(circle, rgba(212, 175, 55, 0.75) 0%, rgba(212, 175, 55, 0.2) 22%, rgba(15, 15, 15, 0) 55%);
+  mix-blend-mode: screen;
   filter: blur(35px);
-  opacity: 1;
-  animation: golden-grid-pulse 5.5s ease-in-out infinite alternate;
-}
-
-.golden-grid__mesh::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at center, rgba(255, 214, 102, 0.4) 0%, rgba(0, 0, 0, 0) 55%);
-  animation: golden-grid-breathe 9s ease-in-out infinite alternate;
+  opacity: 0.85;
+  animation: golden-grid-pulse 8s ease-in-out infinite alternate;
 }
 
 @keyframes golden-grid-drift {
@@ -372,28 +362,16 @@ a:not([class]):hover {
 
 @keyframes golden-grid-pulse {
   0% {
-    transform: scale(0.94);
+    transform: scale(0.9);
     opacity: 0.65;
   }
   50% {
-    transform: scale(1.06);
-    opacity: 0.98;
+    transform: scale(1.05);
+    opacity: 0.95;
   }
   100% {
-    transform: scale(0.97);
-    opacity: 0.78;
-  }
-}
-
-@keyframes golden-grid-breathe {
-  0% {
-    opacity: 0.55;
-  }
-  50% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0.65;
+    transform: scale(0.92);
+    opacity: 0.7;
   }
 }
 

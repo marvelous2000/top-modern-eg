@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS profiles (
   email TEXT UNIQUE NOT NULL,
   first_name TEXT,
   last_name TEXT,
-  role TEXT NOT NULL DEFAULT 'viewer' CHECK (role IN ('admin', 'editor', 'viewer', 'advertiser')),
+  role TEXT NOT NULL DEFAULT 'viewer' CHECK (role IN ('super_admin', 'admin', 'editor', 'viewer', 'advertiser')),
   status TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'invited', 'suspended')),
   last_active TIMESTAMPTZ DEFAULT NOW(),
   created_at TIMESTAMPTZ DEFAULT NOW(),
@@ -120,7 +120,7 @@ CREATE TABLE IF NOT EXISTS form_submissions (
 );
 
 -- =====================================================
--- 7. SITE_SETTINGS TABLE (Global Configuration)
+-- 8. SITE_SETTINGS TABLE (Global Configuration)
 -- =====================================================
 CREATE TABLE IF NOT EXISTS site_settings (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),

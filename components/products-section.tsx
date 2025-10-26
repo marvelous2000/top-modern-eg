@@ -28,6 +28,9 @@ const fallbackProducts = [
   },
 ]
 
+const formatCategory = (value: string | undefined) =>
+  value ? value.charAt(0).toUpperCase() + value.slice(1) : ""
+
 export function ProductsSection() {
   const [products, setProducts] = useState<any[]>(fallbackProducts)
   const [loading, setLoading] = useState(true)
@@ -88,7 +91,7 @@ export function ProductsSection() {
                   />
                   <div className="absolute top-4 left-4">
                     <span className="bg-primary text-black px-3 py-1 rounded-full text-sm font-medium">
-                      {product.category}
+                      {formatCategory(product.category)}
                     </span>
                   </div>
                 </div>
@@ -118,3 +121,6 @@ export function ProductsSection() {
     </section>
   )
 }
+
+
+

@@ -3,19 +3,7 @@
 import { useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import {
-  Users,
-  MessageSquare,
-  FileText,
-  BarChart3,
-  Settings,
-  Eye,
-  Plus,
-  Package,
-  FolderOpen,
-  Target,
-  ShieldCheck,
-} from "lucide-react"
+import { Users, MessageSquare, FileText, BarChart3, Settings, Eye, Plus, Package, FolderOpen, Target, ShieldCheck } from "lucide-react"
 import { AdminNavigation } from "@/components/admin/admin-navigation"
 import { AdminStats } from "@/components/admin/admin-stats"
 import { ContactsTable } from "@/components/admin/contacts-table"
@@ -26,6 +14,7 @@ import { ProductsManager } from "@/components/admin/products-manager"
 import { ProjectsManager } from "@/components/admin/projects-manager"
 import { UsersManager } from "@/components/admin/users-manager"
 import { PixelManager } from "@/components/admin/pixel-manager"
+import { LeadsManager } from "@/components/admin/leads-manager"
 import { SettingsManager } from "@/components/admin/settings-manager"
 
 export default function AdminDashboard() {
@@ -87,12 +76,12 @@ export default function AdminDashboard() {
               <span className="hidden sm:inline">Projects</span>
             </Button>
             <Button
-              variant={activeTab === "messages" ? "default" : "ghost"}
+              variant={activeTab === "leads" ? "default" : "ghost"}
               className="flex-shrink-0 lg:w-full justify-start whitespace-nowrap"
-              onClick={() => setActiveTab("messages")}
+              onClick={() => setActiveTab("leads")}
             >
               <MessageSquare className="mr-2 h-4 w-4" />
-              <span className="hidden sm:inline">Messages</span>
+              <span className="hidden sm:inline">Leads</span>
             </Button>
             <Button
               variant={activeTab === "legal" ? "default" : "ghost"}
@@ -182,17 +171,13 @@ export default function AdminDashboard() {
             </div>
           )}
 
-          {activeTab === "messages" && (
+          {activeTab === "leads" && (
             <div className="space-y-6">
               <div>
-                <h1 className="font-serif text-3xl font-bold text-foreground mb-2">Messages</h1>
-                <p className="text-muted-foreground">View and respond to customer messages</p>
+                <h1 className="font-serif text-3xl font-bold text-foreground mb-2">Leads</h1>
+                <p className="text-muted-foreground">Every submitted form flows into the lead inbox</p>
               </div>
-              <Card>
-                <CardContent className="p-6">
-                  <p className="text-center text-muted-foreground">No messages to display</p>
-                </CardContent>
-              </Card>
+              <LeadsManager />
             </div>
           )}
 

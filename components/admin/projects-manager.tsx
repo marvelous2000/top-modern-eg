@@ -1,11 +1,12 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
 import { getProjects, createProject, updateProject, deleteProject } from "@/lib/actions/projects"
+import { useSupabaseClient } from "@/components/providers/SupabaseProvider"
 
 export function ProjectsManager() {
   const [projects, setProjects] = useState<any[]>([])
@@ -15,6 +16,11 @@ export function ProjectsManager() {
   const [isEditing, setIsEditing] = useState(false)
   const [searchTerm, setSearchTerm] = useState("")
   const [filterStatus, setFilterStatus] = useState<"all" | "active" | "draft" | "archived">("all")
+  const supabase = useSupabaseClient({ optional: true })
+  const fileInputRef = useRef<HTMLInputElement | null>(null)
+  const [uploading, setUploading] = useState(false)
+  const [uploadError, setUploadError] = useState<string | null>(null)
+  const [uploadSuccess, setUploadSuccess] = useState<string | null>(null)
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -120,6 +126,100 @@ export function ProjectsManager() {
         return "bg-gray-500/20 text-gray-400"
       default:
         return "bg-gray-500/20 text-gray-400"
+    }
+  }
+
+  const handleAddImage = () => {
+    if (!selectedProject) return
+    setSelectedProject({
+      ...selectedProject,
+      images: [...(selectedProject.images ?? []), ""],
+    })
+  }
+
+  const handleUpdateImage = (index: number, value: string) => {
+    if (!selectedProject) return
+    const updatedImages = [...(selectedProject.images ?? [])]
+    updatedImages[index] = value
+    setSelectedProject({
+      ...selectedProject,
+      images: updatedImages,
+    })
+  }
+
+  const handleRemoveImage = (index: number) => {
+    if (!selectedProject) return
+    const updatedImages = (selectedProject.images ?? []).filter((_, idx) => idx !== index)
+    setSelectedProject({
+      ...selectedProject,
+      images: updatedImages,
+    })
+  }
+
+  const openFilePicker = () => {
+    setUploadError(null)
+    setUploadSuccess(null)
+    fileInputRef.current?.click()
+  }
+
+  const handleFilesSelected = async (files: FileList | null) => {
+    if (!files || !selectedProject || !supabase) {
+      if (!supabase) {
+        setUploadError("Storage client unavailable. Ensure Supabase env vars are set.")
+      }
+      return
+    }
+
+    const safeSlug = (selectedProject.slug || selectedProject.title || "project")
+      .toLowerCase()
+      .replace(/\s+/g, "-")
+      .replace(/[^a-z0-9-]/g, "")
+    const folder = `projects/${safeSlug || "project"}`
+
+    const uploadedUrls: string[] = []
+    setUploading(true)
+    setUploadError(null)
+    setUploadSuccess(null)
+
+    try {
+      for (const file of Array.from(files)) {
+        const extension = file.name.split(".").pop() ?? "jpg"
+        const sanitizedName = file.name
+          .toLowerCase()
+          .replace(/\s+/g, "-")
+          .replace(/[^a-z0-9.-]/g, "")
+        const uniqueName = `${Date.now()}-${Math.random().toString(36).slice(2)}-${sanitizedName || `image.${extension}`}`
+        const path = `${folder}/${uniqueName}`
+
+        const { error: uploadError } = await supabase.storage.from("uploads").upload(path, file, {
+          upsert: false,
+        })
+
+        if (uploadError) {
+          throw uploadError
+        }
+
+        const {
+          data: { publicUrl },
+        } = supabase.storage.from("uploads").getPublicUrl(path)
+
+        uploadedUrls.push(publicUrl)
+      }
+
+      setSelectedProject({
+        ...selectedProject,
+        images: [...(selectedProject.images ?? []), ...uploadedUrls],
+      })
+
+      setUploadSuccess(`${uploadedUrls.length} image${uploadedUrls.length > 1 ? "s" : ""} uploaded successfully.`)
+    } catch (err: any) {
+      console.error("Image upload failed", err)
+      setUploadError(err.message || "Failed to upload images")
+    } finally {
+      setUploading(false)
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ""
+      }
     }
   }
 
@@ -458,6 +558,60 @@ export function ProjectsManager() {
             </div>
 
             <div className="grid md:grid-cols-2 gap-6 mt-6">
+              <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <label className="block text-[#D4AF37] font-semibold">Project Images</label>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="secondary"
+                  onClick={openFilePicker}
+                  disabled={!supabase || uploading}
+                  className="bg-[#1A1A1A] text-[#D4AF37] hover:bg-[#2A2A2A] disabled:opacity-60"
+                >
+                  {uploading ? "Uploading..." : "Upload Images"}
+                </Button>
+                <Button variant="outline" onClick={handleAddImage} className="border-[#D4AF37]/20 text-[#FAFAFA]">
+                  Add Image URL
+                </Button>
+              </div>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Upload directly to Supabase storage or paste image URLs. The first image is treated as the primary visual.
+            </p>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              multiple
+              className="hidden"
+              onChange={(event) => handleFilesSelected(event.target.files)}
+            />
+            {uploadError && <p className="text-sm text-red-400">{uploadError}</p>}
+            {uploadSuccess && <p className="text-sm text-green-400">{uploadSuccess}</p>}
+            <div className="space-y-3">
+              {(selectedProject.images ?? []).length === 0 && (
+                <p className="text-muted-foreground text-sm">No images added yet.</p>
+              )}
+                  {(selectedProject.images ?? []).map((url: string, index: number) => (
+                    <div key={`project-image-${index}`} className="flex items-center gap-3">
+                      <Input
+                        value={url}
+                        onChange={(e) => handleUpdateImage(index, e.target.value)}
+                        placeholder="https://example.com/project-image.jpg"
+                        className="bg-[#0F0F0F] border-[#D4AF37]/20 text-[#FAFAFA]"
+                      />
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        className="bg-[#C41E3A] hover:bg-[#a01930]"
+                        onClick={() => handleRemoveImage(index)}
+                      >
+                        Remove
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              </div>
               <div>
                 <label className="block text-[#D4AF37] font-semibold mb-2">Materials Used (one per line)</label>
                 <Textarea

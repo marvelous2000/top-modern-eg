@@ -1,5 +1,6 @@
 "use server"
 
+import { cookies } from "next/headers"
 import { createSupabaseServerClient } from "@/lib/supabase/server"
 import { revalidatePath } from "next/cache"
 
@@ -22,7 +23,7 @@ export interface Product {
 
 export async function getProducts() {
   try {
-    const supabase = createSupabaseServerClient()
+    const supabase = createSupabaseServerClient(cookies())
     const { data, error } = await supabase.from("products").select("*").order("created_at", { ascending: false })
 
     if (error) {
@@ -39,7 +40,7 @@ export async function getProducts() {
 
 export async function getActiveProducts() {
   try {
-    const supabase = createSupabaseServerClient()
+    const supabase = createSupabaseServerClient(cookies())
     const { data, error } = await supabase
       .from("products")
       .select("*")
@@ -58,9 +59,26 @@ export async function getActiveProducts() {
   }
 }
 
+export async function getProductBySlug(slug: string) {
+  try {
+    const supabase = createSupabaseServerClient(cookies())
+    const { data, error } = await supabase.from("products").select("*").eq("slug", slug).maybeSingle()
+
+    if (error) {
+      console.error("[v0] Error fetching product by slug:", error)
+      return { success: false, error: error.message, data: null }
+    }
+
+    return { success: true, data: data || null }
+  } catch (error: any) {
+    console.error("[v0] Exception in getProductBySlug:", error)
+    return { success: false, error: error.message, data: null }
+  }
+}
+
 export async function createProduct(product: Omit<Product, "id" | "created_at" | "updated_at">) {
   try {
-    const supabase = createSupabaseServerClient()
+    const supabase = createSupabaseServerClient(cookies())
 
     // Check authentication
     const {
@@ -98,7 +116,7 @@ export async function createProduct(product: Omit<Product, "id" | "created_at" |
 
 export async function updateProduct(id: string, product: Partial<Product>) {
   try {
-    const supabase = createSupabaseServerClient()
+    const supabase = createSupabaseServerClient(cookies())
 
     // Check authentication
     const {
@@ -134,7 +152,7 @@ export async function updateProduct(id: string, product: Partial<Product>) {
 
 export async function deleteProduct(id: string) {
   try {
-    const supabase = createSupabaseServerClient()
+    const supabase = createSupabaseServerClient(cookies())
 
     // Check authentication
     const {

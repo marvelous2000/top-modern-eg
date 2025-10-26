@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import { projects } from "@/lib/projects"
+import { getProjectBySlug } from "@/lib/actions/projects"
 import { ProjectPageClient } from "./page.client.tsx"
 
 type ProjectPageProps = {
@@ -7,7 +7,7 @@ type ProjectPageProps = {
 }
 
 export async function generateMetadata({ params }: ProjectPageProps): Promise<Metadata> {
-  const project = projects[params.slug]
+  const { data: project } = await getProjectBySlug(params.slug)
 
   if (!project) {
     return {
@@ -21,8 +21,8 @@ export async function generateMetadata({ params }: ProjectPageProps): Promise<Me
   }
 }
 
-export default function ProjectPage({ params }: ProjectPageProps) {
-  const project = projects[params.slug]
+export default async function ProjectPage({ params }: ProjectPageProps) {
+  const { data: project } = await getProjectBySlug(params.slug)
 
-  return <ProjectPageClient project={project} slug={params.slug} />
+  return <ProjectPageClient project={project ?? undefined} slug={params.slug} />
 }

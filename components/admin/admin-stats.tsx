@@ -12,7 +12,7 @@ const stats = [
     color: "text-primary",
   },
   {
-    title: "New Messages",
+    title: "New Leads",
     value: "56",
     change: "+8%",
     icon: MessageSquare,

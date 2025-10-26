@@ -45,7 +45,7 @@ export async function middleware(request: NextRequest) {
     }
 
     // Check if user has admin role
-    const { data: userData } = await supabase.from("users").select("role, status").eq("id", session.user.id).single()
+    const { data: userData } = await supabase.from("profiles").select("role, status").eq("id", session.user.id).single()
 
     if (
       !userData ||

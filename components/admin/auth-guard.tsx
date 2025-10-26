@@ -31,7 +31,7 @@ export function AuthGuard({ children }: AuthGuardProps) {
 
         // Check if user has admin role
         const { data: userData, error } = await supabase
-          .from("users")
+          .from("profiles")
           .select("role, status")
           .eq("id", session.user.id)
           .single()
