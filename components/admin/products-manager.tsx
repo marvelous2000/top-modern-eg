@@ -1,78 +1,37 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
-
-interface Product {
-  id: string
-  name: string
-  category: "marble" | "granite"
-  slug: string
-  description: string
-  origin: string
-  finish: string
-  thickness: string
-  applications: string[]
-  images: string[]
-  specifications: Record<string, string>
-  status: "active" | "draft" | "archived"
-  createdAt: string
-  updatedAt: string
-}
-
-const sampleProducts: Product[] = [
-  {
-    id: "1",
-    name: "Carrara White Marble",
-    category: "marble",
-    slug: "carrara-white-marble",
-    description: "Premium Italian Carrara marble with distinctive grey veining",
-    origin: "Carrara, Italy",
-    finish: "Polished",
-    thickness: "20mm, 30mm",
-    applications: ["Flooring", "Wall Cladding", "Countertops"],
-    images: ["/placeholder.svg?height=400&width=400"],
-    specifications: {
-      Density: "2.7 g/cm³",
-      "Water Absorption": "< 0.5%",
-      "Compressive Strength": "120 MPa",
-    },
-    status: "active",
-    createdAt: "2024-01-15",
-    updatedAt: "2024-01-20",
-  },
-  {
-    id: "2",
-    name: "Nero Marquina Marble",
-    category: "marble",
-    slug: "nero-marquina-marble",
-    description: "Sophisticated black marble with striking white veining",
-    origin: "Markina, Spain",
-    finish: "Polished",
-    thickness: "20mm, 30mm",
-    applications: ["Wall Cladding", "Feature Walls", "Bathroom Surfaces"],
-    images: ["/placeholder.svg?height=400&width=400"],
-    specifications: {
-      Density: "2.7 g/cm³",
-      "Water Absorption": "< 0.4%",
-      "Compressive Strength": "110 MPa",
-    },
-    status: "active",
-    createdAt: "2024-01-10",
-    updatedAt: "2024-01-18",
-  },
-]
+import { getProducts, createProduct, updateProduct, deleteProduct, type Product } from "@/lib/actions/products"
 
 export function ProductsManager() {
-  const [products, setProducts] = useState<Product[]>(sampleProducts)
+  const [products, setProducts] = useState<Product[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
   const [isEditing, setIsEditing] = useState(false)
   const [searchTerm, setSearchTerm] = useState("")
   const [filterCategory, setFilterCategory] = useState<"all" | "marble" | "granite">("all")
   const [filterStatus, setFilterStatus] = useState<"all" | "active" | "draft" | "archived">("all")
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      setLoading(true)
+      setError(null)
+      const result = await getProducts()
+      if (result.success) {
+        setProducts(result.data as Product[])
+      } else {
+        setError(result.error || "Failed to fetch products")
+        console.error("[v0] Failed to fetch products:", result.error)
+      }
+      setLoading(false)
+    }
+    fetchProducts()
+  }, [])
 
   const filteredProducts = products.filter((product) => {
     const matchesSearch =
@@ -85,8 +44,7 @@ export function ProductsManager() {
   })
 
   const handleCreateProduct = () => {
-    const newProduct: Product = {
-      id: Date.now().toString(),
+    const newProduct: any = {
       name: "",
       category: "marble",
       slug: "",
@@ -98,33 +56,48 @@ export function ProductsManager() {
       images: [],
       specifications: {},
       status: "draft",
-      createdAt: new Date().toISOString().split("T")[0],
-      updatedAt: new Date().toISOString().split("T")[0],
     }
-    setSelectedProduct(newProduct)
+    setSelectedProduct(newProduct as Product)
     setIsEditing(true)
   }
 
-  const handleSaveProduct = (product: Product) => {
-    if (products.find((p) => p.id === product.id)) {
-      setProducts(
-        products.map((p) =>
-          p.id === product.id ? { ...product, updatedAt: new Date().toISOString().split("T")[0] } : p,
-        ),
-      )
-    } else {
-      setProducts([...products, product])
+  const handleSaveProduct = async (product: Product) => {
+    try {
+      if (product.id) {
+        const result = await updateProduct(product.id, product)
+        if (result.success) {
+          setProducts(products.map((p) => (p.id === product.id ? (result.data as Product) : p)))
+        } else {
+          alert(`Failed to update product: ${result.error}`)
+          return
+        }
+      } else {
+        const result = await createProduct(product)
+        if (result.success) {
+          setProducts([result.data as Product, ...products])
+        } else {
+          alert(`Failed to create product: ${result.error}`)
+          return
+        }
+      }
+      setSelectedProduct(null)
+      setIsEditing(false)
+    } catch (err: any) {
+      alert(`Error saving product: ${err.message}`)
     }
-    setSelectedProduct(null)
-    setIsEditing(false)
   }
 
-  const handleDeleteProduct = (productId: string) => {
+  const handleDeleteProduct = async (productId: string) => {
     if (confirm("Are you sure you want to delete this product?")) {
-      setProducts(products.filter((p) => p.id !== productId))
-      if (selectedProduct?.id === productId) {
-        setSelectedProduct(null)
-        setIsEditing(false)
+      const result = await deleteProduct(productId)
+      if (result.success) {
+        setProducts(products.filter((p) => p.id !== productId))
+        if (selectedProduct?.id === productId) {
+          setSelectedProduct(null)
+          setIsEditing(false)
+        }
+      } else {
+        alert(`Failed to delete product: ${result.error}`)
       }
     }
   }
@@ -140,6 +113,38 @@ export function ProductsManager() {
       default:
         return "bg-gray-500/20 text-gray-400"
     }
+  }
+
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <h2 className="font-playfair text-3xl font-bold text-[#D4AF37]">Products Manager</h2>
+        </div>
+        <div className="text-center py-12">
+          <p className="text-[#FAFAFA]/60 text-lg">Loading products...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <h2 className="font-playfair text-3xl font-bold text-[#D4AF37]">Products Manager</h2>
+          <Button onClick={handleCreateProduct} className="bg-[#D4AF37] text-[#0F0F0F] hover:bg-[#C41E3A]">
+            Add New Product
+          </Button>
+        </div>
+        <div className="text-center py-12">
+          <p className="text-red-400 text-lg mb-4">Error: {error}</p>
+          <p className="text-[#FAFAFA]/60 text-sm">
+            The products table may not exist yet. Please create it in your Supabase database.
+          </p>
+        </div>
+      </div>
+    )
   }
 
   return (

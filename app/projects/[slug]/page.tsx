@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 import { projects } from "@/lib/projects"
-import { ProjectPageClient } from "./page.client"
+import { ProjectPageClient } from "./page.client.tsx"
 
 type ProjectPageProps = {
   params: { slug: string }

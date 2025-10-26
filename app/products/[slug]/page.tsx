@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import { ProductPageClient } from "./page.client"
+import { ProductPageClient } from "./page.client.tsx"
 
 // Sample product data - in real app this would come from database
 const products = {
