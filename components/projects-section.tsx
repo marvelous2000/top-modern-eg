@@ -64,25 +64,50 @@ export function ProjectsSection() {
           {projects.map((project, index) => (
             <Card
               key={project.id || index}
-              className="bg-card/50 backdrop-blur-sm border-primary/20 hover:border-primary/40 transition-all duration-300 group"
+              className="bg-card/50 backdrop-blur-sm border-primary/20 hover:border-primary/40 transition-all duration-300 group min-h-[500px] flex flex-col"
             >
-              <CardContent className="p-0">
+              <CardContent className="p-0 flex-1 flex flex-col">
                 <div className="relative overflow-hidden">
                   <img
                     src={project.images?.[0] || "/placeholder.svg"}
                     alt={project.title}
                     className="w-full h-80 object-cover group-hover:scale-105 transition-transform duration-300"
                   />
-                  <div className="absolute top-4 left-4 flex gap-2">
-                    <Badge className="bg-primary text-black">{project.category}</Badge>
-                    <Badge variant="outline" className="border-white text-white">
+                  <div className="absolute top-4 left-4 flex flex-wrap gap-2">
+                    <Badge className="bg-primary text-black shrink-0">{project.category}</Badge>
+                    <Badge variant="outline" className="border-white text-white break-words max-w-full">
                       {project.location}
                     </Badge>
                   </div>
                 </div>
-                <div className="p-6">
-                  <h3 className="font-serif text-2xl font-bold text-white mb-3">{project.title}</h3>
-                  <p className="text-gray-300">{project.description}</p>
+                <div className="p-6 flex-1 flex flex-col">
+                  <h3 className="font-serif text-2xl font-bold text-white mb-3 break-words line-clamp-2 leading-tight">
+                    {project.title}
+                  </h3>
+                  <p className="text-gray-300 mb-4 flex-1 break-words line-clamp-3">
+                    {project.description}
+                  </p>
+                  <div className="mt-auto">
+                    <a
+                      href={`/projects/${project.slug || project.id}`}
+                      className="inline-flex items-center px-6 py-3 bg-primary text-black font-semibold rounded-lg hover:bg-primary/90 transition-colors duration-200 group-hover:shadow-lg"
+                    >
+                      View Project Details
+                      <svg
+                        className="ml-2 w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 5l7 7-7 7"
+                        />
+                      </svg>
+                    </a>
+                  </div>
                 </div>
               </CardContent>
             </Card>

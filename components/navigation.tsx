@@ -58,7 +58,7 @@ export function Navigation() {
                   Products
                 </a>
                 <a
-                  href="/#projects"
+                  href="/projects"
                   className="text-[#d4af37] hover:text-[#c41e3a] transition-colors font-inter font-medium text-base"
                 >
                   Projects
@@ -117,7 +117,7 @@ export function Navigation() {
                 Products
               </a>
               <a
-                href="/#projects"
+                href="/projects"
                 className="block px-3 py-2 text-[#d4af37] hover:text-[#c41e3a] transition-colors text-base"
               >
                 Projects

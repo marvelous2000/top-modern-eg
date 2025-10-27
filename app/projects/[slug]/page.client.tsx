@@ -27,14 +27,18 @@ export function ProjectPageClient({ project, slug }: ProjectPageProps) {
         <section className="container mx-auto px-6 py-16">
           <div className="max-w-4xl mx-auto text-center mb-16">
             <div className="flex flex-wrap items-center justify-center gap-4 mb-6 text-sm uppercase tracking-[0.3em] text-[#D4AF37]">
-              <span>{project.category}</span>
+              <span className="break-words">{project.category}</span>
               <span className="text-[#FAFAFA]/40">&bull;</span>
-              <span>{project.location}</span>
+              <span className="break-words">{project.location}</span>
               <span className="text-[#FAFAFA]/40">&bull;</span>
-              <span>{project.year}</span>
+              <span className="break-words">{project.year}</span>
             </div>
-            <h1 className="font-playfair text-4xl md:text-6xl font-bold text-balance mb-6">{project.title}</h1>
-            <p className="text-[#FAFAFA]/70 text-lg md:text-xl leading-relaxed">{project.description}</p>
+            <h1 className="font-playfair text-4xl md:text-6xl font-bold text-balance mb-6 break-words line-clamp-3 leading-tight">
+              {project.title}
+            </h1>
+            <p className="text-[#FAFAFA]/70 text-lg md:text-xl leading-relaxed break-words line-clamp-4">
+              {project.description}
+            </p>
           </div>
 
           <div className="grid gap-12 lg:grid-cols-3 items-start">
@@ -47,14 +51,14 @@ export function ProjectPageClient({ project, slug }: ProjectPageProps) {
                 />
                 <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#0F0F0F]/90 to-transparent p-8">
                   <div className="flex flex-wrap gap-4 text-sm text-[#FAFAFA]/60">
-                    <span>
-                      Client: <span className="text-[#FAFAFA] font-semibold">{project.client}</span>
+                    <span className="break-words">
+                      Client: <span className="text-[#FAFAFA] font-semibold break-words">{project.client}</span>
                     </span>
-                    <span>
-                      Category: <span className="text-[#FAFAFA] font-semibold">{project.category}</span>
+                    <span className="break-words">
+                      Category: <span className="text-[#FAFAFA] font-semibold break-words">{project.category}</span>
                     </span>
-                    <span>
-                      Location: <span className="text-[#FAFAFA] font-semibold">{project.location}</span>
+                    <span className="break-words">
+                      Location: <span className="text-[#FAFAFA] font-semibold break-words">{project.location}</span>
                     </span>
                   </div>
                 </div>
@@ -63,11 +67,11 @@ export function ProjectPageClient({ project, slug }: ProjectPageProps) {
               <div className="grid gap-6 lg:grid-cols-2">
                 <div className="rounded-2xl border border-[#D4AF37]/20 bg-[#141414]/80 p-8">
                   <h2 className="font-playfair text-2xl font-bold text-[#D4AF37] mb-4">Project Challenge</h2>
-                  <p className="text-[#FAFAFA]/70 leading-relaxed">{project.challenge}</p>
+                  <p className="text-[#FAFAFA]/70 leading-relaxed break-words line-clamp-6">{project.challenge}</p>
                 </div>
                 <div className="rounded-2xl border border-[#D4AF37]/20 bg-[#141414]/80 p-8">
                   <h2 className="font-playfair text-2xl font-bold text-[#D4AF37] mb-4">Our Solution</h2>
-                  <p className="text-[#FAFAFA]/70 leading-relaxed">{project.solution}</p>
+                  <p className="text-[#FAFAFA]/70 leading-relaxed break-words line-clamp-6">{project.solution}</p>
                 </div>
               </div>
 
@@ -76,8 +80,8 @@ export function ProjectPageClient({ project, slug }: ProjectPageProps) {
                 <div className="grid gap-4 md:grid-cols-2">
                   {project.results.map((result, index) => (
                     <div key={index} className="flex gap-4">
-                      <span className="mt-1 size-2 rounded-full bg-[#D4AF37]" aria-hidden="true" />
-                      <p className="text-[#FAFAFA]/80 leading-relaxed">{result}</p>
+                      <span className="mt-1 size-2 rounded-full bg-[#D4AF37] shrink-0" aria-hidden="true" />
+                      <p className="text-[#FAFAFA]/80 leading-relaxed break-words">{result}</p>
                     </div>
                   ))}
                 </div>
@@ -112,8 +116,8 @@ export function ProjectPageClient({ project, slug }: ProjectPageProps) {
                 <ul className="space-y-3 text-sm text-[#FAFAFA]/75">
                   {project.materials.map((material, index) => (
                     <li key={index} className="flex gap-3">
-                      <span className="mt-1 size-1.5 rounded-full bg-[#D4AF37]/80" aria-hidden="true" />
-                      <span>{material}</span>
+                      <span className="mt-1 size-1.5 rounded-full bg-[#D4AF37]/80 shrink-0" aria-hidden="true" />
+                      <span className="break-words">{material}</span>
                     </li>
                   ))}
                 </ul>

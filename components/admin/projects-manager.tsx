@@ -290,26 +290,26 @@ export function ProjectsManager() {
       {/* Projects Grid */}
       <div className="grid lg:grid-cols-2 gap-6">
         {filteredProjects.map((project) => (
-          <div key={project.id} className="border border-[#D4AF37]/20 rounded-lg p-6 space-y-4">
-            <div className="flex items-start justify-between">
-              <div className="flex-1">
-                <div className="flex items-center gap-2 mb-2">
-                  <h3 className="font-playfair text-xl font-bold text-[#FAFAFA]">{project.title}</h3>
-                  {project.featured && <Badge className="bg-[#D4AF37] text-[#0F0F0F] border-0 text-xs">Featured</Badge>}
+          <div key={project.id} className="border border-[#D4AF37]/20 rounded-lg p-6 space-y-4 min-h-[280px] flex flex-col">
+            <div className="flex items-start justify-between flex-1">
+              <div className="flex-1 min-w-0 pr-4">
+                <div className="flex items-start gap-2 mb-2">
+                  <h3 className="font-playfair text-xl font-bold text-[#FAFAFA] break-words line-clamp-2 leading-tight">{project.title}</h3>
+                  {project.featured && <Badge className="bg-[#D4AF37] text-[#0F0F0F] border-0 text-xs shrink-0">Featured</Badge>}
                 </div>
 
-                <p className="text-[#FAFAFA]/60 text-sm mb-3 line-clamp-2">{project.description}</p>
+                <p className="text-[#FAFAFA]/60 text-sm mb-3 line-clamp-2 break-words">{project.description}</p>
 
-                <div className="flex items-center gap-2 mb-3">
-                  <Badge className={`${getStatusColor(project.status)} border-0`}>{project.status}</Badge>
-                  <Badge className="bg-[#D4AF37]/20 text-[#D4AF37] border-0">{project.category}</Badge>
+                <div className="flex flex-wrap items-center gap-2 mb-3">
+                  <Badge className={`${getStatusColor(project.status)} border-0 shrink-0`}>{project.status}</Badge>
+                  <Badge className="bg-[#D4AF37]/20 text-[#D4AF37] border-0 break-words max-w-full">{project.category}</Badge>
                 </div>
 
                 <div className="text-xs text-[#FAFAFA]/40 space-y-1">
-                  <p>Location: {project.location}</p>
-                  <p>Year: {project.year}</p>
-                  <p>Client: {project.client}</p>
-                  <p>Updated: {project.updatedAt}</p>
+                  <p className="truncate">Location: {project.location}</p>
+                  <p className="truncate">Year: {project.year}</p>
+                  <p className="truncate">Client: {project.client}</p>
+                  <p className="truncate">Updated: {project.updatedAt}</p>
                 </div>
               </div>
 
@@ -317,7 +317,7 @@ export function ProjectsManager() {
                 <img
                   src={project.images[0] || "/placeholder.svg"}
                   alt={project.title}
-                  className="w-20 h-16 object-cover rounded-lg ml-4"
+                  className="w-20 h-16 object-cover rounded-lg shrink-0"
                 />
               )}
             </div>

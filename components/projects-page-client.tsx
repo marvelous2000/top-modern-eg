@@ -159,45 +159,56 @@ export function ProjectsPageClient({ projects }: ProjectsPageClientProps) {
             {filteredProjects.map((project) => (
               <article
                 key={project.slug}
-                className="grid lg:grid-cols-[1.1fr_1fr] border border-[#D4AF37]/20 rounded-3xl overflow-hidden bg-[#141414]/80 backdrop-blur"
+                className="grid lg:grid-cols-[1.1fr_1fr] border border-[#D4AF37]/20 rounded-3xl overflow-hidden bg-[#141414]/80 backdrop-blur min-h-[400px]"
               >
                 <div className="relative">
                   <img
                     src={project.images?.[0] || "/placeholder.svg"}
                     alt={project.title}
-                    className="h-full w-full min-h-[320px] object-cover"
+                    className="h-full w-full min-h-[400px] object-cover"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/0 to-black/40" />
                   <div className="absolute bottom-6 left-6 right-6">
                     <div className="flex flex-wrap items-center gap-3 text-xs uppercase tracking-[0.3em] text-[#D4AF37]">
-                      <span>{project.category}</span>
+                      <span className="break-words">{project.category}</span>
                       <span className="text-[#FAFAFA]/40">&bull;</span>
-                      <span>{project.location}</span>
+                      <span className="break-words">{project.location}</span>
                     </div>
-                    <h2 className="mt-3 font-playfair text-3xl font-bold text-[#FAFAFA]">{project.title}</h2>
+                    <h2 className="mt-3 font-playfair text-2xl md:text-3xl font-bold text-[#FAFAFA] break-words line-clamp-2 leading-tight">
+                      {project.title}
+                    </h2>
                   </div>
                 </div>
 
-                <div className="space-y-6 bg-[#141414]/90 p-8">
-                  <p className="text-[#FAFAFA]/70 leading-relaxed">{project.description}</p>
+                <div className="space-y-6 bg-[#141414]/90 p-8 flex flex-col min-h-[400px]">
+                  <div className="flex-1">
+                    <p className="text-[#FAFAFA]/70 leading-relaxed mb-6 break-words line-clamp-4">
+                      {project.description}
+                    </p>
 
-                  <div className="grid gap-2 text-sm text-[#FAFAFA]/50">
-                    {project.results.slice(0, 3).map((result, index) => (
-                      <div key={index} className="flex items-start gap-2">
-                        <span className="mt-1 size-1.5 rounded-full bg-[#D4AF37]/80" aria-hidden="true" />
-                        <span>{result}</span>
+                    {project.results && project.results.length > 0 && (
+                      <div className="grid gap-2 text-sm text-[#FAFAFA]/50 mb-6">
+                        {project.results.slice(0, 3).map((result, index) => (
+                          <div key={index} className="flex items-start gap-2">
+                            <span className="mt-1 size-1.5 rounded-full bg-[#D4AF37]/80 shrink-0" aria-hidden="true" />
+                            <span className="break-words">{result}</span>
+                          </div>
+                        ))}
                       </div>
-                    ))}
+                    )}
                   </div>
 
-                  <div className="flex flex-wrap items-center justify-between gap-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-auto">
                     <a
                       href={`/projects/${project.slug}`}
-                      className="inline-flex items-center gap-2 rounded-full bg-[#D4AF37] px-6 py-3 text-sm font-semibold text-[#0F0F0F] transition-colors duration-300 hover:bg-[#C41E3A] hover:text-[#FAFAFA]"
+                      className="inline-flex items-center gap-2 rounded-full bg-[#D4AF37] px-6 py-3 text-sm font-semibold text-[#0F0F0F] transition-colors duration-300 hover:bg-[#C41E3A] hover:text-[#FAFAFA] shrink-0"
                     >
                       View Case Study
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
                     </a>
-                    <div className="text-xs uppercase tracking-[0.3em] text-[#FAFAFA]/40">
+                    <div className="text-xs uppercase tracking-[0.3em] text-[#FAFAFA]/40 break-words">
                       {project.year} &bull; {project.client}
                     </div>
                   </div>

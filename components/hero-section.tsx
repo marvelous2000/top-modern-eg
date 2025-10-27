@@ -3,7 +3,6 @@
 import { Button } from "@/components/ui/button"
 import { ArrowRight, Star, Award, Users, Phone, Mail } from "lucide-react"
 import { useContactTracking } from "@/components/contact-tracking"
-import { GoldenGridBackground } from "@/components/backgrounds/GoldenGridBackground"
 
 export function HeroSection() {
   const { trackContact } = useContactTracking()
@@ -25,16 +24,30 @@ export function HeroSection() {
   return (
     <section
       id="home"
-      className="relative min-h-screen flex items-center justify-center pt-24"
-      style={{
-        backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.4)), url('/images/luxury-marble-flooring.jpg')`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-      }}
+      className="relative min-h-screen flex items-center justify-center pt-24 overflow-hidden"
     >
-      <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/20 to-black/40"></div>
-      <GoldenGridBackground />
+      {/* Video Background */}
+      <video
+        autoPlay
+        muted
+        loop
+        playsInline
+        className="absolute inset-0 w-full h-full object-cover"
+        style={{ filter: 'brightness(0.4) contrast(1.1)' }}
+      >
+        <source src="/granite.mp4" type="video/mp4" />
+        {/* Fallback image if video fails to load */}
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{
+            backgroundImage: `url('/images/luxury-marble-flooring.jpg')`,
+          }}
+        />
+      </video>
+
+      {/* Overlay gradients */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/30 to-black/60"></div>
+      <div className="absolute inset-0 bg-gradient-to-r from-black/40 via-transparent to-black/40"></div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <div className="animate-fade-in-up">
