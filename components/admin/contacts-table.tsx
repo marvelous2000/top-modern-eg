@@ -74,15 +74,15 @@ export function ContactsTable() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "New":
-        return "bg-blue-500"
+        return "bg-primary text-primary-foreground"
       case "Contacted":
-        return "bg-yellow-500"
+        return "bg-amber-500 text-white"
       case "Qualified":
-        return "bg-green-500"
+        return "bg-accent text-accent-foreground"
       case "Closed":
-        return "bg-red-500"
+        return "bg-destructive text-destructive-foreground"
       default:
-        return "bg-gray-500"
+        return "bg-muted text-muted-foreground"
     }
   }
 
@@ -175,7 +175,7 @@ export function ContactsTable() {
                   </div>
                 </TableCell>
                 <TableCell>
-                  <Badge className={`${getStatusColor(contact.status)} text-white`}>{contact.status}</Badge>
+                  <Badge className={`${getStatusColor(contact.status)}`}>{contact.status}</Badge>
                 </TableCell>
                 <TableCell>{contact.date}</TableCell>
                 <TableCell>{contact.source}</TableCell>
@@ -201,18 +201,18 @@ export function ContactsTable() {
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <div className="flex justify-between items-center">
-                <DialogTitle className="text-xl font-bold text-[#D4AF37]">
+                <DialogTitle className="text-xl font-bold text-primary">
                   {isEditing ? "Edit Contact" : "Contact Details"}
                 </DialogTitle>
                 <div className="flex space-x-2">
                   {!isEditing ? (
-                    <Button onClick={handleEditContact} size="sm" className="bg-[#C41E3A] hover:bg-[#A01729]">
+                    <Button onClick={handleEditContact} size="sm" variant="destructive">
                       <Edit className="h-4 w-4 mr-2" />
                       Edit
                     </Button>
                   ) : (
                     <>
-                      <Button onClick={handleSaveContact} size="sm" className="bg-green-600 hover:bg-green-700">
+                      <Button onClick={handleSaveContact} size="sm" className="bg-accent text-accent-foreground hover:bg-accent/80">
                         <Save className="h-4 w-4 mr-2" />
                         Save
                       </Button>
@@ -231,7 +231,7 @@ export function ContactsTable() {
                 {/* Basic Information */}
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="name" className="text-[#D4AF37] font-semibold">
+                    <Label htmlFor="name" className="text-primary font-semibold">
                       Full Name
                     </Label>
                     {isEditing ? (
@@ -242,11 +242,11 @@ export function ContactsTable() {
                         className="mt-1"
                       />
                     ) : (
-                      <p className="mt-1 text-white">{selectedContact.name}</p>
+                      <p className="mt-1 text-foreground">{selectedContact.name}</p>
                     )}
                   </div>
                   <div>
-                    <Label htmlFor="company" className="text-[#D4AF37] font-semibold">
+                    <Label htmlFor="company" className="text-primary font-semibold">
                       Company
                     </Label>
                     {isEditing ? (
@@ -257,7 +257,7 @@ export function ContactsTable() {
                         className="mt-1"
                       />
                     ) : (
-                      <p className="mt-1 text-white">{selectedContact.company}</p>
+                      <p className="mt-1 text-foreground">{selectedContact.company}</p>
                     )}
                   </div>
                 </div>
@@ -265,7 +265,7 @@ export function ContactsTable() {
                 {/* Contact Information */}
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="email" className="text-[#D4AF37] font-semibold">
+                    <Label htmlFor="email" className="text-primary font-semibold">
                       Email
                     </Label>
                     {isEditing ? (
@@ -277,11 +277,11 @@ export function ContactsTable() {
                         className="mt-1"
                       />
                     ) : (
-                      <p className="mt-1 text-white">{selectedContact.email}</p>
+                      <p className="mt-1 text-foreground">{selectedContact.email}</p>
                     )}
                   </div>
                   <div>
-                    <Label htmlFor="phone" className="text-[#D4AF37] font-semibold">
+                    <Label htmlFor="phone" className="text-primary font-semibold">
                       Phone
                     </Label>
                     {isEditing ? (
@@ -292,7 +292,7 @@ export function ContactsTable() {
                         className="mt-1"
                       />
                     ) : (
-                      <p className="mt-1 text-white">{selectedContact.phone}</p>
+                      <p className="mt-1 text-foreground">{selectedContact.phone}</p>
                     )}
                   </div>
                 </div>
@@ -300,7 +300,7 @@ export function ContactsTable() {
                 {/* Project Information */}
                 <div className="grid grid-cols-3 gap-4">
                   <div>
-                    <Label htmlFor="projectType" className="text-[#D4AF37] font-semibold">
+                    <Label htmlFor="projectType" className="text-primary font-semibold">
                       Project Type
                     </Label>
                     {isEditing ? (
@@ -318,11 +318,11 @@ export function ContactsTable() {
                         </SelectContent>
                       </Select>
                     ) : (
-                      <p className="mt-1 text-white">{selectedContact.projectType}</p>
+                      <p className="mt-1 text-foreground">{selectedContact.projectType}</p>
                     )}
                   </div>
                   <div>
-                    <Label htmlFor="budget" className="text-[#D4AF37] font-semibold">
+                    <Label htmlFor="budget" className="text-primary font-semibold">
                       Budget
                     </Label>
                     {isEditing ? (
@@ -333,11 +333,11 @@ export function ContactsTable() {
                         className="mt-1"
                       />
                     ) : (
-                      <p className="mt-1 text-white">{selectedContact.budget}</p>
+                      <p className="mt-1 text-foreground">{selectedContact.budget}</p>
                     )}
                   </div>
                   <div>
-                    <Label htmlFor="timeline" className="text-[#D4AF37] font-semibold">
+                    <Label htmlFor="timeline" className="text-primary font-semibold">
                       Timeline
                     </Label>
                     {isEditing ? (
@@ -348,7 +348,7 @@ export function ContactsTable() {
                         className="mt-1"
                       />
                     ) : (
-                      <p className="mt-1 text-white">{selectedContact.timeline}</p>
+                      <p className="mt-1 text-foreground">{selectedContact.timeline}</p>
                     )}
                   </div>
                 </div>
@@ -356,7 +356,7 @@ export function ContactsTable() {
                 {/* Status and Source */}
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="status" className="text-[#D4AF37] font-semibold">
+                    <Label htmlFor="status" className="text-primary font-semibold">
                       Status
                     </Label>
                     {isEditing ? (
@@ -376,14 +376,14 @@ export function ContactsTable() {
                       </Select>
                     ) : (
                       <div className="mt-1">
-                        <Badge className={`${getStatusColor(selectedContact.status)} text-white`}>
+                        <Badge className={`${getStatusColor(selectedContact.status)}`}>
                           {selectedContact.status}
                         </Badge>
                       </div>
                     )}
                   </div>
                   <div>
-                    <Label htmlFor="source" className="text-[#D4AF37] font-semibold">
+                    <Label htmlFor="source" className="text-primary font-semibold">
                       Source
                     </Label>
                     {isEditing ? (
@@ -394,14 +394,14 @@ export function ContactsTable() {
                         className="mt-1"
                       />
                     ) : (
-                      <p className="mt-1 text-white">{selectedContact.source}</p>
+                      <p className="mt-1 text-foreground">{selectedContact.source}</p>
                     )}
                   </div>
                 </div>
 
                 {/* Notes */}
                 <div>
-                  <Label htmlFor="notes" className="text-[#D4AF37] font-semibold">
+                  <Label htmlFor="notes" className="text-primary font-semibold">
                     Notes
                   </Label>
                   {isEditing ? (
@@ -413,21 +413,21 @@ export function ContactsTable() {
                       placeholder="Add notes about this contact..."
                     />
                   ) : (
-                    <p className="mt-1 text-white bg-gray-800 p-3 rounded-md">{selectedContact.notes}</p>
+                    <p className="mt-1 text-foreground bg-card p-3 rounded-md">{selectedContact.notes}</p>
                   )}
                 </div>
 
                 {/* Update Information */}
-                <div className="border-t border-gray-700 pt-4">
-                  <div className="grid grid-cols-2 gap-4 text-sm text-gray-400">
+                <div className="border-t border-border pt-4">
+                  <div className="grid grid-cols-2 gap-4 text-sm text-muted-foreground">
                     <div>
-                      <span className="text-[#D4AF37] font-semibold">Created:</span> {selectedContact.date}
+                      <span className="text-primary font-semibold">Created:</span> {selectedContact.date}
                     </div>
                     <div>
-                      <span className="text-[#D4AF37] font-semibold">Last Updated:</span> {selectedContact.lastUpdated}
+                      <span className="text-primary font-semibold">Last Updated:</span> {selectedContact.lastUpdated}
                     </div>
                     <div className="col-span-2">
-                      <span className="text-[#D4AF37] font-semibold">Last Updated By:</span>{" "}
+                      <span className="text-primary font-semibold">Last Updated By:</span>{" "}
                       {selectedContact.lastUpdatedBy}
                     </div>
                   </div>

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
+import { Plus, ToggleLeft, ToggleRight, Edit, Trash2, X, Code, Save } from "lucide-react"
 
 interface PixelConfig {
   id: string
@@ -139,30 +140,30 @@ export function PixelManager() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "active":
-        return "bg-green-500/20 text-green-400"
+        return "bg-accent/20 text-accent"
       case "inactive":
-        return "bg-red-500/20 text-red-400"
+        return "bg-destructive/20 text-destructive"
       default:
-        return "bg-gray-500/20 text-gray-400"
+        return "bg-muted/20 text-muted-foreground"
     }
   }
 
   const getTypeColor = (type: string) => {
     switch (type) {
       case "facebook":
-        return "bg-blue-500/20 text-blue-400"
+        return "bg-[var(--chart-1)]/20 text-[var(--chart-1)]"
       case "google_analytics":
-        return "bg-orange-500/20 text-orange-400"
+        return "bg-[var(--chart-2)]/20 text-[var(--chart-2)]"
       case "google_ads":
-        return "bg-green-500/20 text-green-400"
+        return "bg-[var(--chart-3)]/20 text-[var(--chart-3)]"
       case "linkedin":
-        return "bg-blue-600/20 text-blue-300"
+        return "bg-[var(--chart-4)]/20 text-[var(--chart-4)]"
       case "twitter":
-        return "bg-sky-500/20 text-sky-400"
+        return "bg-[var(--chart-5)]/20 text-[var(--chart-5)]"
       case "tiktok":
         return "bg-pink-500/20 text-pink-400"
       default:
-        return "bg-gray-500/20 text-gray-400"
+        return "bg-muted/20 text-muted-foreground"
     }
   }
 
@@ -215,8 +216,9 @@ fbq('track', 'PageView');
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="font-playfair text-3xl font-bold text-[#D4AF37]">Pixel Manager</h2>
-        <Button onClick={handleCreatePixel} className="bg-[#D4AF37] text-[#0F0F0F] hover:bg-[#C41E3A]">
+        <h2 className="font-playfair text-3xl font-bold text-primary">Pixel Manager</h2>
+        <Button onClick={handleCreatePixel} className="bg-primary text-primary-foreground hover:bg-primary/80">
+          <Plus className="h-4 w-4 mr-2" />
           Add New Pixel
         </Button>
       </div>
@@ -227,13 +229,12 @@ fbq('track', 'PageView');
           placeholder="Search pixels..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="bg-[#0F0F0F] border-[#D4AF37]/20 text-[#FAFAFA]"
         />
 
         <select
           value={filterType}
           onChange={(e) => setFilterType(e.target.value as any)}
-          className="bg-[#0F0F0F] border border-[#D4AF37]/20 text-[#FAFAFA] rounded-md px-3 py-2"
+          className="w-full bg-background border border-border text-foreground rounded-md px-3 py-2"
         >
           <option value="all">All Types</option>
           <option value="facebook">Facebook</option>
@@ -248,31 +249,31 @@ fbq('track', 'PageView');
         <select
           value={filterStatus}
           onChange={(e) => setFilterStatus(e.target.value as any)}
-          className="bg-[#0F0F0F] border border-[#D4AF37]/20 text-[#FAFAFA] rounded-md px-3 py-2"
+          className="w-full bg-background border border-border text-foreground rounded-md px-3 py-2"
         >
           <option value="all">All Status</option>
           <option value="active">Active</option>
           <option value="inactive">Inactive</option>
         </select>
 
-        <div className="text-[#FAFAFA]/60 flex items-center">{filteredPixels.length} pixels found</div>
+        <div className="text-muted-foreground flex items-center">{filteredPixels.length} pixels found</div>
       </div>
 
       {/* Pixels Grid */}
       <div className="grid lg:grid-cols-2 gap-6">
         {filteredPixels.map((pixel) => (
-          <div key={pixel.id} className="border border-[#D4AF37]/20 rounded-lg p-6 space-y-4">
+          <div key={pixel.id} className="border border-border rounded-lg p-6 space-y-4">
             <div className="flex items-start justify-between">
               <div className="flex-1">
-                <h3 className="font-playfair text-xl font-bold text-[#FAFAFA] mb-2">{pixel.name}</h3>
-                <p className="text-[#FAFAFA]/60 text-sm mb-3">ID: {pixel.pixelId}</p>
+                <h3 className="font-playfair text-xl font-bold text-foreground mb-2">{pixel.name}</h3>
+                <p className="text-muted-foreground text-sm mb-3">ID: {pixel.pixelId}</p>
 
                 <div className="flex items-center gap-2 mb-3">
                   <Badge className={`${getStatusColor(pixel.status)} border-0`}>{pixel.status}</Badge>
                   <Badge className={`${getTypeColor(pixel.type)} border-0`}>{pixel.type.replace("_", " ")}</Badge>
                 </div>
 
-                <div className="text-xs text-[#FAFAFA]/40 space-y-1">
+                <div className="text-xs text-muted-foreground space-y-1">
                   <p>Pages: {pixel.pages.join(", ")}</p>
                   <p>Events: {pixel.events.length} configured</p>
                   <p>Updated: {pixel.updatedAt}</p>
@@ -284,8 +285,9 @@ fbq('track', 'PageView');
               <Button
                 size="sm"
                 onClick={() => togglePixelStatus(pixel.id)}
-                className={`${pixel.status === "active" ? "bg-red-500 hover:bg-red-600" : "bg-green-500 hover:bg-green-600"} text-white`}
+                className={`${pixel.status === "active" ? "bg-destructive text-destructive-foreground hover:bg-destructive/80" : "bg-accent text-accent-foreground hover:bg-accent/80"}`}
               >
+                {pixel.status === "active" ? <ToggleLeft className="h-4 w-4 mr-2" /> : <ToggleRight className="h-4 w-4 mr-2" />}
                 {pixel.status === "active" ? "Deactivate" : "Activate"}
               </Button>
               <Button
@@ -294,16 +296,18 @@ fbq('track', 'PageView');
                   setSelectedPixel(pixel)
                   setIsEditing(true)
                 }}
-                className="bg-[#D4AF37] text-[#0F0F0F] hover:bg-[#C41E3A] flex-1"
+                className="bg-primary text-primary-foreground hover:bg-primary/80 flex-1"
               >
+                <Edit className="h-4 w-4 mr-2" />
                 Edit
               </Button>
               <Button
                 size="sm"
                 variant="outline"
                 onClick={() => handleDeletePixel(pixel.id)}
-                className="border-red-500 text-red-400 hover:bg-red-500/20"
+                className="border-destructive text-destructive-foreground hover:bg-destructive/20"
               >
+                <Trash2 className="h-4 w-4 mr-2" />
                 Delete
               </Button>
             </div>
@@ -313,16 +317,16 @@ fbq('track', 'PageView');
 
       {filteredPixels.length === 0 && (
         <div className="text-center py-12">
-          <p className="text-[#FAFAFA]/60 text-lg">No pixels found matching your criteria.</p>
+          <p className="text-muted-foreground text-lg">No pixels found matching your criteria.</p>
         </div>
       )}
 
       {/* Pixel Editor Modal */}
       {isEditing && selectedPixel && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-          <div className="bg-[#0F0F0F] border border-[#D4AF37]/20 rounded-lg p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-card border border-border rounded-lg p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="font-playfair text-2xl font-bold text-[#D4AF37]">
+              <h3 className="font-playfair text-2xl font-bold text-primary">
                 {selectedPixel.id ? "Edit Pixel" : "Create Pixel"}
               </h3>
               <Button
@@ -331,8 +335,8 @@ fbq('track', 'PageView');
                   setSelectedPixel(null)
                   setIsEditing(false)
                 }}
-                className="border-[#D4AF37]/20 text-[#FAFAFA]"
               >
+                <X className="h-4 w-4 mr-2" />
                 Cancel
               </Button>
             </div>
@@ -340,7 +344,7 @@ fbq('track', 'PageView');
             <div className="grid md:grid-cols-2 gap-6">
               <div className="space-y-4">
                 <div>
-                  <label className="block text-[#D4AF37] font-semibold mb-2">Pixel Name</label>
+                  <label className="block text-primary font-semibold mb-2">Pixel Name</label>
                   <Input
                     value={selectedPixel.name}
                     onChange={(e) =>
@@ -349,13 +353,12 @@ fbq('track', 'PageView');
                         name: e.target.value,
                       })
                     }
-                    className="bg-[#0F0F0F] border-[#D4AF37]/20 text-[#FAFAFA]"
                     placeholder="Enter pixel name"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[#D4AF37] font-semibold mb-2">Pixel Type</label>
+                  <label className="block text-primary font-semibold mb-2">Pixel Type</label>
                   <select
                     value={selectedPixel.type}
                     onChange={(e) => {
@@ -366,7 +369,7 @@ fbq('track', 'PageView');
                         code: generatePixelCode(newType, selectedPixel.pixelId),
                       })
                     }}
-                    className="w-full bg-[#0F0F0F] border border-[#D4AF37]/20 text-[#FAFAFA] rounded-md px-3 py-2"
+                    className="w-full bg-background border border-border text-foreground rounded-md px-3 py-2"
                   >
                     <option value="facebook">Facebook Pixel</option>
                     <option value="google_analytics">Google Analytics</option>
@@ -379,7 +382,7 @@ fbq('track', 'PageView');
                 </div>
 
                 <div>
-                  <label className="block text-[#D4AF37] font-semibold mb-2">Pixel ID</label>
+                  <label className="block text-primary font-semibold mb-2">Pixel ID</label>
                   <Input
                     value={selectedPixel.pixelId}
                     onChange={(e) => {
@@ -390,13 +393,12 @@ fbq('track', 'PageView');
                         code: generatePixelCode(selectedPixel.type, newPixelId),
                       })
                     }}
-                    className="bg-[#0F0F0F] border-[#D4AF37]/20 text-[#FAFAFA]"
                     placeholder="Enter pixel ID"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[#D4AF37] font-semibold mb-2">Status</label>
+                  <label className="block text-primary font-semibold mb-2">Status</label>
                   <select
                     value={selectedPixel.status}
                     onChange={(e) =>
@@ -405,7 +407,7 @@ fbq('track', 'PageView');
                         status: e.target.value as "active" | "inactive",
                       })
                     }
-                    className="w-full bg-[#0F0F0F] border border-[#D4AF37]/20 text-[#FAFAFA] rounded-md px-3 py-2"
+                    className="w-full bg-background border border-border text-foreground rounded-md px-3 py-2"
                   >
                     <option value="inactive">Inactive</option>
                     <option value="active">Active</option>
@@ -413,7 +415,7 @@ fbq('track', 'PageView');
                 </div>
 
                 <div>
-                  <label className="block text-[#D4AF37] font-semibold mb-2">Pages (comma-separated)</label>
+                  <label className="block text-primary font-semibold mb-2">Pages (comma-separated)</label>
                   <Input
                     value={selectedPixel.pages.join(", ")}
                     onChange={(e) =>
@@ -425,13 +427,12 @@ fbq('track', 'PageView');
                           .filter(Boolean),
                       })
                     }
-                    className="bg-[#0F0F0F] border-[#D4AF37]/20 text-[#FAFAFA]"
                     placeholder="all, /contact, /products"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[#D4AF37] font-semibold mb-2">Events (comma-separated)</label>
+                  <label className="block text-primary font-semibold mb-2">Events (comma-separated)</label>
                   <Input
                     value={selectedPixel.events.join(", ")}
                     onChange={(e) =>
@@ -443,7 +444,6 @@ fbq('track', 'PageView');
                           .filter(Boolean),
                       })
                     }
-                    className="bg-[#0F0F0F] border-[#D4AF37]/20 text-[#FAFAFA]"
                     placeholder="PageView, Lead, Contact"
                   />
                 </div>
@@ -451,7 +451,7 @@ fbq('track', 'PageView');
 
               <div className="space-y-4">
                 <div>
-                  <label className="block text-[#D4AF37] font-semibold mb-2">Pixel Code</label>
+                  <label className="block text-primary font-semibold mb-2">Pixel Code</label>
                   <Textarea
                     value={selectedPixel.code}
                     onChange={(e) =>
@@ -460,7 +460,7 @@ fbq('track', 'PageView');
                         code: e.target.value,
                       })
                     }
-                    className="bg-[#0F0F0F] border-[#D4AF37]/20 text-[#FAFAFA] min-h-[400px] font-mono text-sm"
+                    className="min-h-[400px] font-mono text-sm"
                     placeholder="Pixel tracking code will appear here"
                   />
                 </div>
@@ -472,8 +472,9 @@ fbq('track', 'PageView');
                       code: generatePixelCode(selectedPixel.type, selectedPixel.pixelId),
                     })
                   }
-                  className="w-full bg-[#D4AF37]/20 text-[#D4AF37] hover:bg-[#D4AF37] hover:text-[#0F0F0F]"
+                  className="w-full bg-primary/20 text-primary hover:bg-primary hover:text-primary-foreground"
                 >
+                  <Code className="h-4 w-4 mr-2" />
                   Generate Code
                 </Button>
               </div>
@@ -482,8 +483,9 @@ fbq('track', 'PageView');
             <div className="flex justify-end gap-4 mt-6">
               <Button
                 onClick={() => handleSavePixel(selectedPixel)}
-                className="bg-[#D4AF37] text-[#0F0F0F] hover:bg-[#C41E3A]"
+                className="bg-primary text-primary-foreground hover:bg-primary/80"
               >
+                <Save className="h-4 w-4 mr-2" />
                 Save Pixel
               </Button>
             </div>

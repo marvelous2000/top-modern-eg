@@ -23,14 +23,14 @@ const stats = [
     value: "12,345",
     change: "+23%",
     icon: Eye,
-    color: "text-blue-500",
+    color: "text-primary",
   },
   {
     title: "Conversion Rate",
     value: "3.2%",
     change: "+0.5%",
     icon: TrendingUp,
-    color: "text-green-500",
+    color: "text-accent",
   },
 ]
 
@@ -46,7 +46,7 @@ export function AdminStats() {
           <CardContent>
             <div className="text-2xl font-bold text-foreground">{stat.value}</div>
             <p className="text-xs text-muted-foreground">
-              <span className="text-green-500">{stat.change}</span> from last month
+              <span className="text-accent">{stat.change}</span> from last month
             </p>
           </CardContent>
         </Card>

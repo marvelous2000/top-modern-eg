@@ -83,8 +83,8 @@ For questions regarding these terms, contact us at legal@topmodern.com.
                   className="font-mono text-sm"
                 />
               ) : (
-                <div className="prose prose-invert max-w-none">
-                  <pre className="whitespace-pre-wrap text-sm">{privacyContent}</pre>
+                <div className="text-foreground whitespace-pre-wrap text-sm">
+                  {privacyContent}
                 </div>
               )}
             </CardContent>
@@ -119,8 +119,8 @@ For questions regarding these terms, contact us at legal@topmodern.com.
                   className="font-mono text-sm"
                 />
               ) : (
-                <div className="prose prose-invert max-w-none">
-                  <pre className="whitespace-pre-wrap text-sm">{termsContent}</pre>
+                <div className="text-foreground whitespace-pre-wrap text-sm">
+                  {termsContent}
                 </div>
               )}
             </CardContent>

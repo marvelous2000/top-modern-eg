@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { useSupabaseClient } from "@/components/providers/SupabaseProvider"
-import { Loader2, Search } from "lucide-react"
+import { Loader2, Search, Eye } from "lucide-react"
 
 type RawSubmission = {
   id: number
@@ -201,7 +201,7 @@ export function LeadsManager() {
     switch (status.toLowerCase()) {
       case "processed":
       case "contacted":
-        return "bg-green-500/20 text-green-400"
+        return "bg-accent/20 text-accent"
       case "archived":
         return "bg-muted text-muted-foreground"
       case "new":
@@ -279,6 +279,7 @@ export function LeadsManager() {
                       <TableCell className="text-muted-foreground">{formatDate(lead.createdAt)}</TableCell>
                       <TableCell className="text-right">
                         <Button size="sm" variant="secondary" onClick={() => setSelectedLead(lead)}>
+                          <Eye className="h-4 w-4 mr-2" />
                           View Lead
                         </Button>
                       </TableCell>

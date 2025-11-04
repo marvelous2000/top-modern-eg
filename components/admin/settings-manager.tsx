@@ -154,7 +154,7 @@ export function SettingsManager() {
             <RotateCcw className="mr-2 h-4 w-4" />
             Reset to Default
           </Button>
-          <Button onClick={handleSave} disabled={isLoading} className="bg-primary text-primary-foreground">
+          <Button onClick={handleSave} disabled={isLoading} className="bg-primary text-primary-foreground hover:bg-primary/80">
             <Save className="mr-2 h-4 w-4" />
             {isLoading ? "Saving..." : "Save Changes"}
           </Button>
@@ -234,6 +234,7 @@ export function SettingsManager() {
                 value={settings.contact.phone1}
                 onChange={(e) => updateSetting("contact", "phone1", e.target.value)}
                 placeholder="+20 123 456 7890"
+                isAdmin={true}
               />
             </div>
             <div className="space-y-2">
@@ -243,6 +244,7 @@ export function SettingsManager() {
                 value={settings.contact.phone2}
                 onChange={(e) => updateSetting("contact", "phone2", e.target.value)}
                 placeholder="+971 50 123 4567"
+                isAdmin={true}
               />
             </div>
             <div className="space-y-2">
@@ -253,6 +255,7 @@ export function SettingsManager() {
                 value={settings.contact.email1}
                 onChange={(e) => updateSetting("contact", "email1", e.target.value)}
                 placeholder="info@topmodern.com"
+                isAdmin={true}
               />
             </div>
             <div className="space-y-2">
@@ -263,6 +266,7 @@ export function SettingsManager() {
                 value={settings.contact.email2}
                 onChange={(e) => updateSetting("contact", "email2", e.target.value)}
                 placeholder="sales@topmodern.com"
+                isAdmin={true}
               />
             </div>
             <div className="space-y-2">
@@ -272,6 +276,7 @@ export function SettingsManager() {
                 value={settings.contact.whatsapp}
                 onChange={(e) => updateSetting("contact", "whatsapp", e.target.value)}
                 placeholder="+201234567890"
+                isAdmin={true}
               />
             </div>
           </div>
@@ -289,7 +294,7 @@ export function SettingsManager() {
         <CardContent className="space-y-4">
           <div className="space-y-4">
             <div className="flex items-center gap-3">
-              <Facebook className="h-5 w-5 text-[#1877F2]" />
+              <Facebook className="h-5 w-5 text-muted-foreground" />
               <div className="flex-1">
                 <Label htmlFor="facebook">Facebook Page URL</Label>
                 <Input
@@ -297,11 +302,12 @@ export function SettingsManager() {
                   value={settings.social.facebook}
                   onChange={(e) => updateSetting("social", "facebook", e.target.value)}
                   placeholder="https://facebook.com/topmodern"
+                  isAdmin={true}
                 />
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <Instagram className="h-5 w-5 text-[#E4405F]" />
+              <Instagram className="h-5 w-5 text-muted-foreground" />
               <div className="flex-1">
                 <Label htmlFor="instagram">Instagram Profile URL</Label>
                 <Input
@@ -309,11 +315,12 @@ export function SettingsManager() {
                   value={settings.social.instagram}
                   onChange={(e) => updateSetting("social", "instagram", e.target.value)}
                   placeholder="https://instagram.com/topmodern"
+                  isAdmin={true}
                 />
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <Linkedin className="h-5 w-5 text-[#0A66C2]" />
+              <Linkedin className="h-5 w-5 text-muted-foreground" />
               <div className="flex-1">
                 <Label htmlFor="linkedin">LinkedIn Company URL</Label>
                 <Input
@@ -321,6 +328,7 @@ export function SettingsManager() {
                   value={settings.social.linkedin}
                   onChange={(e) => updateSetting("social", "linkedin", e.target.value)}
                   placeholder="https://linkedin.com/company/topmodern"
+                  isAdmin={true}
                 />
               </div>
             </div>
@@ -341,13 +349,14 @@ export function SettingsManager() {
               value={settings.company.name}
               onChange={(e) => updateSetting("company", "name", e.target.value)}
               placeholder="Top Modern"
+              isAdmin={true}
             />
           </div>
           <div className="space-y-2">
             <Label htmlFor="description">Company Description</Label>
             <textarea
               id="description"
-              className="w-full min-h-[100px] px-3 py-2 border border-border rounded-md bg-background text-foreground"
+              className="w-full min-h-[100px] px-3 py-2 border border-border rounded-md bg-background text-foreground admin-form-input admin-focus"
               value={settings.company.description}
               onChange={(e) => updateSetting("company", "description", e.target.value)}
               placeholder="Premium marble and granite solutions..."
@@ -360,6 +369,7 @@ export function SettingsManager() {
               value={settings.company.address}
               onChange={(e) => updateSetting("company", "address", e.target.value)}
               placeholder="MENA Region"
+              isAdmin={true}
             />
           </div>
         </CardContent>

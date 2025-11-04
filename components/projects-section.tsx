@@ -3,33 +3,31 @@
 import { useEffect, useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { ArrowRight } from "lucide-react"
 import { getActiveProjects } from "@/lib/actions/projects"
 
-// Fallback project for when DB is not set up yet
-const fallbackProjects = [
-  {
-    title: "Four Seasons Hotel Cairo",
-    description: "Complete marble installation for luxury hotel lobby and suites",
-    images: ["/luxury-hotel-lobby-marble-installation-four-season.jpg"],
-    category: "Hospitality",
-    location: "Cairo, Egypt",
-  },
-]
+// No fallback projects - always fetch from database
 
 export function ProjectsSection() {
-  const [projects, setProjects] = useState<any[]>(fallbackProjects)
+  const [projects, setProjects] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     const fetchProjects = async () => {
-      const result = await getActiveProjects()
-      if (result.success && result.data.length > 0) {
-        // Use database projects if available
-        setProjects(result.data.slice(0, 2)) // Show first 2 projects
-      } else {
-        // Use fallback projects if DB not set up or no projects
-        console.log("[v0] Using fallback projects - DB may not be set up yet")
-        setProjects(fallbackProjects)
+      try {
+        const result = await getActiveProjects()
+        if (result.success) {
+          setProjects(result.data.slice(0, 2)) // Show first 2 projects
+        } else {
+          setError(result.error || "Failed to fetch projects")
+          setProjects([])
+        }
+      } catch (err) {
+        console.error("[v0] Error fetching projects:", err)
+        setError("Failed to fetch projects")
+        setProjects([])
       }
       setLoading(false)
     }
@@ -41,7 +39,37 @@ export function ProjectsSection() {
       <section id="projects" className="py-20 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <p className="text-xl text-gray-300">Loading projects...</p>
+            <p className="text-xl text-muted-foreground">Loading projects...</p>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  if (error) {
+    return (
+      <section id="projects" className="py-20 relative">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <p className="text-xl text-destructive">Failed to load projects. Please try again later.</p>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  if (projects.length === 0) {
+    return (
+      <section id="projects" className="py-20 relative">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-h2 text-foreground mb-6">
+              Signature <span className="text-primary gold-glow">Projects</span>
+            </h2>
+            <p className="text-body text-muted-foreground max-w-3xl mx-auto mb-8">
+              Explore our portfolio of prestigious projects across the MENA region
+            </p>
+            <p className="text-xl text-muted-foreground">No projects available at the moment. Check back soon!</p>
           </div>
         </div>
       </section>
@@ -52,10 +80,10 @@ export function ProjectsSection() {
     <section id="projects" className="py-20 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="font-serif text-4xl md:text-5xl font-bold text-white mb-6">
-            Signature <span className="text-primary">Projects</span>
+          <h2 className="text-h2 text-foreground mb-6">
+            Signature <span className="text-primary gold-glow">Projects</span>
           </h2>
-          <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+          <p className="text-body text-muted-foreground max-w-3xl mx-auto">
             Explore our portfolio of prestigious projects across the MENA region
           </p>
         </div>
@@ -64,7 +92,7 @@ export function ProjectsSection() {
           {projects.map((project, index) => (
             <Card
               key={project.id || index}
-              className="bg-card/50 backdrop-blur-sm border-primary/20 hover:border-primary/40 transition-all duration-300 group min-h-[500px] flex flex-col"
+              className="bg-card/80 backdrop-blur-sm border-primary/30 hover:border-primary/50 transition-all duration-300 group min-h-[500px] flex flex-col shadow-lg"
             >
               <CardContent className="p-0 flex-1 flex flex-col">
                 <div className="relative overflow-hidden">
@@ -81,32 +109,23 @@ export function ProjectsSection() {
                   </div>
                 </div>
                 <div className="p-6 flex-1 flex flex-col">
-                  <h3 className="font-serif text-2xl font-bold text-white mb-3 break-words line-clamp-2 leading-tight">
+                  <h3 className="text-h3 text-foreground mb-3 break-words line-clamp-2 leading-tight">
                     {project.title}
                   </h3>
-                  <p className="text-gray-300 mb-4 flex-1 break-words line-clamp-3">
+                  <p className="text-body-sm mb-4 flex-1 break-words line-clamp-3">
                     {project.description}
                   </p>
                   <div className="mt-auto">
-                    <a
-                      href={`/projects/${project.slug || project.id}`}
-                      className="inline-flex items-center px-6 py-3 bg-primary text-black font-semibold rounded-lg hover:bg-primary/90 transition-colors duration-200 group-hover:shadow-lg"
+                    <Button
+                      variant="glass"
+                      className="w-full group-hover:shadow-primary/20 transition-all duration-300"
+                      asChild
                     >
-                      View Project Details
-                      <svg
-                        className="ml-2 w-4 h-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M9 5l7 7-7 7"
-                        />
-                      </svg>
-                    </a>
+                      <a href={`/projects/${project.slug || project.id}`}>
+                        View Project Details
+                        <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform duration-300" />
+                      </a>
+                    </Button>
                   </div>
                 </div>
               </CardContent>

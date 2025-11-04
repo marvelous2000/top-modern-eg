@@ -1,83 +1,118 @@
 @import "tailwindcss";
+@import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
 
+/* Updated color palette with deep charcoal nav/footer, richer card colors, and stronger contrast */
 :root {
-  /* PRD Color Specifications - Black background with gold accents and red buttons */
-  --background: #0f0f0f; /* Pure black background */
-  --foreground: #ffffff; /* White text */
-  --card: #1a1a1a; /* Dark card background */
-  --card-foreground: #ffffff;
-  --popover: #1a1a1a;
-  --popover-foreground: #ffffff;
-  --primary: #d4af37; /* Gold accent color */
-  --primary-foreground: #0f0f0f;
-  --secondary: #2a2a2a;
-  --secondary-foreground: #ffffff;
-  --muted: #2a2a2a;
-  --muted-foreground: #a0a0a0;
-  --accent: #d4af37; /* Gold accent */
-  --accent-foreground: #0f0f0f;
-  --destructive: #c41e3a; /* Red for buttons and links */
-  --destructive-foreground: #ffffff;
-  --border: #333333;
-  --input: #2a2a2a;
-  --ring: #d4af37;
-  --chart-1: #d4af37;
-  --chart-2: #c41e3a;
-  --chart-3: #8b7355;
-  --chart-4: #ffd700;
-  --chart-5: #b8860b;
-  --radius: 0.625rem;
-  --sidebar: #1a1a1a;
-  --sidebar-foreground: #ffffff;
-  --sidebar-primary: #d4af37;
-  --sidebar-primary-foreground: #0f0f0f;
-  --sidebar-accent: #2a2a2a;
-  --sidebar-accent-foreground: #ffffff;
-  --sidebar-border: #333333;
-  --sidebar-ring: #d4af37;
+  /* Warm ivory background for main content */
+  --background: oklch(0.97 0.01 75);
+  /* Deep charcoal for text */
+  --foreground: oklch(0.15 0.01 280);
+
+  /* Deep charcoal cards for strong contrast */
+  --card: oklch(0.95 0.01 75);
+  --card-foreground: oklch(0.15 0.01 280);
+
+  --popover: oklch(0.95 0.01 75);
+  --popover-foreground: oklch(0.15 0.01 280);
+
+  /* Deep charcoal primary for nav/footer */
+  --primary: oklch(0.12 0.015 280);
+  --primary-foreground: oklch(0.99 0.008 70);
+
+  /* Rich warm secondary for subtle backgrounds */
+  --secondary: oklch(0.88 0.03 70);
+  --secondary-foreground: oklch(0.15 0.01 280);
+
+  /* Warm stone gray muted */
+  --muted: oklch(0.88 0.012 60);
+  --muted-foreground: oklch(0.4 0.015 50);
+
+  /* Vibrant rich gold accent - highly saturated for luxury feel */
+  --accent: oklch(0.72 0.16 75);
+  --accent-foreground: oklch(0.12 0.01 280);
+
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.99 0.008 70);
+
+  /* Subtle warm borders */
+  --border: oklch(0.92 0.01 75);
+  --input: oklch(0.92 0.01 75);
+  --ring: oklch(0.72 0.16 75);
+
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+
+  --radius: 0.25rem;
+
+  --sidebar: oklch(0.12 0.015 280);
+  --sidebar-foreground: oklch(0.97 0.01 75);
+  --sidebar-primary: oklch(0.72 0.16 75);
+  --sidebar-primary-foreground: oklch(0.12 0.01 280);
+  --sidebar-accent: oklch(0.28 0.025 65);
+  --sidebar-accent-foreground: oklch(0.97 0.01 75);
+  --sidebar-border: oklch(0.3 0.02 270);
+  --sidebar-ring: oklch(0.72 0.16 75);
 }
 
 .dark {
-  /* Same colors for dark mode consistency */
-  --background: #0f0f0f;
-  --foreground: #ffffff;
-  --card: #1a1a1a;
-  --card-foreground: #ffffff;
-  --popover: #1a1a1a;
-  --popover-foreground: #ffffff;
-  --primary: #d4af37;
-  --primary-foreground: #0f0f0f;
-  --secondary: #2a2a2a;
-  --secondary-foreground: #ffffff;
-  --muted: #2a2a2a;
-  --muted-foreground: #a0a0a0;
-  --accent: #d4af37;
-  --accent-foreground: #0f0f0f;
-  --destructive: #c41e3a;
-  --destructive-foreground: #ffffff;
-  --border: #333333;
-  --input: #2a2a2a;
-  --ring: #d4af37;
-  --chart-1: #d4af37;
-  --chart-2: #c41e3a;
-  --chart-3: #8b7355;
-  --chart-4: #ffd700;
-  --chart-5: #b8860b;
-  --sidebar: #1a1a1a;
-  --sidebar-foreground: #ffffff;
-  --sidebar-primary: #d4af37;
-  --sidebar-primary-foreground: #0f0f0f;
-  --sidebar-accent: #2a2a2a;
-  --sidebar-accent-foreground: #ffffff;
-  --sidebar-border: #333333;
-  --sidebar-ring: #d4af37;
+  /* Deep rich charcoal background */
+  --background: oklch(0.15 0.01 280);
+  /* Warm white foreground */
+  --foreground: oklch(0.97 0.01 75);
+
+  --card: oklch(0.18 0.015 280);
+  --card-foreground: oklch(0.97 0.01 75);
+
+  --popover: oklch(0.18 0.015 280);
+  --popover-foreground: oklch(0.97 0.01 75);
+
+  /* Warm ivory primary in dark mode */
+  --primary: oklch(0.25 0.015 280);
+  --primary-foreground: oklch(0.97 0.01 75);
+
+  /* Darker warm secondary */
+  --secondary: oklch(0.25 0.015 60);
+  --secondary-foreground: oklch(0.97 0.01 75);
+
+  --muted: oklch(0.3 0.015 50);
+  --muted-foreground: oklch(0.75 0.015 60);
+
+  /* Rich gold accent in dark mode */
+  --accent: oklch(0.72 0.14 75);
+  --accent-foreground: oklch(0.15 0.01 280);
+
+  --destructive: oklch(0.396 0.141 25.723);
+  --destructive-foreground: oklch(0.97 0.01 75);
+
+  --border: oklch(0.28 0.015 270);
+  --input: oklch(0.28 0.015 270);
+  --ring: oklch(0.72 0.14 75);
+
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+
+  --sidebar: oklch(0.15 0.01 280);
+  --sidebar-foreground: oklch(0.97 0.01 75);
+  --sidebar-primary: oklch(0.72 0.14 75);
+  --sidebar-primary-foreground: oklch(0.15 0.01 280);
+  --sidebar-accent: oklch(0.25 0.015 60);
+  --sidebar-accent-foreground: oklch(0.97 0.01 75);
+  --sidebar-border: oklch(0.28 0.015 270);
+  --sidebar-ring: oklch(0.72 0.14 75);
 }
 
+/* Updated font configuration for Lora (serif) and Inter (sans-serif) */
 @theme inline {
-  --font-sans: var(--font-inter);
-  --font-serif: var(--font-playfair);
+  --font-sans: "Inter", "Inter Fallback", system-ui, -apple-system, sans-serif;
+  --font-serif: "Lora", "Lora Fallback", Georgia, serif;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -121,289 +156,108 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground font-sans;
-    /* Force black background with proper contrast */
-    background-color: #0f0f0f !important;
-    color: #ffffff !important;
-  }
-
-  /* Improved font sizes for better readability and luxury feel */
-  h1 {
-    @apply text-4xl md:text-6xl lg:text-7xl font-serif font-bold;
-  }
-
-  h2 {
-    @apply text-3xl md:text-4xl lg:text-5xl font-serif font-semibold;
-  }
-
-  h3 {
-    @apply text-2xl md:text-3xl font-serif font-semibold;
-  }
-
-  h4 {
-    @apply text-xl md:text-2xl font-serif font-medium;
-  }
-
-  p {
-    @apply text-base md:text-lg leading-relaxed font-sans;
-  }
-
-  .text-small {
-    @apply text-sm md:text-base;
+    @apply bg-background text-foreground;
   }
 }
 
-/* Enhanced marble background with black base and golden glowing lights */
-@keyframes marbleFlow {
-  0%,
-  100% {
-    transform: translateX(0) translateY(0) scale(1);
-    opacity: 0.8;
-  }
-  25% {
-    transform: translateX(-3px) translateY(-2px) scale(1.02);
-    opacity: 0.9;
-  }
-  50% {
-    transform: translateX(2px) translateY(3px) scale(0.98);
-    opacity: 1;
-  }
-  75% {
-    transform: translateX(3px) translateY(-2px) scale(1.01);
-    opacity: 0.85;
-  }
+/* Admin Panel Luxury Styling */
+.admin-panel {
+  /* background-image removed for simplicity */
+  background-attachment: fixed;
 }
 
-@keyframes goldGlow {
-  0%,
-  100% {
-    opacity: 0.4;
-    filter: blur(2px);
-    box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
-  }
-  50% {
-    opacity: 0.8;
-    filter: blur(0px);
-    box-shadow: 0 0 40px rgba(212, 175, 55, 0.6);
-  }
+/* Luxury focus states for accessibility */
+.admin-focus:focus-visible {
+  outline: 2px solid oklch(0.72 0.16 75);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px oklch(0.72 0.16 75 / 0.1);
 }
 
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+/* Enhanced backdrop blur for luxury cards */
+.admin-card {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid oklch(0.3 0.02 270 / 0.3);
+  box-shadow:
+    0 8px 32px oklch(0 0 0 / 0.1),
+    inset 0 1px 0 oklch(1 1 1 / 0.1);
+  transition: all 0.2s ease-in-out; /* Added transition */
 }
 
-/* Updated marble background with pure black base and golden glowing lights */
-.marble-background {
-  background: radial-gradient(ellipse at 15% 25%, rgba(212, 175, 55, 0.2) 0%, transparent 60%),
-    radial-gradient(ellipse at 85% 75%, rgba(212, 175, 55, 0.15) 0%, transparent 60%),
-    radial-gradient(ellipse at 45% 85%, rgba(212, 175, 55, 0.1) 0%, transparent 50%),
-    radial-gradient(ellipse at 70% 20%, rgba(212, 175, 55, 0.12) 0%, transparent 55%),
-    radial-gradient(ellipse at 30% 60%, rgba(212, 175, 55, 0.08) 0%, transparent 40%), #0f0f0f;
-  animation: marbleFlow 25s ease-in-out infinite;
+.admin-card:hover {
+  transform: translateY(-2px); /* Subtle lift effect on hover */
+  box-shadow:
+    0 12px 40px oklch(0 0 0 / 0.15),
+    inset 0 1px 0 oklch(1 1 1 / 0.1);
 }
 
-.gold-vein {
-  background: linear-gradient(45deg, transparent 20%, rgba(212, 175, 55, 0.6) 25%, transparent 30%),
-    linear-gradient(-45deg, transparent 40%, rgba(212, 175, 55, 0.4) 45%, transparent 50%),
-    linear-gradient(135deg, transparent 60%, rgba(212, 175, 55, 0.3) 65%, transparent 70%);
-  animation: goldGlow 8s ease-in-out infinite, marbleFlow 20s ease-in-out infinite reverse;
-}
-
-/* Staggered fade-in animations */
-.animate-fade-in-up {
-  animation: fadeInUp 0.8s ease-out forwards;
-  opacity: 0;
-}
-
-.animation-delay-200 {
-  animation-delay: 0.2s;
-}
-.animation-delay-400 {
-  animation-delay: 0.4s;
-}
-.animation-delay-600 {
-  animation-delay: 0.6s;
-}
-.animation-delay-800 {
-  animation-delay: 0.8s;
-}
-.animation-delay-1000 {
-  animation-delay: 1s;
-}
-
-/* Updated floating CTA bridge with gold accent */
-.floating-cta-bridge {
-  background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(212, 175, 55, 0.08) 100%);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(212, 175, 55, 0.3);
-  box-shadow: 0 8px 32px rgba(212, 175, 55, 0.2);
-}
-
-/* Updated luxury button with red color for CTA buttons */
-.luxury-button {
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-}
-
-.luxury-button::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transition: left 0.5s;
-}
-
-.luxury-button:hover::before {
-  left: 100%;
-}
-
-.luxury-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(196, 30, 58, 0.4);
-}
-
-/* Red buttons for CTAs as per PRD */
-.cta-button {
-  background-color: #c41e3a !important;
-  color: #ffffff !important;
-  border: none !important;
-}
-
-.cta-button:hover {
-  background-color: #a01729 !important;
-  box-shadow: 0 10px 25px rgba(196, 30, 58, 0.4) !important;
-}
-
-/* Enhanced text styling for luxury feel */
-.luxury-text-shadow {
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8), 0 0 20px rgba(212, 175, 55, 0.2);
-}
-
-.gold-text-glow {
-  color: #d4af37 !important;
-  text-shadow: 0 0 10px rgba(212, 175, 55, 0.6), 0 0 20px rgba(212, 175, 55, 0.4);
-}
-
-/* Social media icons with red color */
-.social-icon {
-  color: #d4af37 !important;
-  transition: all 0.3s ease;
-}
-
-.social-icon:hover {
-  color: #c41e3a !important;
-  transform: scale(1.1);
-  filter: drop-shadow(0 0 8px rgba(196, 30, 58, 0.6));
-}
-
-/* Link styling with gold default and red hover */
-a:not([class]) {
-  color: #d4af37;
-  transition: color 0.3s ease;
-}
-
-
-a:not([class]):hover {
-  color: #c41e3a;
-}
-
-.golden-grid {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-  pointer-events: none;
-  mix-blend-mode: screen;
-  opacity: 1;
-  z-index: 0;
-  background: radial-gradient(circle at center, rgba(255, 215, 120, 0.25) 0%, rgba(15, 15, 15, 0) 65%);
-}
-
-.golden-grid__mesh {
-  position: absolute;
-  inset: -10%;
-  background-image:
-    linear-gradient(rgba(212, 175, 55, 0.35) 1px, rgba(0, 0, 0, 0) 0),
-    linear-gradient(90deg, rgba(212, 175, 55, 0.35) 1px, rgba(0, 0, 0, 0) 0);
-  background-size: 85px 85px;
+/* Marble texture overlay */
+.marble-texture {
+  background-image: url('/marble-texture.png');
+  background-size: cover;
   background-position: center;
-  animation: golden-grid-drift 18s linear infinite;
-  filter: drop-shadow(0 0 22px rgba(212, 175, 55, 0.45));
+  opacity: 0.01; /* Reduced opacity for subtlety */
+  mix-blend-mode: overlay;
 }
 
-.golden-grid__glow {
-  position: absolute;
-  inset: -35%;
-  background: radial-gradient(circle, rgba(255, 235, 185, 0.95) 0%, rgba(212, 175, 55, 0.55) 28%, rgba(15, 15, 15, 0) 62%);
-  filter: blur(35px);
-  opacity: 1;
-  animation: golden-grid-pulse 5.5s ease-in-out infinite alternate;
-}
-
-.golden-grid__mesh::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at center, rgba(255, 214, 102, 0.4) 0%, rgba(0, 0, 0, 0) 55%);
-  animation: golden-grid-breathe 9s ease-in-out infinite alternate;
-}
-
-@keyframes golden-grid-drift {
-  0% {
-    transform: translate3d(0, 0, 0) scale(1);
+/* Responsive breakpoints for admin panel */
+@media (max-width: 640px) {
+  .admin-sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
   }
-  50% {
-    transform: translate3d(-24px, -24px, 0) scale(1.02);
-  }
-  100% {
-    transform: translate3d(0, 0, 0) scale(1);
+  .admin-sidebar.open {
+    transform: translateX(0);
   }
 }
 
-@keyframes golden-grid-pulse {
-  0% {
-    transform: scale(0.94);
-    opacity: 0.65;
-  }
-  50% {
-    transform: scale(1.06);
-    opacity: 0.98;
-  }
-  100% {
-    transform: scale(0.97);
-    opacity: 0.78;
+@media (min-width: 641px) and (max-width: 1023px) {
+  .admin-sidebar {
+    width: 200px;
   }
 }
 
-@keyframes golden-grid-breathe {
-  0% {
-    opacity: 0.55;
-  }
-  50% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0.65;
+@media (min-width: 1024px) {
+  .admin-sidebar {
+    width: 256px;
   }
 }
 
-
-
-/* Improved contrast for better readability */
-.text-muted-foreground {
-  color: #b0b0b0 !important;
+/* Luxury button hover effects */
+.admin-button-hover {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.text-foreground {
-  color: #ffffff !important;
+.admin-button-hover:hover {
+  transform: scale(1.02);
+}
+
+.admin-button-hover:active {
+  transform: scale(0.98);
+}
+
+/* Enhanced form styling for luxury feel */
+.admin-form-input {
+  background: var(--card);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--border);
+  transition: all 0.2s ease;
+  color: var(--card-foreground);
+}
+
+.admin-form-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 10%, transparent);
+}
+
+/* Modal backdrop with luxury blur */
+.admin-modal-backdrop {
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  background: oklch(0.15 0.01 280 / 0.8);
+}
+
+/* Added smooth scroll behavior */
+html {
+  scroll-behavior: smooth;
 }

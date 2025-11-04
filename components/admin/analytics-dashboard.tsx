@@ -32,10 +32,10 @@ const generateMonthlyData = (selectedMonth: string) => {
 }
 
 const trafficSources = [
-  { name: "Direct", value: 35, color: "#D4AF37" },
-  { name: "Search", value: 30, color: "#C41E3A" },
-  { name: "Social", value: 20, color: "#666666" },
-  { name: "Referral", value: 15, color: "#999999" },
+  { name: "Direct", value: 35, color: "var(--chart-1)" },
+  { name: "Search", value: 30, color: "var(--chart-2)" },
+  { name: "Social", value: 20, color: "var(--chart-3)" },
+  { name: "Referral", value: 15, color: "var(--chart-4)" },
 ]
 
 export function AnalyticsDashboard() {
@@ -201,8 +201,8 @@ export function AnalyticsDashboard() {
                 <XAxis dataKey="month" />
                 <YAxis />
                 <Tooltip />
-                <Bar dataKey="visitors" fill="#D4AF37" />
-                <Bar dataKey="contacts" fill="#C41E3A" />
+                <Bar dataKey="visitors" fill="var(--chart-1)" />
+                <Bar dataKey="contacts" fill="var(--chart-2)" />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>
@@ -252,11 +252,11 @@ export function AnalyticsDashboard() {
                 <div className="text-sm text-muted-foreground">Email Clicks</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-blue-500">{formSubmissions.length}</div>
+                <div className="text-2xl font-bold text-primary">{formSubmissions.length}</div>
                 <div className="text-sm text-muted-foreground">Form Submissions</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-green-500">
+                <div className="text-2xl font-bold text-accent">
                   {contactTracking.filter((item) => item.method === "cta_click").length}
                 </div>
                 <div className="text-sm text-muted-foreground">CTA Clicks</div>

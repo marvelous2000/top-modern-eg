@@ -5,8 +5,10 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
+import { Checkbox } from "@/components/ui/checkbox"
 import { getProjects, createProject, updateProject, deleteProject } from "@/lib/actions/projects"
 import { useSupabaseClient } from "@/components/providers/SupabaseProvider"
+import { Plus, Edit, Trash2, Upload, Link, X, Save } from "lucide-react"
 
 export function ProjectsManager() {
   const [projects, setProjects] = useState<any[]>([])
@@ -119,13 +121,13 @@ export function ProjectsManager() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "active":
-        return "bg-green-500/20 text-green-400"
+        return "bg-accent/20 text-accent"
       case "draft":
         return "bg-yellow-500/20 text-yellow-400"
       case "archived":
-        return "bg-gray-500/20 text-gray-400"
+        return "bg-muted/20 text-muted-foreground"
       default:
-        return "bg-gray-500/20 text-gray-400"
+        return "bg-muted/20 text-muted-foreground"
     }
   }
 
@@ -227,10 +229,10 @@ export function ProjectsManager() {
     return (
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <h2 className="font-playfair text-3xl font-bold text-[#D4AF37]">Projects Manager</h2>
+          <h2 className="font-serif text-3xl font-bold text-card-foreground">Projects Manager</h2>
         </div>
         <div className="text-center py-12">
-          <p className="text-[#FAFAFA]/60 text-lg">Loading projects...</p>
+          <p className="text-muted-foreground text-lg">Loading projects...</p>
         </div>
       </div>
     )
@@ -240,14 +242,14 @@ export function ProjectsManager() {
     return (
       <div className="space-y-6">
         <div className="flex items-center justify-between">
-          <h2 className="font-playfair text-3xl font-bold text-[#D4AF37]">Projects Manager</h2>
-          <Button onClick={handleCreateProject} className="bg-[#D4AF37] text-[#0F0F0F] hover:bg-[#C41E3A]">
+          <h2 className="font-serif text-3xl font-bold text-card-foreground">Projects Manager</h2>
+          <Button onClick={handleCreateProject} className="bg-accent text-accent-foreground hover:bg-accent/90">
             Add New Project
           </Button>
         </div>
         <div className="text-center py-12">
-          <p className="text-red-400 text-lg mb-4">Error: {error}</p>
-          <p className="text-[#FAFAFA]/60 text-sm">
+          <p className="text-destructive text-lg mb-4">Error: {error}</p>
+          <p className="text-muted-foreground text-sm">
             The projects table may not exist yet. Please create it in your Supabase database.
           </p>
         </div>
@@ -258,8 +260,9 @@ export function ProjectsManager() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="font-playfair text-3xl font-bold text-[#D4AF37]">Projects Manager</h2>
-        <Button onClick={handleCreateProject} className="bg-[#D4AF37] text-[#0F0F0F] hover:bg-[#C41E3A]">
+        <h2 className="font-serif text-3xl font-bold text-card-foreground">Projects Manager</h2>
+        <Button onClick={handleCreateProject} className="bg-accent text-accent-foreground hover:bg-accent/90">
+          <Plus className="h-4 w-4 mr-2" />
           Add New Project
         </Button>
       </div>
@@ -269,14 +272,13 @@ export function ProjectsManager() {
         <Input
           placeholder="Search projects..."
           value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="bg-[#0F0F0F] border-[#D4AF37]/20 text-[#FAFAFA]"
+          isAdmin={true}
         />
 
         <select
           value={filterStatus}
           onChange={(e) => setFilterStatus(e.target.value as any)}
-          className="bg-[#0F0F0F] border border-[#D4AF37]/20 text-[#FAFAFA] rounded-md px-3 py-2"
+          className="admin-form-input admin-focus"
         >
           <option value="all">All Status</option>
           <option value="active">Active</option>
@@ -284,28 +286,28 @@ export function ProjectsManager() {
           <option value="archived">Archived</option>
         </select>
 
-        <div className="text-[#FAFAFA]/60 flex items-center">{filteredProjects.length} projects found</div>
+        <div className="text-muted-foreground flex items-center">{filteredProjects.length} projects found</div>
       </div>
 
       {/* Projects Grid */}
       <div className="grid lg:grid-cols-2 gap-6">
         {filteredProjects.map((project) => (
-          <div key={project.id} className="border border-[#D4AF37]/20 rounded-lg p-6 space-y-4 min-h-[280px] flex flex-col">
+          <div key={project.id} className="border border-border rounded-lg p-6 space-y-4 min-h-[280px] flex flex-col">
             <div className="flex items-start justify-between flex-1">
               <div className="flex-1 min-w-0 pr-4">
                 <div className="flex items-start gap-2 mb-2">
-                  <h3 className="font-playfair text-xl font-bold text-[#FAFAFA] break-words line-clamp-2 leading-tight">{project.title}</h3>
-                  {project.featured && <Badge className="bg-[#D4AF37] text-[#0F0F0F] border-0 text-xs shrink-0">Featured</Badge>}
+                  <h3 className="font-playfair text-xl font-bold text-foreground break-words line-clamp-2 leading-tight">{project.title}</h3>
+                  {project.featured && <Badge className="bg-primary text-primary-foreground border-0 text-xs shrink-0">Featured</Badge>}
                 </div>
 
-                <p className="text-[#FAFAFA]/60 text-sm mb-3 line-clamp-2 break-words">{project.description}</p>
+                <p className="text-muted-foreground text-sm mb-3 line-clamp-2 break-words">{project.description}</p>
 
                 <div className="flex flex-wrap items-center gap-2 mb-3">
                   <Badge className={`${getStatusColor(project.status)} border-0 shrink-0`}>{project.status}</Badge>
-                  <Badge className="bg-[#D4AF37]/20 text-[#D4AF37] border-0 break-words max-w-full">{project.category}</Badge>
+                  <Badge className="bg-primary/20 text-primary border-0 break-words max-w-full">{project.category}</Badge>
                 </div>
 
-                <div className="text-xs text-[#FAFAFA]/40 space-y-1">
+                <div className="text-xs text-muted-foreground space-y-1">
                   <p className="truncate">Location: {project.location}</p>
                   <p className="truncate">Year: {project.year}</p>
                   <p className="truncate">Client: {project.client}</p>
@@ -329,16 +331,18 @@ export function ProjectsManager() {
                   setSelectedProject(project)
                   setIsEditing(true)
                 }}
-                className="bg-[#D4AF37] text-[#0F0F0F] hover:bg-[#C41E3A] flex-1"
+                className="bg-accent text-accent-foreground hover:bg-accent/90 flex-1"
               >
+                <Edit className="h-4 w-4 mr-2" />
                 Edit
               </Button>
               <Button
                 size="sm"
                 variant="outline"
                 onClick={() => handleDeleteProject(project.id)}
-                className="border-red-500 text-red-400 hover:bg-red-500/20"
+                className="border-destructive text-destructive-foreground hover:bg-destructive/20"
               >
+                <Trash2 className="h-4 w-4 mr-2" />
                 Delete
               </Button>
             </div>
@@ -348,16 +352,15 @@ export function ProjectsManager() {
 
       {filteredProjects.length === 0 && (
         <div className="text-center py-12">
-          <p className="text-[#FAFAFA]/60 text-lg">No projects found matching your criteria.</p>
+          <p className="text-muted-foreground text-lg">No projects found matching your criteria.</p>
         </div>
       )}
 
-      {/* Project Editor Modal */}
       {isEditing && selectedProject && (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-          <div className="bg-[#0F0F0F] border border-[#D4AF37]/20 rounded-lg p-6 max-w-6xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 admin-modal-backdrop flex items-center justify-center z-50 p-4">
+          <div className="bg-card border border-accent/20 rounded-lg p-6 max-w-6xl w-full max-h-[90vh] overflow-y-auto admin-card">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="font-playfair text-2xl font-bold text-[#D4AF37]">
+              <h3 className="font-playfair text-2xl font-bold text-primary">
                 {selectedProject.id ? "Edit Project" : "Create Project"}
               </h3>
               <Button
@@ -366,8 +369,8 @@ export function ProjectsManager() {
                   setSelectedProject(null)
                   setIsEditing(false)
                 }}
-                className="border-[#D4AF37]/20 text-[#FAFAFA]"
               >
+                <X className="h-4 w-4 mr-2" />
                 Cancel
               </Button>
             </div>
@@ -375,7 +378,7 @@ export function ProjectsManager() {
             <div className="grid md:grid-cols-2 gap-6">
               <div className="space-y-4">
                 <div>
-                  <label className="block text-[#D4AF37] font-semibold mb-2">Project Title</label>
+                  <label className="block text-primary font-semibold mb-2">Project Title</label>
                   <Input
                     value={selectedProject.title}
                     onChange={(e) =>
@@ -388,14 +391,14 @@ export function ProjectsManager() {
                           .replace(/[^a-z0-9-]/g, ""),
                       })
                     }
-                    className="bg-[#0F0F0F] border-[#D4AF37]/20 text-[#FAFAFA]"
                     placeholder="Enter project title"
+                    isAdmin={true}
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-[#D4AF37] font-semibold mb-2">Category</label>
+                    <label className="block text-primary font-semibold mb-2">Category</label>
                     <Input
                       value={selectedProject.category}
                       onChange={(e) =>
@@ -404,13 +407,13 @@ export function ProjectsManager() {
                           category: e.target.value,
                         })
                       }
-                      className="bg-[#0F0F0F] border-[#D4AF37]/20 text-[#FAFAFA]"
                       placeholder="e.g., Luxury Hotel"
+                      isAdmin={true}
                     />
                   </div>
 
                   <div>
-                    <label className="block text-[#D4AF37] font-semibold mb-2">Year</label>
+                    <label className="block text-primary font-semibold mb-2">Year</label>
                     <Input
                       value={selectedProject.year}
                       onChange={(e) =>
@@ -419,14 +422,14 @@ export function ProjectsManager() {
                           year: e.target.value,
                         })
                       }
-                      className="bg-[#0F0F0F] border-[#D4AF37]/20 text-[#FAFAFA]"
                       placeholder="2024"
+                      isAdmin={true}
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-[#D4AF37] font-semibold mb-2">Location</label>
+                  <label className="block text-primary font-semibold mb-2">Location</label>
                   <Input
                     value={selectedProject.location}
                     onChange={(e) =>
@@ -435,13 +438,13 @@ export function ProjectsManager() {
                         location: e.target.value,
                       })
                     }
-                    className="bg-[#0F0F0F] border-[#D4AF37]/20 text-[#FAFAFA]"
                     placeholder="e.g., Cairo, Egypt"
+                    isAdmin={true}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[#D4AF37] font-semibold mb-2">Client</label>
+                  <label className="block text-primary font-semibold mb-2">Client</label>
                   <Input
                     value={selectedProject.client}
                     onChange={(e) =>
@@ -450,14 +453,14 @@ export function ProjectsManager() {
                         client: e.target.value,
                       })
                     }
-                    className="bg-[#0F0F0F] border-[#D4AF37]/20 text-[#FAFAFA]"
                     placeholder="Client name"
+                    isAdmin={true}
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-[#D4AF37] font-semibold mb-2">Status</label>
+                    <label className="block text-primary font-semibold mb-2">Status</label>
                     <select
                       value={selectedProject.status}
                       onChange={(e) =>
@@ -466,7 +469,7 @@ export function ProjectsManager() {
                           status: e.target.value as "active" | "draft" | "archived",
                         })
                       }
-                      className="w-full bg-[#0F0F0F] border border-[#D4AF37]/20 text-[#FAFAFA] rounded-md px-3 py-2"
+                      className="admin-form-input admin-focus"
                     >
                       <option value="draft">Draft</option>
                       <option value="active">Active</option>
@@ -475,19 +478,18 @@ export function ProjectsManager() {
                   </div>
 
                   <div className="flex items-center gap-2 pt-8">
-                    <input
-                      type="checkbox"
+                    <Checkbox
                       id="featured"
                       checked={selectedProject.featured}
-                      onChange={(e) =>
+                      onCheckedChange={(checked) =>
                         setSelectedProject({
                           ...selectedProject,
-                          featured: e.target.checked,
+                          featured: checked,
                         })
                       }
-                      className="w-4 h-4"
+                      isAdmin={true}
                     />
-                    <label htmlFor="featured" className="text-[#D4AF37] font-semibold">
+                    <label htmlFor="featured" className="text-primary font-semibold">
                       Featured Project
                     </label>
                   </div>
@@ -496,7 +498,7 @@ export function ProjectsManager() {
 
               <div className="space-y-4">
                 <div>
-                  <label className="block text-[#D4AF37] font-semibold mb-2">Description</label>
+                  <label className="block text-primary font-semibold mb-2">Description</label>
                   <Textarea
                     value={selectedProject.description}
                     onChange={(e) =>
@@ -505,13 +507,14 @@ export function ProjectsManager() {
                         description: e.target.value,
                       })
                     }
-                    className="bg-[#0F0F0F] border-[#D4AF37]/20 text-[#FAFAFA] min-h-[100px]"
+                    isAdmin={true}
+                    className="min-h-[100px]"
                     placeholder="Project description"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[#D4AF37] font-semibold mb-2">Challenge</label>
+                  <label className="block text-primary font-semibold mb-2">Challenge</label>
                   <Textarea
                     value={selectedProject.challenge}
                     onChange={(e) =>
@@ -520,13 +523,14 @@ export function ProjectsManager() {
                         challenge: e.target.value,
                       })
                     }
-                    className="bg-[#0F0F0F] border-[#D4AF37]/20 text-[#FAFAFA] min-h-[80px]"
-                    placeholder="Project challenges"
+                    isAdmin={true}
+                    className="min-h-[80px]"
+                    placeholder="How challenges were solved"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[#D4AF37] font-semibold mb-2">Solution</label>
+                  <label className="block text-primary font-semibold mb-2">Solution</label>
                   <Textarea
                     value={selectedProject.solution}
                     onChange={(e) =>
@@ -535,13 +539,14 @@ export function ProjectsManager() {
                         solution: e.target.value,
                       })
                     }
-                    className="bg-[#0F0F0F] border-[#D4AF37]/20 text-[#FAFAFA] min-h-[80px]"
+                    isAdmin={true}
+                    className="min-h-[80px]"
                     placeholder="How challenges were solved"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[#D4AF37] font-semibold mb-2">Results (one per line)</label>
+                  <label className="block text-primary font-semibold mb-2">Results (one per line)</label>
                   <Textarea
                     value={selectedProject.results.join("\n")}
                     onChange={(e) =>
@@ -550,7 +555,8 @@ export function ProjectsManager() {
                         results: e.target.value.split("\n").filter(Boolean),
                       })
                     }
-                    className="bg-[#0F0F0F] border-[#D4AF37]/20 text-[#FAFAFA] min-h-[80px]"
+                    isAdmin={true}
+                    className="min-h-[80px]"
                     placeholder="Project results and achievements"
                   />
                 </div>
@@ -560,17 +566,18 @@ export function ProjectsManager() {
             <div className="grid md:grid-cols-2 gap-6 mt-6">
               <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <label className="block text-[#D4AF37] font-semibold">Project Images</label>
+              <label className="block text-primary font-semibold">Project Images</label>
               <div className="flex items-center gap-2">
                 <Button
                   variant="secondary"
                   onClick={openFilePicker}
                   disabled={!supabase || uploading}
-                  className="bg-[#1A1A1A] text-[#D4AF37] hover:bg-[#2A2A2A] disabled:opacity-60"
                 >
+                  <Upload className="h-4 w-4 mr-2" />
                   {uploading ? "Uploading..." : "Upload Images"}
                 </Button>
-                <Button variant="outline" onClick={handleAddImage} className="border-[#D4AF37]/20 text-[#FAFAFA]">
+                <Button variant="outline" onClick={handleAddImage}>
+                  <Link className="h-4 w-4 mr-2" />
                   Add Image URL
                 </Button>
               </div>
@@ -586,8 +593,8 @@ export function ProjectsManager() {
               className="hidden"
               onChange={(event) => handleFilesSelected(event.target.files)}
             />
-            {uploadError && <p className="text-sm text-red-400">{uploadError}</p>}
-            {uploadSuccess && <p className="text-sm text-green-400">{uploadSuccess}</p>}
+            {uploadError && <p className="text-sm text-destructive">{uploadError}</p>}
+            {uploadSuccess && <p className="text-sm text-accent">{uploadSuccess}</p>}
             <div className="space-y-3">
               {(selectedProject.images ?? []).length === 0 && (
                 <p className="text-muted-foreground text-sm">No images added yet.</p>
@@ -597,15 +604,15 @@ export function ProjectsManager() {
                       <Input
                         value={url}
                         onChange={(e) => handleUpdateImage(index, e.target.value)}
-                        placeholder="https://example.com/project-image.jpg"
-                        className="bg-[#0F0F0F] border-[#D4AF37]/20 text-[#FAFAFA]"
-                      />
-                      <Button
+                                              isAdmin={true}
+                                              placeholder="https://example.com/project-image.jpg"
+                                            />                      <Button
                         type="button"
                         variant="destructive"
-                        className="bg-[#C41E3A] hover:bg-[#a01930]"
                         onClick={() => handleRemoveImage(index)}
+                        className="admin-focus"
                       >
+                        <X className="h-4 w-4 mr-2" />
                         Remove
                       </Button>
                     </div>
@@ -613,7 +620,7 @@ export function ProjectsManager() {
                 </div>
               </div>
               <div>
-                <label className="block text-[#D4AF37] font-semibold mb-2">Materials Used (one per line)</label>
+                <label className="block text-primary font-semibold mb-2">Materials Used (one per line)</label>
                 <Textarea
                   value={selectedProject.materials.join("\n")}
                   onChange={(e) =>
@@ -622,14 +629,15 @@ export function ProjectsManager() {
                       materials: e.target.value.split("\n").filter(Boolean),
                     })
                   }
-                  className="bg-[#0F0F0F] border-[#D4AF37]/20 text-[#FAFAFA] min-h-[100px]"
+                  isAdmin={true}
+                  className="min-h-[100px]"
                   placeholder="Materials and quantities used"
                 />
               </div>
 
               <div className="space-y-4">
                 <div>
-                  <label className="block text-[#D4AF37] font-semibold mb-2">Testimonial Quote</label>
+                  <label className="block text-primary font-semibold mb-2">Testimonial Quote</label>
                   <Textarea
                     value={selectedProject.testimonial.quote}
                     onChange={(e) =>
@@ -641,14 +649,15 @@ export function ProjectsManager() {
                         },
                       })
                     }
-                    className="bg-[#0F0F0F] border-[#D4AF37]/20 text-[#FAFAFA] min-h-[60px]"
+                    isAdmin={true}
+                    className="min-h-[60px]"
                     placeholder="Client testimonial"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-[#D4AF37] font-semibold mb-2">Author</label>
+                    <label className="block text-primary font-semibold mb-2">Author</label>
                     <Input
                       value={selectedProject.testimonial.author}
                       onChange={(e) =>
@@ -660,13 +669,13 @@ export function ProjectsManager() {
                           },
                         })
                       }
-                      className="bg-[#0F0F0F] border-[#D4AF37]/20 text-[#FAFAFA]"
                       placeholder="Author name"
+                      isAdmin={true}
                     />
                   </div>
 
                   <div>
-                    <label className="block text-[#D4AF37] font-semibold mb-2">Position</label>
+                    <label className="block text-primary font-semibold mb-2">Position</label>
                     <Input
                       value={selectedProject.testimonial.position}
                       onChange={(e) =>
@@ -678,8 +687,8 @@ export function ProjectsManager() {
                           },
                         })
                       }
-                      className="bg-[#0F0F0F] border-[#D4AF37]/20 text-[#FAFAFA]"
                       placeholder="Job title"
+                      isAdmin={true}
                     />
                   </div>
                 </div>
@@ -689,8 +698,9 @@ export function ProjectsManager() {
             <div className="flex justify-end gap-4 mt-6">
               <Button
                 onClick={() => handleSaveProject(selectedProject)}
-                className="bg-[#D4AF37] text-[#0F0F0F] hover:bg-[#C41E3A]"
+                className="bg-accent text-accent-foreground hover:bg-accent/90"
               >
+                <Save className="h-4 w-4 mr-2" />
                 Save Project
               </Button>
             </div>

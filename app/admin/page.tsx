@@ -3,7 +3,8 @@
 import { useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Users, MessageSquare, FileText, BarChart3, Settings, Eye, Plus, Package, FolderOpen, Target, ShieldCheck } from "lucide-react"
+import { Settings, Eye, Plus, Package, FolderOpen, Target, ShieldCheck, BarChart3, FileText, Users, MessageSquare } from "lucide-react"
+import { PageTransition } from "@/components/ui/page-transition"
 import { AdminNavigation } from "@/components/admin/admin-navigation"
 import { AdminStats } from "@/components/admin/admin-stats"
 import { ContactsTable } from "@/components/admin/contacts-table"
@@ -18,203 +19,209 @@ import { LeadsManager } from "@/components/admin/leads-manager"
 import { SettingsManager } from "@/components/admin/settings-manager"
 
 export default function AdminDashboard() {
-  const [activeTab, setActiveTab] = useState("overview")
+  const [activeTab, setActiveTab] = useState("dashboard")
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+
+  const navigationGroups = [
+    {
+      title: "Dashboard & Analytics",
+      items: [
+        { id: "dashboard", label: "Overview", icon: BarChart3 },
+        { id: "analytics", label: "Analytics", icon: BarChart3 },
+      ]
+    },
+    {
+      title: "Content Management",
+      items: [
+        { id: "products", label: "Products", icon: Package },
+        { id: "projects", label: "Projects", icon: FolderOpen },
+        { id: "legal", label: "Legal Pages", icon: FileText },
+      ]
+    },
+    {
+      title: "User Management",
+      items: [
+        { id: "contacts", label: "Contacts", icon: Users },
+        { id: "users", label: "Users", icon: ShieldCheck },
+        { id: "tracking", label: "Tracking", icon: Eye },
+        { id: "leads", label: "Leads", icon: MessageSquare },
+      ]
+    },
+    {
+      title: "Marketing",
+      items: [
+        { id: "pixels", label: "Pixels", icon: Target },
+      ]
+    },
+    {
+      title: "System",
+      items: [
+        { id: "settings", label: "Settings", icon: Settings },
+      ]
+    }
+  ]
 
   return (
-    <div className="min-h-screen bg-background">
-      <AdminNavigation />
+    <div className="min-h-screen bg-background admin-panel">
+      <AdminNavigation onMenuClick={() => setSidebarOpen(!sidebarOpen)} />
 
       <div className="flex flex-col lg:flex-row">
-        <div className="w-full lg:w-64 bg-card border-r border-border p-4 lg:p-6">
-          <div className="flex lg:flex-col space-x-2 lg:space-x-0 lg:space-y-2 overflow-x-auto lg:overflow-x-visible pb-2 lg:pb-0">
-            <Button
-              variant={activeTab === "overview" ? "default" : "ghost"}
-              className="flex-shrink-0 lg:w-full justify-start whitespace-nowrap"
-              onClick={() => setActiveTab("overview")}
-            >
-              <BarChart3 className="mr-2 h-4 w-4" />
-              <span className="hidden sm:inline">Overview</span>
-            </Button>
-            <Button
-              variant={activeTab === "contacts" ? "default" : "ghost"}
-              className="flex-shrink-0 lg:w-full justify-start whitespace-nowrap"
-              onClick={() => setActiveTab("contacts")}
-            >
-              <Users className="mr-2 h-4 w-4" />
-              <span className="hidden sm:inline">Contacts</span>
-            </Button>
-            <Button
-              variant={activeTab === "users" ? "default" : "ghost"}
-              className="flex-shrink-0 lg:w-full justify-start whitespace-nowrap"
-              onClick={() => setActiveTab("users")}
-            >
-              <ShieldCheck className="mr-2 h-4 w-4" />
-              <span className="hidden sm:inline">Users</span>
-            </Button>
-            <Button
-              variant={activeTab === "tracking" ? "default" : "ghost"}
-              className="flex-shrink-0 lg:w-full justify-start whitespace-nowrap"
-              onClick={() => setActiveTab("tracking")}
-            >
-              <Eye className="mr-2 h-4 w-4" />
-              <span className="hidden sm:inline">Tracking</span>
-            </Button>
-            <Button
-              variant={activeTab === "products" ? "default" : "ghost"}
-              className="flex-shrink-0 lg:w-full justify-start whitespace-nowrap"
-              onClick={() => setActiveTab("products")}
-            >
-              <Package className="mr-2 h-4 w-4" />
-              <span className="hidden sm:inline">Products</span>
-            </Button>
-            <Button
-              variant={activeTab === "projects" ? "default" : "ghost"}
-              className="flex-shrink-0 lg:w-full justify-start whitespace-nowrap"
-              onClick={() => setActiveTab("projects")}
-            >
-              <FolderOpen className="mr-2 h-4 w-4" />
-              <span className="hidden sm:inline">Projects</span>
-            </Button>
-            <Button
-              variant={activeTab === "leads" ? "default" : "ghost"}
-              className="flex-shrink-0 lg:w-full justify-start whitespace-nowrap"
-              onClick={() => setActiveTab("leads")}
-            >
-              <MessageSquare className="mr-2 h-4 w-4" />
-              <span className="hidden sm:inline">Leads</span>
-            </Button>
-            <Button
-              variant={activeTab === "legal" ? "default" : "ghost"}
-              className="flex-shrink-0 lg:w-full justify-start whitespace-nowrap"
-              onClick={() => setActiveTab("legal")}
-            >
-              <FileText className="mr-2 h-4 w-4" />
-              <span className="hidden sm:inline">Legal</span>
-            </Button>
-            <Button
-              variant={activeTab === "analytics" ? "default" : "ghost"}
-              className="flex-shrink-0 lg:w-full justify-start whitespace-nowrap"
-              onClick={() => setActiveTab("analytics")}
-            >
-              <BarChart3 className="mr-2 h-4 w-4" />
-              <span className="hidden sm:inline">Analytics</span>
-            </Button>
-            <Button
-              variant={activeTab === "pixels" ? "default" : "ghost"}
-              className="flex-shrink-0 lg:w-full justify-start whitespace-nowrap"
-              onClick={() => setActiveTab("pixels")}
-            >
-              <Target className="mr-2 h-4 w-4" />
-              <span className="hidden sm:inline">Pixels</span>
-            </Button>
-            <Button
-              variant={activeTab === "settings" ? "default" : "ghost"}
-              className="flex-shrink-0 lg:w-full justify-start whitespace-nowrap"
-              onClick={() => setActiveTab("settings")}
-            >
-              <Settings className="mr-2 h-4 w-4" />
-              <span className="hidden sm:inline">Settings</span>
-            </Button>
+        {/* Sidebar */}
+        <div className={`admin-sidebar w-full lg:w-64 bg-card/95 backdrop-blur-sm text-card-foreground border-r border-accent/30 p-4 lg:p-6 shadow-lg admin-card ${sidebarOpen ? 'open' : ''}`}>
+          <div className="space-y-6">
+            {navigationGroups.map((group) => (
+              <div key={group.title} className="space-y-2">
+                <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-2">
+                  {group.title}
+                </h3>
+                <div className="flex lg:flex-col space-x-2 lg:space-x-0 lg:space-y-1 overflow-x-auto lg:overflow-x-visible pb-2 lg:pb-0">
+                  {group.items.map((item) => {
+                    const Icon = item.icon
+                    const isActive = activeTab === item.id
+                    return (
+                      <Button
+                        key={item.id}
+                        variant={isActive ? "luxury" : "ghost"}
+                        className={`flex-shrink-0 lg:w-full justify-start whitespace-nowrap admin-focus ${
+                          isActive
+                            ? "bg-accent text-accent-foreground"
+                            : "hover:bg-accent/10 hover:text-accent"
+                        }`}
+                        onClick={() => {
+                          setActiveTab(item.id)
+                          setSidebarOpen(false)
+                        }}
+                      >
+                        <Icon className="mr-2 h-4 w-4" />
+                        <span className="hidden sm:inline">{item.label}</span>
+                      </Button>
+                    )
+                  })}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
 
         {/* Main Content */}
         <div className="flex-1 p-4 lg:p-8">
-          {activeTab === "overview" && (
-            <div className="space-y-6 lg:space-y-8">
-              <div>
-                <h1 className="font-serif text-2xl lg:text-3xl font-bold text-foreground mb-2">Dashboard Overview</h1>
-                <p className="text-muted-foreground text-sm lg:text-base">
-                  Welcome back to your Top Modern admin panel
-                </p>
+          {activeTab === "dashboard" && (
+            <PageTransition>
+              <div className="space-y-6 lg:space-y-8">
+                <div>
+                  <h1 className="font-serif text-2xl lg:text-3xl font-bold text-foreground mb-2">Dashboard Overview</h1>
+                  <p className="text-muted-foreground text-sm lg:text-base">
+                    Welcome back to your Top Modern admin panel
+                  </p>
+                </div>
+                <AdminStats />
               </div>
-              <AdminStats />
-            </div>
+            </PageTransition>
           )}
 
           {activeTab === "contacts" && (
-            <div className="space-y-4 lg:space-y-6">
-              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <div>
-                  <h1 className="font-serif text-2xl lg:text-3xl font-bold text-foreground mb-2">Contact Management</h1>
-                  <p className="text-muted-foreground text-sm lg:text-base">Manage and track all customer inquiries</p>
+            <PageTransition>
+              <div className="space-y-4 lg:space-y-6">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                  <div>
+                    <h1 className="font-serif text-2xl lg:text-3xl font-bold text-foreground mb-2">Contact Management</h1>
+                    <p className="text-muted-foreground text-sm lg:text-base">Manage and track all customer inquiries</p>
+                  </div>
+                  <Button variant="luxury" className="w-full sm:w-auto">
+                    <Plus className="mr-2 h-4 w-4" />
+                    Add Contact
+                  </Button>
                 </div>
-                <Button className="bg-primary text-primary-foreground w-full sm:w-auto">
-                  <Plus className="mr-2 h-4 w-4" />
-                  Add Contact
-                </Button>
+                <ContactsTable />
               </div>
-              <ContactsTable />
-            </div>
+            </PageTransition>
           )}
           {activeTab === "users" && (
-            <div className="space-y-6">
-              <UsersManager />
-            </div>
+            <PageTransition>
+              <div className="space-y-6">
+                <UsersManager />
+              </div>
+            </PageTransition>
           )}
 
           {activeTab === "tracking" && (
-            <div className="space-y-6">
-              <ContactTrackingViewer />
-            </div>
+            <PageTransition>
+              <div className="space-y-6">
+                <ContactTrackingViewer />
+              </div>
+            </PageTransition>
           )}
 
           {activeTab === "products" && (
-            <div className="space-y-6">
-              <ProductsManager />
-            </div>
+            <PageTransition>
+              <div className="space-y-6">
+                <ProductsManager />
+              </div>
+            </PageTransition>
           )}
 
           {activeTab === "projects" && (
-            <div className="space-y-6">
-              <ProjectsManager />
-            </div>
+            <PageTransition>
+              <div className="space-y-6">
+                <ProjectsManager />
+              </div>
+            </PageTransition>
           )}
 
           {activeTab === "leads" && (
-            <div className="space-y-6">
-              <div>
-                <h1 className="font-serif text-3xl font-bold text-foreground mb-2">Leads</h1>
-                <p className="text-muted-foreground">Every submitted form flows into the lead inbox</p>
+            <PageTransition>
+              <div className="space-y-6">
+                <div>
+                  <h1 className="font-serif text-3xl font-bold text-foreground mb-2">Leads</h1>
+                  <p className="text-muted-foreground">Every submitted form flows into the lead inbox</p>
+                </div>
+                <LeadsManager />
               </div>
-              <LeadsManager />
-            </div>
+            </PageTransition>
           )}
 
           {activeTab === "legal" && (
-            <div className="space-y-6">
-              <div>
-                <h1 className="font-serif text-3xl font-bold text-foreground mb-2">Legal Pages</h1>
-                <p className="text-muted-foreground">Manage privacy policy and terms of service</p>
+            <PageTransition>
+              <div className="space-y-6">
+                <div>
+                  <h1 className="font-serif text-3xl font-bold text-foreground mb-2">Legal Pages</h1>
+                  <p className="text-muted-foreground">Manage privacy policy and terms of service</p>
+                </div>
+                <LegalPagesManager />
               </div>
-              <LegalPagesManager />
-            </div>
+            </PageTransition>
           )}
 
           {activeTab === "analytics" && (
-            <div className="space-y-6">
-              <div>
-                <h1 className="font-serif text-3xl font-bold text-foreground mb-2">Analytics</h1>
-                <p className="text-muted-foreground">Track website performance and user engagement</p>
+            <PageTransition>
+              <div className="space-y-6">
+                <div>
+                  <h1 className="font-serif text-3xl font-bold text-foreground mb-2">Analytics</h1>
+                  <p className="text-muted-foreground">Track website performance and user engagement</p>
+                </div>
+                <AnalyticsDashboard />
               </div>
-              <AnalyticsDashboard />
-            </div>
+            </PageTransition>
           )}
 
           {activeTab === "pixels" && (
-            <div className="space-y-6">
-              <PixelManager />
-            </div>
+            <PageTransition>
+              <div className="space-y-6">
+                <PixelManager />
+              </div>
+            </PageTransition>
           )}
 
           {activeTab === "settings" && (
-            <div className="space-y-6">
-              <div>
-                <h1 className="font-serif text-3xl font-bold text-foreground mb-2">Settings</h1>
-                <p className="text-muted-foreground">Configure your admin preferences</p>
+            <PageTransition>
+              <div className="space-y-6">
+                <div>
+                  <h1 className="font-serif text-3xl font-bold text-foreground mb-2">Settings</h1>
+                  <p className="text-muted-foreground">Configure your admin preferences</p>
+                </div>
+                <SettingsManager />
               </div>
-              <SettingsManager />
-            </div>
+            </PageTransition>
           )}
         </div>
       </div>

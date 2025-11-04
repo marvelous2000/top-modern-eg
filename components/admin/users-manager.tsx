@@ -150,7 +150,7 @@ export function UsersManager() {
 
   return (
     <div className="space-y-6">
-      <Card className="border-primary/10 bg-card/60 backdrop-blur">
+      <Card className="border-border bg-card">
         <CardHeader>
           <CardTitle className="font-serif text-2xl text-foreground flex items-center gap-2">
             <ShieldCheck className="h-5 w-5 text-primary" />
@@ -165,16 +165,15 @@ export function UsersManager() {
               value={searchTerm}
               onChange={(event) => setSearchTerm(event.target.value)}
               placeholder="Search by name or email"
-              className="bg-background/80 border-primary/20"
             />
           </div>
           <div className="space-y-2">
             <Label>Filter by role</Label>
             <Select value={roleFilter} onValueChange={setRoleFilter}>
-              <SelectTrigger className="bg-background/80 border-primary/20 text-foreground">
+              <SelectTrigger>
                 <SelectValue placeholder="All roles" />
               </SelectTrigger>
-              <SelectContent className="bg-background/95 text-foreground border-primary/30">
+              <SelectContent>
                 <SelectItem value="all">All roles</SelectItem>
                 <SelectItem value="admin">Admin</SelectItem>
                 <SelectItem value="editor">Editor</SelectItem>
@@ -185,7 +184,7 @@ export function UsersManager() {
           </div>
           <div className="space-y-2">
             <Label>Invite member</Label>
-            <Button className="w-full bg-primary text-[#0F0F0F] hover:bg-primary/80" disabled={!supabase}>
+            <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/80" disabled={!supabase}>
               Invite User
             </Button>
             {!supabase && (
@@ -195,10 +194,10 @@ export function UsersManager() {
         </CardContent>
       </Card>
 
-      <Card className="border-primary/10 bg-card/60 backdrop-blur">
+      <Card className="border-border bg-card">
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="font-serif text-xl text-foreground">Team Members</CardTitle>
-          <Badge variant="outline" className="border-primary/30 text-primary">
+          <Badge variant="outline">
             {filteredUsers.length} active
           </Badge>
         </CardHeader>
@@ -231,10 +230,10 @@ export function UsersManager() {
                       value={user.role}
                       onValueChange={(value) => handleRoleChange(user.id, value as AdminUser["role"])}
                     >
-                      <SelectTrigger className="bg-background/80 border-primary/20 text-foreground">
+                      <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
-                      <SelectContent className="bg-background/95 text-foreground border-primary/30">
+                      <SelectContent>
                         <SelectItem value="admin">Admin</SelectItem>
                         <SelectItem value="editor">Editor</SelectItem>
                         <SelectItem value="viewer">Viewer</SelectItem>

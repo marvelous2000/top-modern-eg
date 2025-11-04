@@ -1,7 +1,7 @@
 "use server"
 
 import { cookies } from "next/headers"
-import { createSupabaseServerClient } from "@/lib/supabase/server"
+import { createSupabaseServiceClient } from "@/lib/supabase/service"
 import { revalidatePath } from "next/cache"
 
 export interface Project {
@@ -31,7 +31,7 @@ export interface Project {
 
 export async function getProjects() {
   try {
-    const supabase = createSupabaseServerClient(cookies())
+    const supabase = createSupabaseServiceClient()
     const { data, error } = await supabase.from("projects").select("*").order("created_at", { ascending: false })
 
     if (error) {
@@ -48,7 +48,7 @@ export async function getProjects() {
 
 export async function getActiveProjects() {
   try {
-    const supabase = createSupabaseServerClient(cookies())
+    const supabase = createSupabaseServiceClient()
     const { data, error } = await supabase
       .from("projects")
       .select("*")
@@ -69,7 +69,7 @@ export async function getActiveProjects() {
 
 export async function getProjectBySlug(slug: string) {
   try {
-    const supabase = createSupabaseServerClient(cookies())
+    const supabase = createSupabaseServiceClient()
     const { data, error } = await supabase.from("projects").select("*").eq("slug", slug).maybeSingle()
 
     if (error) {
@@ -86,7 +86,7 @@ export async function getProjectBySlug(slug: string) {
 
 export async function createProject(project: Omit<Project, "id" | "created_at" | "updated_at">) {
   try {
-    const supabase = createSupabaseServerClient(cookies())
+    const supabase = createSupabaseServiceClient()
 
     // Check authentication
     const {
@@ -124,7 +124,7 @@ export async function createProject(project: Omit<Project, "id" | "created_at" |
 
 export async function updateProject(id: string, project: Partial<Project>) {
   try {
-    const supabase = createSupabaseServerClient(cookies())
+    const supabase = createSupabaseServiceClient()
 
     // Check authentication
     const {
@@ -160,7 +160,7 @@ export async function updateProject(id: string, project: Partial<Project>) {
 
 export async function deleteProject(id: string) {
   try {
-    const supabase = createSupabaseServerClient(cookies())
+    const supabase = createSupabaseServiceClient()
 
     // Check authentication
     const {

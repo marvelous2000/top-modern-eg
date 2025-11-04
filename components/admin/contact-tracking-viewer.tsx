@@ -159,13 +159,28 @@ export function ContactTrackingViewer() {
   const getMethodColor = (method: string) => {
     switch (method) {
       case "phone_call":
-        return "bg-blue-500"
+        return "bg-[var(--chart-1)] text-white";
       case "email_click":
-        return "bg-green-500"
+        return "bg-[var(--chart-2)] text-white";
       default:
-        return "bg-gray-500"
+        return "bg-muted text-muted-foreground";
     }
   }
+
+  const getSourceColor = (source: string) => {
+    switch (source.toLowerCase()) {
+      case "contact form":
+        return "bg-primary text-primary-foreground";
+      case "email":
+        return "bg-accent text-accent-foreground";
+      case "phone":
+        return "bg-[var(--chart-1)] text-white";
+      case "whatsapp":
+        return "bg-[var(--chart-2)] text-white";
+      default:
+        return "bg-muted text-muted-foreground";
+    }
+  };
 
   const availableMonths = getAvailableMonths()
 
@@ -274,12 +289,12 @@ export function ContactTrackingViewer() {
                         <TableCell>
                           <div className="flex items-center space-x-2">
                             {getMethodIcon(item.method)}
-                            <Badge className={`${getMethodColor(item.method)} text-white`}>
+                            <Badge className={`${getMethodColor(item.method)}`}>
                               {item.method.replace("_", " ")}
                             </Badge>
                           </div>
                         </TableCell>
-                        <TableCell>{item.details?.source || "Unknown"}</TableCell>
+                        <TableCell><Badge className={`${getSourceColor(item.details?.source || "Unknown")}`}>{item.details?.source || "Unknown"}</Badge></TableCell>
                         <TableCell>{item.details?.number || item.details?.email || "N/A"}</TableCell>
                         <TableCell>{new Date(item.timestamp).toLocaleString()}</TableCell>
                       </TableRow>

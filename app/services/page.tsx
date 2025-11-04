@@ -98,7 +98,7 @@ export default function ServicesPage() {
   })
 
   return (
-    <div className="min-h-screen bg-[#0F0F0F] text-[#FAFAFA] relative overflow-hidden">
+    <div className="min-h-screen bg-background text-foreground relative overflow-hidden">
       <MarbleBackground />
       <ContactTracking />
       <Navigation />
@@ -107,10 +107,10 @@ export default function ServicesPage() {
         {/* Hero Section */}
         <section className="container mx-auto px-6 py-20">
           <div className="max-w-4xl mx-auto text-center">
-            <h1 className="font-playfair text-5xl md:text-7xl font-bold mb-8 text-balance">
-              Premium <span className="text-[#D4AF37]">Stone</span> Collection
+            <h1 className="text-h1 mb-8 text-balance">
+              Premium <span className="text-primary">Stone</span> Collection
             </h1>
-            <p className="text-xl md:text-2xl text-[#FAFAFA]/80 leading-relaxed">
+            <p className="text-body text-muted-foreground leading-relaxed">
               Discover our curated selection of the world's finest marble and granite, sourced from premium quarries for
               luxury projects.
             </p>
@@ -121,14 +121,14 @@ export default function ServicesPage() {
         <section className="container mx-auto px-6 py-12">
           <div className="flex flex-col md:flex-row gap-8 justify-center items-center">
             <div className="flex flex-col items-center">
-              <label className="text-[#D4AF37] font-semibold mb-3">Material Type</label>
+              <label className="text-primary font-semibold mb-3">Material Type</label>
               <div className="flex gap-4">
                 <button
                   onClick={() => setSelectedCategory("all")}
                   className={`px-6 py-3 rounded-lg font-semibold transition-colors duration-300 ${
                     selectedCategory === "all"
-                      ? "bg-[#D4AF37] text-[#0F0F0F]"
-                      : "border border-[#D4AF37] text-[#D4AF37] hover:bg-[#D4AF37] hover:text-[#0F0F0F]"
+                      ? "bg-primary text-primary-foreground"
+                      : "border border-primary text-primary hover:bg-primary hover:text-primary-foreground"
                   }`}
                 >
                   All Materials
@@ -137,8 +137,8 @@ export default function ServicesPage() {
                   onClick={() => setSelectedCategory("marble")}
                   className={`px-6 py-3 rounded-lg font-semibold transition-colors duration-300 ${
                     selectedCategory === "marble"
-                      ? "bg-[#D4AF37] text-[#0F0F0F]"
-                      : "border border-[#D4AF37] text-[#D4AF37] hover:bg-[#D4AF37] hover:text-[#0F0F0F]"
+                      ? "bg-primary text-primary-foreground"
+                      : "border border-primary text-primary hover:bg-primary hover:text-primary-foreground"
                   }`}
                 >
                   Marble
@@ -147,8 +147,8 @@ export default function ServicesPage() {
                   onClick={() => setSelectedCategory("granite")}
                   className={`px-6 py-3 rounded-lg font-semibold transition-colors duration-300 ${
                     selectedCategory === "granite"
-                      ? "bg-[#D4AF37] text-[#0F0F0F]"
-                      : "border border-[#D4AF37] text-[#D4AF37] hover:bg-[#D4AF37] hover:text-[#0F0F0F]"
+                      ? "bg-primary text-primary-foreground"
+                      : "border border-primary text-primary hover:bg-primary hover:text-primary-foreground"
                   }`}
                 >
                   Granite
@@ -157,14 +157,14 @@ export default function ServicesPage() {
             </div>
 
             <div className="flex flex-col items-center">
-              <label className="text-[#D4AF37] font-semibold mb-3">Application</label>
+              <label className="text-primary font-semibold mb-3">Application</label>
               <div className="flex gap-4">
                 <button
                   onClick={() => setSelectedType("all")}
                   className={`px-6 py-3 rounded-lg font-semibold transition-colors duration-300 ${
                     selectedType === "all"
-                      ? "bg-[#D4AF37] text-[#0F0F0F]"
-                      : "border border-[#D4AF37] text-[#D4AF37] hover:bg-[#D4AF37] hover:text-[#0F0F0F]"
+                      ? "bg-primary text-primary-foreground"
+                      : "border border-primary text-primary hover:bg-primary hover:text-primary-foreground"
                   }`}
                 >
                   All Types
@@ -173,8 +173,8 @@ export default function ServicesPage() {
                   onClick={() => setSelectedType("flooring")}
                   className={`px-6 py-3 rounded-lg font-semibold transition-colors duration-300 ${
                     selectedType === "flooring"
-                      ? "bg-[#D4AF37] text-[#0F0F0F]"
-                      : "border border-[#D4AF37] text-[#D4AF37] hover:bg-[#D4AF37] hover:text-[#0F0F0F]"
+                      ? "bg-primary text-primary-foreground"
+                      : "border border-primary text-primary hover:bg-primary hover:text-primary-foreground"
                   }`}
                 >
                   Flooring
@@ -183,8 +183,8 @@ export default function ServicesPage() {
                   onClick={() => setSelectedType("wall")}
                   className={`px-6 py-3 rounded-lg font-semibold transition-colors duration-300 ${
                     selectedType === "wall"
-                      ? "bg-[#D4AF37] text-[#0F0F0F]"
-                      : "border border-[#D4AF37] text-[#D4AF37] hover:bg-[#D4AF37] hover:text-[#0F0F0F]"
+                      ? "bg-primary text-primary-foreground"
+                      : "border border-primary text-primary hover:bg-primary hover:text-primary-foreground"
                   }`}
                 >
                   Wall Cladding
@@ -193,8 +193,8 @@ export default function ServicesPage() {
                   onClick={() => setSelectedType("countertop")}
                   className={`px-6 py-3 rounded-lg font-semibold transition-colors duration-300 ${
                     selectedType === "countertop"
-                      ? "bg-[#D4AF37] text-[#0F0F0F]"
-                      : "border border-[#D4AF37] text-[#D4AF37] hover:bg-[#D4AF37] hover:text-[#0F0F0F]"
+                      ? "bg-primary text-primary-foreground"
+                      : "border border-primary text-primary hover:bg-primary hover:text-primary-foreground"
                   }`}
                 >
                   Countertops
@@ -215,11 +215,11 @@ export default function ServicesPage() {
                     alt={product.name}
                     className="w-full h-80 object-cover group-hover:scale-105 transition-transform duration-500"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0F0F0F]/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                     <div className="absolute bottom-6 left-6 right-6">
                       <a
                         href={`/products/${product.slug}`}
-                        className="bg-[#D4AF37] text-[#0F0F0F] px-6 py-3 rounded-lg font-semibold inline-block hover:bg-[#C41E3A] hover:text-[#FAFAFA] transition-colors duration-300"
+                        className="bg-primary text-primary-foreground px-6 py-3 rounded-lg font-semibold inline-block hover:bg-primary/80 hover:text-primary-foreground transition-colors duration-300"
                       >
                         View Details
                       </a>
@@ -229,23 +229,23 @@ export default function ServicesPage() {
 
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <h3 className="font-playfair text-2xl font-bold">{product.name}</h3>
-                    <span className="text-[#D4AF37] text-sm font-semibold uppercase tracking-wide">
+                    <h3 className="text-h2">{product.name}</h3>
+                    <span className="text-primary text-sm font-semibold uppercase tracking-wide">
                       {product.category}
                     </span>
                   </div>
 
-                  <p className="text-[#FAFAFA]/80 leading-relaxed">{product.description}</p>
+                  <p className="text-muted-foreground leading-relaxed">{product.description}</p>
 
                   <div className="flex flex-wrap gap-2">
                     {product.applications.map((app) => (
-                      <span key={app} className="bg-[#D4AF37]/20 text-[#D4AF37] px-3 py-1 rounded-full text-sm">
+                      <span key={app} className="bg-primary/20 text-primary px-3 py-1 rounded-full text-sm">
                         {app}
                       </span>
                     ))}
                   </div>
 
-                  <div className="flex items-center justify-between text-sm text-[#FAFAFA]/60">
+                  <div className="flex items-center justify-between text-sm text-muted-foreground">
                     <span>Origin: {product.origin}</span>
                     <span>Finish: {product.finish}</span>
                   </div>
@@ -258,23 +258,23 @@ export default function ServicesPage() {
         {/* CTA Section */}
         <section className="container mx-auto px-6 py-20">
           <div className="text-center max-w-4xl mx-auto">
-            <h2 className="font-playfair text-4xl md:text-5xl font-bold mb-8">
-              Need a <span className="text-[#D4AF37]">Custom Solution?</span>
+            <h2 className="text-h1 mb-8">
+              Need a <span className="text-primary">Custom Solution?</span>
             </h2>
-            <p className="text-xl text-[#FAFAFA]/80 mb-12 leading-relaxed">
+            <p className="text-body text-muted-foreground mb-12 leading-relaxed">
               Our experts can help you select the perfect stone for your specific project requirements and provide
               custom fabrication services.
             </p>
             <div className="flex flex-col sm:flex-row gap-6 justify-center">
               <a
                 href="/contact"
-                className="bg-[#D4AF37] text-[#0F0F0F] px-8 py-4 rounded-lg font-semibold text-lg hover:bg-[#C41E3A] hover:text-[#FAFAFA] transition-colors duration-300"
+                className="bg-primary text-primary-foreground px-8 py-4 rounded-lg font-semibold text-lg hover:bg-primary/80 hover:text-primary-foreground transition-colors duration-300"
               >
                 Request Consultation
               </a>
               <a
                 href="mailto:info@topmodern.com"
-                className="border border-[#D4AF37] text-[#D4AF37] px-8 py-4 rounded-lg font-semibold text-lg hover:bg-[#D4AF37] hover:text-[#0F0F0F] transition-colors duration-300"
+                className="border border-primary text-primary px-8 py-4 rounded-lg font-semibold text-lg hover:bg-primary hover:text-primary-foreground transition-colors duration-300"
                 onClick={() =>
                   window.dispatchEvent(
                     new CustomEvent("contactClick", {

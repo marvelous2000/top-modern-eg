@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 import { getProductBySlug } from "@/lib/actions/products"
-import { ProductPageClient } from "./page.client.tsx"
+import { ProductPageClient } from "./page.client"
 
 type ProductPageProps = {
   params: { slug: string }

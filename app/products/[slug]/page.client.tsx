@@ -30,7 +30,7 @@ export function ProductPageClient({ params, product }: ProductPageProps) {
   const specificationEntries = Object.entries(product.specifications ?? {})
 
   return (
-    <div className="min-h-screen bg-[#0F0F0F] text-[#FAFAFA] relative overflow-hidden">
+    <div className="min-h-screen bg-background text-foreground relative overflow-hidden">
       <MarbleBackground />
       <ContactTracking />
       <Navigation />
@@ -40,22 +40,22 @@ export function ProductPageClient({ params, product }: ProductPageProps) {
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div>
               <div className="flex items-center gap-4 mb-6">
-                <span className="text-[#D4AF37] font-semibold uppercase tracking-wide">{formattedCategory}</span>
-                <span className="text-[#FAFAFA]/40">{"\u2022"}</span>
-                <span className="text-[#FAFAFA]/60">{product.origin}</span>
+                <span className="text-primary font-semibold uppercase tracking-wide">{formattedCategory}</span>
+                <span className="text-muted-foreground">{"\u2022"}</span>
+                <span className="text-muted-foreground">{product.origin}</span>
               </div>
 
-              <h1 className="font-playfair text-5xl md:text-6xl font-bold mb-8 text-balance">{product.name}</h1>
+              <h1 className="text-h1 mb-8 text-balance">{product.name}</h1>
 
-              <p className="text-xl text-[#FAFAFA]/80 leading-relaxed mb-8">{product.description}</p>
+              <p className="text-body text-muted-foreground mb-8">{product.description}</p>
 
               {featureList.length > 0 && (
                 <div className="space-y-3 mb-8">
-                  <h2 className="font-playfair text-2xl font-bold text-[#D4AF37]">Applications & Features</h2>
-                  <ul className="space-y-2 text-[#FAFAFA]/75">
+                  <h2 className="text-h2 text-primary">Applications & Features</h2>
+                  <ul className="space-y-2 text-muted-foreground">
                     {featureList.map((feature, index) => (
                       <li key={index} className="flex gap-3">
-                        <span className="mt-2 size-1.5 rounded-full bg-[#D4AF37]/80" aria-hidden="true" />
+                        <span className="mt-2 size-1.5 rounded-full bg-primary/80" aria-hidden="true" />
                         <span>{feature}</span>
                       </li>
                     ))}
@@ -66,13 +66,13 @@ export function ProductPageClient({ params, product }: ProductPageProps) {
               <div className="flex flex-col sm:flex-row gap-4">
                 <a
                   href="/contact"
-                  className="bg-[#D4AF37] text-[#0F0F0F] px-8 py-4 rounded-lg font-semibold text-lg hover:bg-[#C41E3A] hover:text-[#FAFAFA] transition-colors duration-300 text-center"
+                  className="bg-primary text-primary-foreground px-8 py-4 rounded-lg font-semibold text-lg hover:bg-primary/80 hover:text-primary-foreground transition-colors duration-300 text-center"
                 >
                   Request Quote
                 </a>
                 <a
                   href="tel:+201234567890"
-                  className="border border-[#D4AF37] text-[#D4AF37] px-8 py-4 rounded-lg font-semibold text-lg hover:bg-[#D4AF37] hover:text-[#0F0F0F] transition-colors duration-300 text-center"
+                  className="border border-primary text-primary px-8 py-4 rounded-lg font-semibold text-lg hover:bg-primary hover:text-primary-foreground transition-colors duration-300 text-center"
                   onClick={() =>
                     window.dispatchEvent(
                       new CustomEvent("contactClick", {
@@ -87,7 +87,7 @@ export function ProductPageClient({ params, product }: ProductPageProps) {
             </div>
 
             <div className="relative">
-              <div className="rounded-3xl overflow-hidden border border-[#D4AF37]/30">
+              <div className="rounded-3xl overflow-hidden border border-primary/30">
                 <img
                   src={product.images?.[0] || "/placeholder.svg"}
                   alt={product.name}
@@ -96,7 +96,7 @@ export function ProductPageClient({ params, product }: ProductPageProps) {
               </div>
               <div className="absolute inset-x-0 -bottom-12 hidden lg:flex justify-center gap-4">
                 {(product.images ?? []).slice(1, 4).map((image, index) => (
-                  <div key={`${image}-${index}`} className="w-24 h-24 rounded-2xl overflow-hidden border border-[#D4AF37]/30">
+                  <div key={`${image}-${index}`} className="w-24 h-24 rounded-2xl overflow-hidden border border-primary/30">
                     <img src={image || "/placeholder.svg"} alt={`${product.name} detail ${index + 2}`} className="w-full h-full object-cover" />
                   </div>
                 ))}
@@ -108,9 +108,9 @@ export function ProductPageClient({ params, product }: ProductPageProps) {
         <section className="container mx-auto px-6 py-16">
           <div className="grid lg:grid-cols-2 gap-16 items-start">
             <div className="space-y-10">
-              <div className="rounded-2xl border border-[#D4AF37]/20 bg-[#141414]/80 p-10">
-                <h2 className="font-playfair text-3xl font-bold text-[#D4AF37] mb-6">Material Overview</h2>
-                <p className="text-[#FAFAFA]/70 leading-relaxed">
+              <div className="rounded-2xl border border-primary/20 bg-card/80 p-10">
+                <h2 className="text-h2 text-primary mb-6">Material Overview</h2>
+                <p className="text-muted-foreground leading-relaxed">
                   {product.name} is sourced from {product.origin} and finished with a {product.finish.toLowerCase()} surface,
                   offering exceptional durability for premium interior and exterior applications. Available in {product.thickness},
                   it balances structural integrity with refined aesthetics.
@@ -118,13 +118,13 @@ export function ProductPageClient({ params, product }: ProductPageProps) {
               </div>
 
               {featureList.length > 0 && (
-                <div className="rounded-2xl border border-[#D4AF37]/20 bg-[#141414]/80 p-10">
-                  <h2 className="font-playfair text-3xl font-bold text-[#D4AF37] mb-6">Recommended Uses</h2>
+                <div className="rounded-2xl border border-primary/20 bg-card/80 p-10">
+                  <h2 className="text-h2 text-primary mb-6">Recommended Uses</h2>
                   <div className="flex flex-wrap gap-3">
                     {featureList.map((application) => (
                       <span
                         key={application}
-                        className="bg-[#D4AF37]/20 text-[#D4AF37] px-4 py-2 rounded-full font-semibold"
+                        className="bg-primary/20 text-primary px-4 py-2 rounded-full font-semibold"
                       >
                         {application}
                       </span>
@@ -135,35 +135,35 @@ export function ProductPageClient({ params, product }: ProductPageProps) {
             </div>
 
             <div>
-              <h2 className="font-playfair text-4xl font-bold mb-8">
-                Technical <span className="text-[#D4AF37]">Specifications</span>
+              <h2 className="text-h1 mb-8">
+                Technical <span className="text-primary">Specifications</span>
               </h2>
 
               <div className="space-y-6">
-                <div className="grid grid-cols-2 gap-4 p-6 border border-[#D4AF37]/20 rounded-lg">
+                <div className="grid grid-cols-2 gap-4 p-6 border border-primary/20 rounded-lg">
                   <div>
-                    <p className="text-[#D4AF37] font-semibold mb-2">Origin</p>
-                    <p className="text-[#FAFAFA]/90">{product.origin}</p>
+                    <p className="text-primary font-semibold mb-2">Origin</p>
+                    <p className="text-foreground/90">{product.origin}</p>
                   </div>
                   <div>
-                    <p className="text-[#D4AF37] font-semibold mb-2">Finish</p>
-                    <p className="text-[#FAFAFA]/90">{product.finish}</p>
+                    <p className="text-primary font-semibold mb-2">Finish</p>
+                    <p className="text-foreground/90">{product.finish}</p>
                   </div>
                   <div>
-                    <p className="text-[#D4AF37] font-semibold mb-2">Thickness</p>
-                    <p className="text-[#FAFAFA]/90">{product.thickness}</p>
+                    <p className="text-primary font-semibold mb-2">Thickness</p>
+                    <p className="text-foreground/90">{product.thickness}</p>
                   </div>
                   <div>
-                    <p className="text-[#D4AF37] font-semibold mb-2">Category</p>
-                    <p className="text-[#FAFAFA]/90">{formattedCategory}</p>
+                    <p className="text-primary font-semibold mb-2">Category</p>
+                    <p className="text-foreground/90">{formattedCategory}</p>
                   </div>
                 </div>
 
                 <div className="space-y-4">
                   {specificationEntries.map(([key, value]) => (
-                    <div key={key} className="flex justify-between items-center py-3 border-b border-[#D4AF37]/20">
-                      <span className="text-[#FAFAFA]/80">{key}</span>
-                      <span className="text-[#D4AF37] font-semibold text-right max-w-[60%]">{value}</span>
+                    <div key={key} className="flex justify-between items-center py-3 border-b border-primary/20">
+                      <span className="text-muted-foreground">{key}</span>
+                      <span className="text-primary font-semibold text-right max-w-[60%]">{value}</span>
                     </div>
                   ))}
                 </div>
@@ -174,18 +174,18 @@ export function ProductPageClient({ params, product }: ProductPageProps) {
 
         {showcaseItems.length > 0 && (
           <section className="container mx-auto px-6 py-20">
-            <h2 className="font-playfair text-4xl font-bold mb-12 text-center">
-              Featured <span className="text-[#D4AF37]">Installations</span>
+            <h2 className="text-h1 mb-12 text-center">
+              Featured <span className="text-primary">Installations</span>
             </h2>
 
             <div className="grid md:grid-cols-3 gap-8">
               {showcaseItems.map((item, index) => (
-                <div key={`${item}-${index}`} className="text-center p-8 border border-[#D4AF37]/20 rounded-lg">
-                  <div className="w-16 h-16 bg-[#D4AF37] rounded-full flex items-center justify-center mx-auto mb-6">
-                    <span className="text-[#0F0F0F] text-2xl font-bold">{index + 1}</span>
+                <div key={`${item}-${index}`} className="text-center p-8 border border-primary/20 rounded-lg">
+                  <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-6">
+                    <span className="text-primary-foreground text-2xl font-bold">{index + 1}</span>
                   </div>
-                  <h3 className="font-playfair text-xl font-bold mb-4">{item}</h3>
-                  <p className="text-[#FAFAFA]/80">
+                  <h3 className="text-h2 mb-4">{item}</h3>
+                  <p className="text-muted-foreground">
                     Premium installation showcasing the beauty and durability of {product.name}.
                   </p>
                 </div>
@@ -196,22 +196,22 @@ export function ProductPageClient({ params, product }: ProductPageProps) {
 
         <section className="container mx-auto px-6 py-20">
           <div className="text-center max-w-4xl mx-auto">
-            <h2 className="font-playfair text-4xl md:text-5xl font-bold mb-8">
-              Ready to Use <span className="text-[#D4AF37]">{product.name}</span>?
+            <h2 className="text-h1 mb-8">
+              Ready to Use <span className="text-primary">{product.name}</span>?
             </h2>
-            <p className="text-xl text-[#FAFAFA]/80 mb-12 leading-relaxed">
+            <p className="text-body text-muted-foreground mb-12 leading-relaxed">
               Contact our experts to discuss your project requirements and get a detailed quote for {product.name}.
             </p>
             <div className="flex flex-col sm:flex-row gap-6 justify-center">
               <a
                 href="/contact"
-                className="bg-[#D4AF37] text-[#0F0F0F] px-8 py-4 rounded-lg font-semibold text-lg hover:bg-[#C41E3A] hover:text-[#FAFAFA] transition-colors duration-300"
+                className="bg-primary text-primary-foreground px-8 py-4 rounded-lg font-semibold text-lg hover:bg-primary/80 hover:text-primary-foreground transition-colors duration-300"
               >
                 Get Quote
               </a>
               <a
                 href="mailto:info@topmodern.com"
-                className="border border-[#D4AF37] text-[#D4AF37] px-8 py-4 rounded-lg font-semibold text-lg hover:bg-[#D4AF37] hover:text-[#0F0F0F] transition-colors duration-300"
+                className="border border-primary text-primary px-8 py-4 rounded-lg font-semibold text-lg hover:bg-primary hover:text-primary-foreground transition-colors duration-300"
                 onClick={() =>
                   window.dispatchEvent(
                     new CustomEvent("contactClick", {

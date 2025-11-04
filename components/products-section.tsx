@@ -6,45 +6,30 @@ import { Button } from "@/components/ui/button"
 import { ArrowRight } from "lucide-react"
 import { getActiveProducts } from "@/lib/actions/products"
 
-// Fallback products for when DB is not set up yet
-const fallbackProducts = [
-  {
-    name: "Carrara Marble",
-    description: "Premium Italian marble with distinctive white and gray veining, perfect for luxury interiors.",
-    images: ["/carrara-marble-white-gray-veining-luxury.jpg"],
-    category: "Marble",
-  },
-  {
-    name: "Black Galaxy Granite",
-    description: "Stunning black granite with golden speckles, ideal for countertops and flooring.",
-    images: ["/black-galaxy-granite-golden-speckles-luxury.jpg"],
-    category: "Granite",
-  },
-  {
-    name: "Calacatta Gold",
-    description: "Exquisite marble with bold gold veining, the epitome of luxury and elegance.",
-    images: ["/calacatta-gold-marble-bold-veining-luxury.jpg"],
-    category: "Marble",
-  },
-]
+// No fallback products - always fetch from database
 
 const formatCategory = (value: string | undefined) =>
   value ? value.charAt(0).toUpperCase() + value.slice(1) : ""
 
 export function ProductsSection() {
-  const [products, setProducts] = useState<any[]>(fallbackProducts)
+  const [products, setProducts] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     const fetchProducts = async () => {
-      const result = await getActiveProducts()
-      if (result.success && result.data.length > 0) {
-        // Use database products if available
-        setProducts(result.data.slice(0, 3)) // Show first 3 products
-      } else {
-        // Use fallback products if DB not set up or no products
-        console.log("[v0] Using fallback products - DB may not be set up yet")
-        setProducts(fallbackProducts)
+      try {
+        const result = await getActiveProducts()
+        if (result.success) {
+          setProducts(result.data.slice(0, 3)) // Show first 3 products
+        } else {
+          setError(result.error || "Failed to fetch products")
+          setProducts([])
+        }
+      } catch (err) {
+        console.error("[v0] Error fetching products:", err)
+        setError("Failed to fetch products")
+        setProducts([])
       }
       setLoading(false)
     }
@@ -56,7 +41,38 @@ export function ProductsSection() {
       <section id="products" className="py-20 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <p className="text-xl text-gray-300">Loading products...</p>
+            <p className="text-xl text-muted-foreground">Loading products...</p>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  if (error) {
+    return (
+      <section id="products" className="py-20 relative">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <p className="text-xl text-destructive">Failed to load products. Please try again later.</p>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  if (products.length === 0) {
+    return (
+      <section id="products" className="py-20 relative">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-h2 text-foreground mb-6">
+              Premium <span className="text-primary gold-glow">Stone Collection</span>
+            </h2>
+            <p className="text-body text-muted-foreground max-w-3xl mx-auto mb-8">
+              Discover our curated selection of the world's finest marble and granite, sourced from the most prestigious
+              quarries
+            </p>
+            <p className="text-xl text-muted-foreground">No products available at the moment. Check back soon!</p>
           </div>
         </div>
       </section>
@@ -67,10 +83,10 @@ export function ProductsSection() {
     <section id="products" className="py-20 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="font-serif text-4xl md:text-5xl font-bold text-white mb-6">
-            Premium <span className="text-primary">Stone Collection</span>
+          <h2 className="text-h2 text-foreground mb-6">
+            Premium <span className="text-primary gold-glow">Stone Collection</span>
           </h2>
-          <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+          <p className="text-body text-muted-foreground max-w-3xl mx-auto">
             Discover our curated selection of the world's finest marble and granite, sourced from the most prestigious
             quarries
           </p>
@@ -80,7 +96,7 @@ export function ProductsSection() {
           {products.map((product, index) => (
             <Card
               key={product.id || index}
-              className="bg-card/50 backdrop-blur-sm border-primary/20 hover:border-primary/40 transition-all duration-300 group"
+              className="bg-card/80 backdrop-blur-sm border-primary/30 hover:border-primary/50 transition-all duration-300 group shadow-lg"
             >
               <CardContent className="p-0">
                 <div className="relative overflow-hidden">
@@ -96,14 +112,14 @@ export function ProductsSection() {
                   </div>
                 </div>
                 <div className="p-6">
-                  <h3 className="font-serif text-2xl font-bold text-white mb-3">{product.name}</h3>
-                  <p className="text-gray-300 mb-4">{product.description}</p>
+                  <h3 className="text-h3 text-foreground mb-3">{product.name}</h3>
+                  <p className="text-body-sm mb-4">{product.description}</p>
                   <Button
-                    variant="outline"
-                    className="border-primary text-[#FAFAFA] hover:bg-primary hover:text-[#FAFAFA] w-full bg-transparent"
+                    variant="glass"
+                    className="w-full group-hover:shadow-primary/20 transition-all duration-300"
                   >
                     View Details
-                    <ArrowRight className="ml-2 h-4 w-4" />
+                    <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform duration-300" />
                   </Button>
                 </div>
               </CardContent>
@@ -112,7 +128,7 @@ export function ProductsSection() {
         </div>
 
         <div className="text-center">
-          <Button size="lg" className="bg-primary text-[#FAFAFA] hover:bg-primary/90">
+          <Button size="lg" className="btn-primary">
             View Full Collection
             <ArrowRight className="ml-2 h-5 w-5" />
           </Button>
