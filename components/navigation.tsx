@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Menu, X, Phone, Mail } from "lucide-react"
 import { useContactTracking } from "@/components/contact-tracking"
@@ -8,6 +9,7 @@ import { useContactTracking } from "@/components/contact-tracking"
 export function Navigation() {
   const [isOpen, setIsOpen] = useState(false)
   const { trackContact } = useContactTracking()
+  const pathname = usePathname()
 
   const handlePhoneClick = () => {
     trackContact("phone_call", {
@@ -24,6 +26,14 @@ export function Navigation() {
     })
     window.location.href = "mailto:info@topmodern.com"
   }
+
+  const navLinks = [
+    { href: "/", label: "Home" },
+    { href: "/about", label: "About" },
+    { href: "/products", label: "Products" },
+    { href: "/projects", label: "Projects" },
+    { href: "/contact", label: "Contact" },
+  ]
 
   return (
     <>
@@ -68,36 +78,17 @@ export function Navigation() {
             {/* Right Section - Navigation Links (Desktop) / Single CTA (Mobile) */}
             <div className="flex items-center justify-end">
               <div className="hidden md:flex items-center gap-8">
-                <a
-                  href="/"
-                  className="text-foreground hover:text-primary transition-colors font-sans font-medium"
-                >
-                  Home
-                </a>
-                <a
-                  href="/about"
-                  className="text-foreground hover:text-primary transition-colors font-sans font-medium"
-                >
-                  About
-                </a>
-                <a
-                  href="/services"
-                  className="text-foreground hover:text-primary transition-colors font-sans font-medium"
-                >
-                  Products
-                </a>
-                <a
-                  href="/projects"
-                  className="text-foreground hover:text-primary transition-colors font-sans font-medium"
-                >
-                  Projects
-                </a>
-                <a
-                  href="/contact"
-                  className="text-foreground hover:text-primary transition-colors font-sans font-medium"
-                >
-                  Contact
-                </a>
+                {navLinks.map((link) => (
+                  <a
+                    key={link.href}
+                    href={link.href}
+                    className={`text-foreground hover:text-accent transition-colors font-sans font-medium ${
+                      (link.href === "/" ? pathname === "/" : pathname.startsWith(link.href)) ? "text-accent border-b-2 border-accent bg-accent/10" : ""
+                    }`}
+                  >
+                    {link.label}
+                  </a>
+                ))}
               </div>
               {/* Mobile single CTA */}
               <div className="md:hidden">
@@ -117,33 +108,17 @@ export function Navigation() {
         {isOpen && (
           <div className="md:hidden bg-black/50 backdrop-blur-md">
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-              <a href="/" className="block px-3 py-2 text-primary hover:text-primary/80 transition-colors text-base">
-                Home
-              </a>
-              <a
-                href="/about"
-                className="block px-3 py-2 text-primary hover:text-primary/80 transition-colors text-base"
-              >
-                About
-              </a>
-              <a
-                href="/services"
-                className="block px-3 py-2 text-primary hover:text-primary/80 transition-colors text-base"
-              >
-                Products
-              </a>
-              <a
-                href="/projects"
-                className="block px-3 py-2 text-primary hover:text-primary/80 transition-colors text-base"
-              >
-                Projects
-              </a>
-              <a
-                href="/contact"
-                className="block px-3 py-2 text-primary hover:text-primary/80 transition-colors text-base"
-              >
-                Contact
-              </a>
+              {navLinks.map((link) => (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  className={`block px-3 py-2 text-primary hover:text-primary/80 transition-colors text-base ${
+                    pathname === link.href ? "text-primary underline" : ""
+                  }`}
+                >
+                  {link.label}
+                </a>
+              ))}
               <div className="flex flex-col space-y-2 px-3 pt-4">
                 <Button
                   variant="outline"
@@ -154,7 +129,7 @@ export function Navigation() {
                   <Phone className="w-4 h-4 mr-2" />
                   Call Now
                 </Button>
-                <Button variant="cta" size="sm" className="bg-gradient-to-br from-primary/20 to-primary/10 backdrop-blur-md border border-primary/40 text-primary-foreground shadow-xl hover:shadow-primary/50 hover:bg-primary/25 hover:border-primary/60 font-bold" onClick={handleEmailClick}>
+                <Button variant="luxury" size="sm" className="bg-gradient-to-br from-primary/20 to-primary/10 backdrop-blur-md border border-primary/40 text-primary-foreground shadow-xl hover:shadow-primary/50 hover:bg-primary/25 hover:border-primary/60 font-bold" onClick={handleEmailClick}>
                   <Mail className="w-4 h-4 mr-2" />
                   Get Quote
                 </Button>

@@ -69,7 +69,7 @@ const projects = [
 export default function ProjectsPage() {
   return (
     <PageTransition>
-      <div className="flex min-h-screen flex-col">
+      <div className="flex flex-col">
         <Header />
 
         <main className="flex-1">

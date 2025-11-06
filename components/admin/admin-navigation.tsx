@@ -58,10 +58,10 @@ export function AdminNavigation({ onMenuClick }: AdminNavigationProps) {
   }
 
   return (
-    <nav className="bg-card/95 backdrop-blur-sm border-b border-accent/30 p-4 shadow-lg admin-card">
-      <div className="flex justify-between items-center">
+    <nav className="bg-card/95 backdrop-blur-sm border-b border-accent/30 p-4 shadow-lg admin-card h-20">
+      <div className="flex justify-between items-center h-full">
         <div className="flex items-center space-x-4">
-          <img src="/top-modern-logo-gold.png" alt="Top Modern Admin" className="h-8 w-auto" />
+          <img src="/top-modern-logo-gold.png" alt="Top Modern Admin" className="h-16 w-auto" />
           <span className="font-serif text-xl font-bold text-card-foreground">Admin Panel</span>
         </div>
 
@@ -101,9 +101,9 @@ export function AdminNavigation({ onMenuClick }: AdminNavigationProps) {
             variant="outline"
             size="sm"
             onClick={toggleTheme}
-            className="border-accent/30 hover:bg-accent/10 hover:border-accent text-card-foreground admin-focus"
+            className="border-accent/30 hover:bg-accent/10 hover:border-accent text-card-foreground admin-focus transition-theme"
           >
-            {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+            {theme === "dark" ? <Sun className="h-4 w-4 transition-theme" /> : <Moon className="h-4 w-4 transition-theme" />}
           </Button>
 
           <div className="flex items-center space-x-2 px-3 py-2 bg-secondary/50 rounded-md admin-card">

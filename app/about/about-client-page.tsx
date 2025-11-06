@@ -88,14 +88,14 @@ export function AboutClientPage() {
         </section>
 
         {/* Company Story */}
-        <section ref={storyRef} className="container mx-auto px-6 py-20">
+        <section ref={storyRef} className="container mx-auto px-6 py-24">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <motion.div
               initial="hidden"
               animate={storyInView ? "visible" : "hidden"}
               variants={itemVariants}
             >
-              <h2 className="text-h2 mb-8">
+              <h2 className="text-h2 mb-12">
                 Our <span className="text-primary">Story</span>
               </h2>
               <div className="space-y-6 text-body">
@@ -140,7 +140,7 @@ export function AboutClientPage() {
         </section>
 
         {/* Mission & Values */}
-        <section ref={missionRef} className="container mx-auto px-6 py-20">
+        <section ref={missionRef} className="container mx-auto px-6 py-24">
           <motion.div
             className="text-center mb-16"
             initial="hidden"
@@ -207,7 +207,7 @@ export function AboutClientPage() {
         </section>
 
         {/* Statistics */}
-        <section ref={statsRef} className="container mx-auto px-6 py-20">
+        <section ref={statsRef} className="container mx-auto px-6 py-24">
           <motion.div
             className="text-center mb-16"
             initial="hidden"
@@ -245,7 +245,7 @@ export function AboutClientPage() {
         </section>
 
         {/* Team Section */}
-        <section ref={teamRef} className="container mx-auto px-6 py-20">
+        <section ref={teamRef} className="container mx-auto px-6 py-24">
           <motion.div
             className="text-center mb-16"
             initial="hidden"
@@ -321,7 +321,7 @@ export function AboutClientPage() {
         </section>
 
         {/* CTA Section */}
-        <section ref={ctaRef} className="container mx-auto px-6 py-20">
+        <section ref={ctaRef} className="container mx-auto px-6 py-24">
           <motion.div
             className="text-center max-w-4xl mx-auto"
             initial="hidden"

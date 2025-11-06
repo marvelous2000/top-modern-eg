@@ -10,7 +10,7 @@ export function Footer() {
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
           {/* Company Info */}
           <div className="space-y-4">
-            <h3 className="font-serif text-xl font-semibold text-white">Top Modern</h3>
+            <img src="/top-modern-final-logo.png" alt="Top Modern" className="h-16 w-auto" />
             <p className="text-sm leading-relaxed text-white/70">
               Premium natural stone solutions for discerning clients. Crafting timeless elegance with granite, marble,
               and quartz.

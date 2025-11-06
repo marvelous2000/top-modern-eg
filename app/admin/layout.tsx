@@ -14,11 +14,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   return (
     <AuthGuard>
-      <div className="relative min-h-screen bg-gradient-to-br from-background via-background to-primary/20">
-        {/* Marble texture overlay */}
-        <div className="absolute inset-0 marble-texture"></div>
-
-        {/* Removed subtle gold accent gradients and additional luxury overlay for better contrast */}
+      <div className="relative min-h-screen bg-background admin-panel">
+        {/* Marble texture overlay with controlled opacity */}
+        <div className="absolute inset-0 marble-texture opacity-30"></div>
 
         <div className="relative z-10">{children}</div>
       </div>

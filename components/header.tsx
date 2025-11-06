@@ -53,10 +53,8 @@ export function Header() {
         <div className="flex h-20 items-center justify-between">
           {/* Logo */}
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.2 }}>
-            <Link href="/" className="flex items-center space-x-2">
-              <span className="font-serif text-2xl font-semibold tracking-tight text-white drop-shadow-[0_2px_8px_rgba(255,255,255,0.3)]">
-                Top Modern
-              </span>
+            <Link href="/" className="flex items-center">
+              <img src="/top-modern-final-logo.png" alt="Top Modern" className="h-16 w-auto" />
             </Link>
           </motion.div>
 

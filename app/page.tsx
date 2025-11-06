@@ -18,7 +18,7 @@ import { motion } from "framer-motion"
 export default function HomePage() {
   return (
     <PageTransition>
-      <div className="flex min-h-screen flex-col">
+      <div className="flex flex-col">
         <Header />
 
         <main className="flex-1">
@@ -227,7 +227,7 @@ export default function HomePage() {
                   },
                 ].map((item, index) => (
                   <motion.div key={index} variants={itemVariants}>
-                    <Card className="border-border bg-card transition-shadow hover:shadow-lg">
+                    <Card className="border-border bg-card">
                       <CardContent className="pt-6">
                         <div className="flex flex-col items-center text-center">
                           <motion.div
@@ -237,7 +237,7 @@ export default function HomePage() {
                           >
                             <item.icon className="h-6 w-6 text-accent" />
                           </motion.div>
-                          <h3 className="mt-4 font-semibold">{item.title}</h3>
+                          <h3 className="mt-4 font-semibold text-lg">{item.title}</h3>
                           <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{item.description}</p>
                         </div>
                       </CardContent>

@@ -75,22 +75,31 @@ export function StoneCard({ image, title, description, href, badge }: StoneCardP
             variants={overlayVariants}
             className="absolute inset-0 flex items-center justify-center bg-primary/90"
           >
-            <div className="text-center text-primary-foreground">
-              <p className="text-sm font-medium">View Details</p>
-              <ArrowRight className="mx-auto mt-2 h-5 w-5" />
-            </div>
+            {href ? (
+              <Link href={href} className="text-center text-primary-foreground hover:text-primary-foreground/80 transition-colors">
+                <p className="text-sm font-medium">View Details</p>
+                <ArrowRight className="mx-auto mt-2 h-5 w-5" />
+              </Link>
+            ) : (
+              <div className="text-center text-primary-foreground">
+                <p className="text-sm font-medium">View Details</p>
+                <ArrowRight className="mx-auto mt-2 h-5 w-5" />
+              </div>
+            )}
           </motion.div>
         </div>
-        <CardContent className="p-6">
+        <CardContent className="p-6 text-center">
           <h3 className="font-serif text-xl font-semibold text-card-foreground">{title}</h3>
           <p className="mt-2 text-sm leading-relaxed text-card-foreground/70">{description}</p>
           {href && (
-            <Button asChild variant="link" className="mt-4 p-0 text-accent hover:text-accent/80">
-              <Link href={href}>
-                Learn More
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
+            <div className="mt-4 flex justify-center">
+              <Button asChild variant="link" className="p-0 text-accent hover:text-accent/80">
+                <Link href={href}>
+                  Learn More
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+            </div>
           )}
         </CardContent>
       </Card>

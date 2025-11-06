@@ -88,7 +88,7 @@ const products = [
 export default function ProductsPage() {
   return (
     <PageTransition>
-      <div className="flex min-h-screen flex-col">
+      <div className="flex flex-col">
         <Header />
 
         <main className="flex-1">

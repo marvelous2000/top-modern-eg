@@ -30,7 +30,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${lora.variable} ${inter.variable}`}>
-      <body className={`font-sans antialiased`}>
+      <body className={`font-sans antialiased min-h-screen`}>
         {children}
         <Analytics />
       </body>

@@ -104,7 +104,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Main Content */}
-        <div className="flex-1 p-4 lg:p-8">
+        <div className="flex-1 p-4 lg:p-8 max-w-7xl mx-auto">
           {activeTab === "dashboard" && (
             <PageTransition>
               <div className="space-y-6 lg:space-y-8">

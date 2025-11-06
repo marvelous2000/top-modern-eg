@@ -272,7 +272,6 @@ export function ProjectsManager() {
         <Input
           placeholder="Search projects..."
           value={searchTerm}
-          isAdmin={true}
         />
 
         <select
@@ -392,7 +391,6 @@ export function ProjectsManager() {
                       })
                     }
                     placeholder="Enter project title"
-                    isAdmin={true}
                   />
                 </div>
 
@@ -408,7 +406,6 @@ export function ProjectsManager() {
                         })
                       }
                       placeholder="e.g., Luxury Hotel"
-                      isAdmin={true}
                     />
                   </div>
 
@@ -423,7 +420,6 @@ export function ProjectsManager() {
                         })
                       }
                       placeholder="2024"
-                      isAdmin={true}
                     />
                   </div>
                 </div>
@@ -439,7 +435,6 @@ export function ProjectsManager() {
                       })
                     }
                     placeholder="e.g., Cairo, Egypt"
-                    isAdmin={true}
                   />
                 </div>
 
@@ -454,7 +449,6 @@ export function ProjectsManager() {
                       })
                     }
                     placeholder="Client name"
-                    isAdmin={true}
                   />
                 </div>
 
@@ -487,7 +481,6 @@ export function ProjectsManager() {
                           featured: checked,
                         })
                       }
-                      isAdmin={true}
                     />
                     <label htmlFor="featured" className="text-primary font-semibold">
                       Featured Project
@@ -507,7 +500,6 @@ export function ProjectsManager() {
                         description: e.target.value,
                       })
                     }
-                    isAdmin={true}
                     className="min-h-[100px]"
                     placeholder="Project description"
                   />

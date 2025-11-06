@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 
 export default function ContactPage() {
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex flex-col">
       <Header />
       <ContactTracking />
 

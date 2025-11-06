@@ -6,13 +6,14 @@ import { Card, CardContent } from "@/components/ui/card"
 import { AnimatedSection } from "@/components/ui/animated-section"
 import { StaggerContainer, itemVariants } from "@/components/ui/stagger-container"
 import { PageTransition } from "@/components/ui/page-transition"
+import { TimelineItem } from "@/components/ui/timeline-item"
 import { Award, Users, Target, Heart } from "lucide-react"
 import { motion } from "framer-motion"
 
 export default function AboutPage() {
   return (
     <PageTransition>
-      <div className="flex min-h-screen flex-col">
+      <div className="flex flex-col">
         <Header />
 
         <main className="flex-1">
@@ -56,6 +57,54 @@ export default function AboutPage() {
               </div>
             </section>
           </AnimatedSection>
+
+          {/* Our Journey Timeline */}
+          <section className="border-b border-border py-20">
+            <div className="container mx-auto px-4">
+              <AnimatedSection className="mx-auto mb-16 max-w-2xl text-center">
+                <h2 className="font-serif text-3xl font-bold tracking-tight md:text-4xl">Our Journey</h2>
+                <p className="mt-4 text-lg leading-relaxed text-muted-foreground">
+                  Three decades of growth, innovation, and commitment to excellence
+                </p>
+              </AnimatedSection>
+
+              <div className="relative mx-auto max-w-4xl">
+                <div className="space-y-16">
+                  <TimelineItem year="1994" title="The Beginning" isLeft={true}>
+                    <p>
+                      Top Modern was founded as a small family workshop in Dubai, UAE. Our founders, with a vision
+                      for bringing premium natural stone craftsmanship to the Middle East, started with just a handful
+                      of skilled artisans and a commitment to quality that would define our legacy.
+                    </p>
+                  </TimelineItem>
+
+                  <TimelineItem year="2005" title="Regional Expansion" isLeft={false}>
+                    <p>
+                      Recognizing the growing demand for luxury stone solutions, we expanded our operations across
+                      the UAE. Our reputation for excellence in marble and granite fabrication began to spread,
+                      establishing us as the go-to experts for discerning clients in Dubai, Abu Dhabi, and Sharjah.
+                    </p>
+                  </TimelineItem>
+
+                  <TimelineItem year="2015" title="International Recognition" isLeft={true}>
+                    <p>
+                      Our craftsmanship caught the attention of international clients. We began serving luxury
+                      hospitality projects and high-end residential developments across the Middle East, earning
+                      recognition for our meticulous attention to detail and innovative stone solutions.
+                    </p>
+                  </TimelineItem>
+
+                  <TimelineItem year="2024" title="Leading the Industry" isLeft={false}>
+                    <p>
+                      Today, Top Modern stands as one of the most trusted names in premium natural stone. With over
+                      500 completed projects and a team of master craftsmen, we continue to push the boundaries of
+                      what's possible in stone fabrication, serving clients across the UAE and beyond.
+                    </p>
+                  </TimelineItem>
+                </div>
+              </div>
+            </div>
+          </section>
 
           {/* Values Section */}
           <section className="border-b border-border bg-secondary/30 py-16">
@@ -101,8 +150,8 @@ export default function AboutPage() {
                           >
                             <value.icon className="h-6 w-6 text-accent" />
                           </motion.div>
-                          <h3 className="mt-4 font-semibold">{value.title}</h3>
-                          <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{value.description}</p>
+                          <h3 className="mt-4 font-semibold text-lg">{value.title}</h3>
+                          <p className="mt-2 text-sm leading-relaxed text-muted-foreground text-base">{value.description}</p>
                         </div>
                       </CardContent>
                     </Card>
@@ -123,7 +172,7 @@ export default function AboutPage() {
                   </p>
                 </div>
 
-                <div className="mx-auto max-w-3xl space-y-8">
+                <div className="mx-auto max-w-3xl space-y-12">
                   {[
                     {
                       number: "30+",
@@ -156,8 +205,8 @@ export default function AboutPage() {
                         <span className="font-serif text-xl font-bold text-accent">{stat.number}</span>
                       </motion.div>
                       <div>
-                        <h3 className="font-semibold">{stat.title}</h3>
-                        <p className="mt-1 leading-relaxed text-muted-foreground">{stat.description}</p>
+                        <h3 className="font-semibold text-lg">{stat.title}</h3>
+                        <p className="mt-2 leading-relaxed text-muted-foreground text-base">{stat.description}</p>
                       </div>
                     </motion.div>
                   ))}
