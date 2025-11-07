@@ -24,9 +24,9 @@ This document outlines a plan for improving the TopModern website, including new
 ### 3. Logo Size Update (from previous TODO)
 - **Goal:** Increase the visibility of the company logo.
 - **Tasks:**
-  - [ ] Update logo size in `components/header.tsx` (e.g., from `h-8` to `h-16`).
-  - [ ] Update logo size in `components/footer.tsx` (e.g., from `h-8` to `h-16`).
-  - [ ] Update logo size in `components/admin/admin-navigation.tsx` (e.g., from `h-8` to `h-16`).
+  - [x] Update logo size in `components/header.tsx` (e.g., from `h-8` to `h-16`).
+  - [x] Update logo size in `components/footer.tsx` (e.g., from `h-8` to `h-16`).
+  - [x] Update logo size in `components/admin/admin-navigation.tsx` (e.g., from `h-8` to `h-16`).
 
 ---
 
