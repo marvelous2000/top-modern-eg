@@ -2,6 +2,7 @@ import type React from "react"
 import type { Metadata } from "next"
 import { Lora, Inter } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
+import { ThemeProvider } from "@/components/theme-provider"
 import "./globals.css"
 
 const lora = Lora({
@@ -31,7 +32,9 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${lora.variable} ${inter.variable}`}>
       <body className={`font-sans antialiased min-h-screen`}>
-        {children}
+        <ThemeProvider>
+          {children}
+        </ThemeProvider>
         <Analytics />
       </body>
     </html>

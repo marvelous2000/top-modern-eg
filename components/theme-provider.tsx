@@ -13,7 +13,7 @@ export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
       defaultTheme="system"
       enableSystem
       disableTransitionOnChange={false}
-      storageKey="admin-theme"
+      storageKey="topmodern-theme"
       {...props}
     >
       {children}

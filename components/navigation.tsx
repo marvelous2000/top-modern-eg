@@ -2,14 +2,20 @@
 
 import { useState } from "react"
 import { usePathname } from "next/navigation"
+import { useTheme } from "next-themes"
 import { Button } from "@/components/ui/button"
-import { Menu, X, Phone, Mail } from "lucide-react"
+import { Menu, X, Phone, Mail, Moon, Sun } from "lucide-react"
 import { useContactTracking } from "@/components/contact-tracking"
 
 export function Navigation() {
   const [isOpen, setIsOpen] = useState(false)
   const { trackContact } = useContactTracking()
   const pathname = usePathname()
+  const { theme, setTheme } = useTheme()
+
+  const toggleTheme = () => {
+    setTheme(theme === "dark" ? "light" : "dark")
+  }
 
   const handlePhoneClick = () => {
     trackContact("phone_call", {
@@ -89,6 +95,15 @@ export function Navigation() {
                     {link.label}
                   </a>
                 ))}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={toggleTheme}
+                  className="text-foreground hover:text-accent hover:bg-accent/10 transition-colors"
+                  title="Toggle theme"
+                >
+                  {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+                </Button>
               </div>
               {/* Mobile single CTA */}
               <div className="md:hidden">
@@ -132,6 +147,16 @@ export function Navigation() {
                 <Button variant="luxury" size="sm" className="bg-gradient-to-br from-primary/20 to-primary/10 backdrop-blur-md border border-primary/40 text-primary-foreground shadow-xl hover:shadow-primary/50 hover:bg-primary/25 hover:border-primary/60 font-bold" onClick={handleEmailClick}>
                   <Mail className="w-4 h-4 mr-2" />
                   Get Quote
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={toggleTheme}
+                  className="text-primary hover:text-accent hover:bg-accent/10 transition-colors"
+                  title="Toggle theme"
+                >
+                  {theme === "dark" ? <Sun className="h-4 w-4 mr-2" /> : <Moon className="h-4 w-4 mr-2" />}
+                  Toggle Theme
                 </Button>
               </div>
             </div>
