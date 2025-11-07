@@ -2,7 +2,6 @@
 
 import type React from "react"
 import { Playfair_Display, Inter } from "next/font/google"
-import { Analytics } from "@vercel/analytics/next"
 import { Suspense } from "react"
 import { SupabaseProvider } from "@/components/providers/SupabaseProvider"
 
@@ -29,7 +28,6 @@ export function ClientLayout({
         <SupabaseProvider>
           <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
         </SupabaseProvider>
-        <Analytics />
       </body>
     </html>
   )
