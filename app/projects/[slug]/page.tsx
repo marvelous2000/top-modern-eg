@@ -1,4 +1,4 @@
-import type { Metadata } from "next"
+  import type { Metadata } from "next"
 import { getProjectBySlug } from "@/lib/actions/projects"
 import { ProjectPageClient } from "./page.client"
 
