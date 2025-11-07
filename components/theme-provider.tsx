@@ -12,7 +12,7 @@ export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
       attribute="class"
       defaultTheme="light"
       enableSystem={false}
-      disableTransitionOnChange={false}
+      disableTransitionOnChange={true}
       storageKey="topmodern-theme"
       {...props}
     >
