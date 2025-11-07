@@ -9,12 +9,12 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: 'bg-accent text-accent-foreground hover:bg-accent/90 hover:scale-105 active:scale-95 shadow-sm hover:shadow-md',
-        primary: 'bg-accent text-accent-foreground border-0 hover:bg-accent/90 hover:scale-105 active:scale-95 shadow-sm hover:shadow-md',
-        secondary: 'bg-secondary text-secondary-foreground border-0 hover:bg-secondary/80 hover:scale-105 active:scale-95 shadow-sm hover:shadow-md',
-        outline: 'border border-border bg-transparent text-foreground hover:bg-accent hover:text-accent-foreground hover:border-accent hover:scale-105 active:scale-95 shadow-sm hover:shadow-md',
-        ghost: 'bg-transparent text-muted-foreground border-0 hover:bg-accent/10 hover:text-accent hover:scale-105 active:scale-95',
-        destructive: 'bg-destructive text-destructive-foreground border-0 hover:bg-destructive/90 hover:scale-105 active:scale-95 shadow-sm hover:shadow-md',
+        default: 'bg-accent text-accent-foreground hover:bg-accent/90 active:scale-95 shadow-sm hover:shadow-md',
+        primary: 'bg-accent text-accent-foreground border-0 hover:bg-accent/90 active:scale-95 shadow-sm hover:shadow-md',
+        secondary: 'bg-secondary text-secondary-foreground border-0 hover:bg-secondary/80 active:scale-95 shadow-sm hover:shadow-md',
+        outline: 'border border-border bg-transparent text-foreground hover:bg-accent hover:text-accent-foreground hover:border-accent active:scale-95 shadow-sm hover:shadow-md',
+        ghost: 'bg-transparent text-muted-foreground border-0 hover:bg-accent/10 hover:text-accent active:scale-95',
+        destructive: 'bg-destructive text-destructive-foreground border-0 hover:bg-destructive/90 active:scale-95 shadow-sm hover:shadow-md',
         link: 'text-accent underline-offset-4 hover:underline hover:text-accent/80',
         glass: 'bg-card/80 backdrop-blur-sm border border-accent/20 hover:border-accent/40 text-foreground hover:shadow-accent/10 transition-all duration-300 shadow-sm',
         luxury: 'bg-gradient-to-r from-accent to-accent/90 text-accent-foreground hover:from-accent/90 hover:to-accent shadow-lg hover:shadow-xl border border-accent/20',

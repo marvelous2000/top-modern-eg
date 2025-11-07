@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
+import { Navigation } from "@/components/navigation"
 import { StoneCard } from "@/components/ui/stone-card"
 import { PageTransition } from "@/components/ui/page-transition"
 import { AnimatedSection } from "@/components/ui/animated-section"
@@ -89,13 +90,13 @@ export default function ProductsPage() {
   return (
     <PageTransition>
       <div className="flex flex-col">
-        <Header />
+        <Navigation />
 
-        <main className="flex-1">
+        <main className="flex-1 pt-16">
           {/* Hero Section */}
           <AnimatedSection>
-            <section className="border-b border-border bg-secondary/30 py-16">
-              <div className="container mx-auto px-4">
+            <section className="border-b border-border bg-secondary/30 py-20 md:py-24">
+              <div className="container mx-auto px-6">
                 <div className="mx-auto max-w-2xl text-center">
                   <h1 className="font-serif text-4xl font-bold tracking-tight md:text-5xl">Our Products</h1>
                   <p className="mt-4 text-lg leading-relaxed text-muted-foreground">
@@ -107,8 +108,8 @@ export default function ProductsPage() {
           </AnimatedSection>
 
           {/* Products Grid */}
-          <section className="py-16">
-            <div className="container mx-auto px-4">
+          <section className="py-20 md:py-24">
+            <div className="container mx-auto px-6">
               {/* Marble Section */}
               <div id="marble" className="mb-20">
                 <AnimatedSection className="mb-8">
@@ -125,6 +126,7 @@ export default function ProductsPage() {
                           title={product.name}
                           description={product.description}
                           badge={product.price}
+                          href={`/products/${product.id}`}
                         />
                       </motion.div>
                     ))}
@@ -147,6 +149,7 @@ export default function ProductsPage() {
                           title={product.name}
                           description={product.description}
                           badge={product.price}
+                          href={`/products/${product.id}`}
                         />
                       </motion.div>
                     ))}
@@ -169,6 +172,7 @@ export default function ProductsPage() {
                           title={product.name}
                           description={product.description}
                           badge={product.price}
+                          href={`/products/${product.id}`}
                         />
                       </motion.div>
                     ))}

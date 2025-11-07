@@ -30,7 +30,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={`${lora.variable} ${inter.variable}`}>
+    <html lang="en">
       <body className={`font-sans antialiased min-h-screen`}>
         <ThemeProvider>
           {children}

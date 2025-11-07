@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
+import { Navigation } from "@/components/navigation"
 import { ContactTracking } from "@/components/contact-tracking"
 import { ContactSection } from "@/components/contact-section"
 
@@ -13,7 +14,7 @@ export const metadata: Metadata = {
 export default function ContactPage() {
   return (
     <div className="flex flex-col">
-      <Header />
+      <Navigation />
       <ContactTracking />
 
       <main className="flex-1">

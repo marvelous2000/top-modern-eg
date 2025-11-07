@@ -2,351 +2,191 @@
 
 import { useEffect, useMemo, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { useSupabaseClient } from "@/components/providers/SupabaseProvider"
-import { Loader2, Search, Eye } from "lucide-react"
+import { Loader2, Search, Inbox, Send, CheckCircle, Archive, Mail, Phone } from "lucide-react"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { cn } from "@/lib/utils"
 
-type RawSubmission = {
-  id: number
-  form_type: string | null
-  form_data: Record<string, any> | null
-  status: string | null
-  created_at: string | null
-  processed_at?: string | null
-}
+// Types and utility functions (mapSubmissionToLead, etc.) remain the same
+type RawSubmission = { id: number; form_type: string | null; form_data: Record<string, any> | null; status: string | null; created_at: string | null; processed_at?: string | null }
+type Lead = { id: number; name: string; email: string; phone: string; formType: string; status: string; createdAt: string; rawData: Record<string, any> }
+function resolveField<T extends string | undefined>(value: any, fallback: T): T | string { if (typeof value === "string" && value.trim().length > 0) { return value.trim() } if (typeof value === "number") { return value.toString() } return fallback }
+function mapSubmissionToLead(submission: RawSubmission): Lead { const data = submission.form_data ?? {}; const name = resolveField(data.name, undefined) ?? resolveField(data.full_name, undefined) ?? resolveField(data.firstName && data.lastName ? `${data.firstName} ${data.lastName}` : undefined, "Unknown"); const email = resolveField(data.email, undefined) ?? resolveField(data.emailAddress, undefined) ?? resolveField(data.contact_email, "Not provided"); const phone = resolveField(data.phone, undefined) ?? resolveField(data.phoneNumber, undefined) ?? resolveField(data.contact_phone, "Not provided"); return { id: submission.id, name, email, phone, formType: submission.form_type ?? "unknown", status: submission.status ?? "new", createdAt: submission.created_at ?? new Date().toISOString(), rawData: data, } }
+function mapLocalSubmissionToLead(entry: any, index: number): Lead { const timestamp = typeof entry?.timestamp === "string" ? entry.timestamp : new Date().toISOString(); const formData = entry?.formData ?? {}; const name = resolveField(formData.name, undefined) ?? resolveField(formData.firstName || formData.lastName ? `${formData.firstName ?? ""} ${formData.lastName ?? ""}`.trim() : undefined, "Unknown"); const email = resolveField(formData.email, undefined) ?? resolveField(formData.emailAddress, undefined) ?? "Not provided"; const phone = resolveField(formData.phone, undefined) ?? resolveField(formData.phoneNumber, undefined) ?? "Not provided"; return { id: Date.parse(timestamp) || index + 1, name, email, phone, formType: entry?.formType ?? "unknown", status: "new", createdAt: timestamp, rawData: formData, } }
 
-type Lead = {
-  id: number
-  name: string
-  email: string
-  phone: string
-  formType: string
-  status: string
-  createdAt: string
-  rawData: Record<string, any>
-}
-
-const fallbackLeads: Lead[] = []
-
-function resolveField<T extends string | undefined>(value: any, fallback: T): T | string {
-  if (typeof value === "string" && value.trim().length > 0) {
-    return value.trim()
-  }
-  if (typeof value === "number") {
-    return value.toString()
-  }
-  return fallback
-}
-
-function mapSubmissionToLead(submission: RawSubmission): Lead {
-  const data = submission.form_data ?? {}
-  const name =
-    resolveField(data.name, undefined) ??
-    resolveField(data.full_name, undefined) ??
-    resolveField(data.firstName && data.lastName ? `${data.firstName} ${data.lastName}` : undefined, "Unknown")
-
-  const email =
-    resolveField(data.email, undefined) ??
-    resolveField(data.emailAddress, undefined) ??
-    resolveField(data.contact_email, "Not provided")
-
-  const phone =
-    resolveField(data.phone, undefined) ??
-    resolveField(data.phoneNumber, undefined) ??
-    resolveField(data.contact_phone, "Not provided")
-
-  return {
-    id: submission.id,
-    name,
-    email,
-    phone,
-    formType: submission.form_type ?? "unknown",
-    status: submission.status ?? "new",
-    createdAt: submission.created_at ?? new Date().toISOString(),
-    rawData: data,
-  }
-}
-
-function mapLocalSubmissionToLead(entry: any, index: number): Lead {
-  const timestamp = typeof entry?.timestamp === "string" ? entry.timestamp : new Date().toISOString()
-  const formData = entry?.formData ?? {}
-
-  const name =
-    resolveField(formData.name, undefined) ??
-    resolveField(
-      formData.firstName || formData.lastName
-        ? `${formData.firstName ?? ""} ${formData.lastName ?? ""}`.trim()
-        : undefined,
-      "Unknown",
-    )
-
-  const email =
-    resolveField(formData.email, undefined) ?? resolveField(formData.emailAddress, undefined) ?? "Not provided"
-
-  const phone =
-    resolveField(formData.phone, undefined) ?? resolveField(formData.phoneNumber, undefined) ?? "Not provided"
-
-  return {
-    id: Date.parse(timestamp) || index + 1,
-    name,
-    email,
-    phone,
-    formType: entry?.formType ?? "unknown",
-    status: "new",
-    createdAt: timestamp,
-    rawData: formData,
-  }
-}
+const InfoField = ({ label, icon: Icon, children }: { label: string; icon: React.ElementType; children: React.ReactNode }) => (
+  <div className="space-y-1">
+    <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+      <Icon className="h-4 w-4" />
+      <span>{label}</span>
+    </div>
+    <div className="text-sm text-foreground font-semibold pl-6">{children}</div>
+  </div>
+)
 
 export function LeadsManager() {
   const supabase = useSupabaseClient({ optional: true })
   const [loading, setLoading] = useState(true)
-  const [remoteLeads, setRemoteLeads] = useState<Lead[]>([])
-  const [localLeads, setLocalLeads] = useState<Lead[]>(fallbackLeads)
+  const [leads, setLeads] = useState<Lead[]>([])
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null)
+  const [selectedStatus, setSelectedStatus] = useState("new")
 
   useEffect(() => {
-    if (typeof window === "undefined") {
-      return
-    }
-
-    try {
-      const stored = JSON.parse(window.localStorage.getItem("formSubmissions") ?? "[]")
-      if (Array.isArray(stored) && stored.length) {
-        const mapped = stored.map(mapLocalSubmissionToLead).sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1))
-        setLocalLeads(mapped)
-      } else {
-        setLocalLeads([])
+    const loadData = () => {
+      const localData = JSON.parse(localStorage.getItem("formSubmissions") || "[]")
+      if (Array.isArray(localData) && localData.length > 0) {
+        setLeads(localData.map(mapLocalSubmissionToLead).sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1)))
       }
-    } catch (error) {
-      console.warn("Unable to parse local form submissions", error)
-      setLocalLeads([])
     }
-  }, [])
-
-  useEffect(() => {
     if (!supabase) {
+      loadData()
       setLoading(false)
-      return
-    }
-
-    let isMounted = true
-
-    ;(async () => {
-      setLoading(true)
-      try {
-        const { data, error } = await supabase
-          .from("form_submissions")
-          .select("id, form_type, form_data, status, created_at")
-          .order("created_at", { ascending: false })
-          .limit(200)
-
-        if (error) {
-          throw error
-        }
-
-        if (!isMounted) return
-
-        const mapped = (data ?? []).map(mapSubmissionToLead)
-        setRemoteLeads(mapped)
-      } catch (err) {
-        console.error("Failed to load leads:", err)
-        setRemoteLeads([])
-      } finally {
-        if (isMounted) {
-          setLoading(false)
-        }
-      }
-    })()
-
-    return () => {
-      isMounted = false
     }
   }, [supabase])
 
-  const combinedLeads = useMemo(() => {
-    if (remoteLeads.length) {
-      return remoteLeads
+  useEffect(() => {
+    if (!supabase) return
+    let isMounted = true
+    const fetchLeads = async () => {
+      setLoading(true)
+      const { data, error } = await supabase.from("form_submissions").select("*").order("created_at", { ascending: false }).limit(200)
+      if (!isMounted) return
+      if (error) {
+        console.error("Failed to load leads:", error)
+        setLeads([])
+      } else {
+        setLeads((data ?? []).map(mapSubmissionToLead))
+      }
+      setLoading(false)
     }
-    if (localLeads.length) {
-      return localLeads
-    }
-    return fallbackLeads
-  }, [remoteLeads, localLeads])
+    fetchLeads()
+    return () => { isMounted = false }
+  }, [supabase])
 
   const filteredLeads = useMemo(() => {
     const term = searchTerm.trim().toLowerCase()
-    if (!term) return combinedLeads
-    return combinedLeads.filter((lead) => {
-      const bucket = [
-        lead.name,
-        lead.email,
-        lead.phone,
-        lead.formType,
-        Object.values(lead.rawData).join(" "),
-      ]
-        .filter(Boolean)
-        .join(" ")
-        .toLowerCase()
-      return bucket.includes(term)
-    })
-  }, [combinedLeads, searchTerm])
+    if (!term) return leads
+    return leads.filter((lead) => JSON.stringify(lead).toLowerCase().includes(term))
+  }, [leads, searchTerm])
 
-  const statusColor = (status: string) => {
-    switch (status.toLowerCase()) {
-      case "processed":
-      case "contacted":
-        return "bg-accent/20 text-accent"
-      case "archived":
-        return "bg-muted text-muted-foreground"
-      case "new":
-      default:
-        return "bg-primary/20 text-primary"
-    }
+  const leadsByStatus = useMemo(() => {
+    const grouped: { [key: string]: Lead[] } = { new: [], contacted: [], qualified: [], archived: [] }
+    filteredLeads.forEach((lead) => {
+      const status = lead.status.toLowerCase()
+      if (grouped[status]) grouped[status].push(lead)
+      else grouped.new.push(lead)
+    })
+    return grouped
+  }, [filteredLeads])
+
+  const handleStatusChange = (leadId: number, newStatus: string) => {
+    setLeads(leads.map((lead) => (lead.id === leadId ? { ...lead, status: newStatus } : lead)))
+    if (selectedLead && selectedLead.id === leadId) setSelectedLead({ ...selectedLead, status: newStatus })
+    if (supabase) { /* TODO: Persist status change to Supabase */ }
   }
 
-  const formatDate = (value: string) => {
-    const date = new Date(value)
-    if (Number.isNaN(date.getTime())) {
-      return "Unknown"
-    }
-    return date.toLocaleString()
+  const statusConfig: { [key: string]: { icon: React.ElementType; varName: string } } = {
+    new: { icon: Inbox, varName: "--chart-1" },
+    contacted: { icon: Send, varName: "--chart-3" },
+    qualified: { icon: CheckCircle, varName: "--chart-2" },
+    archived: { icon: Archive, varName: "--chart-5" },
   }
 
   return (
     <div className="space-y-6">
-      <Card>
-        <CardHeader className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <div>
-            <CardTitle className="text-xl font-semibold text-foreground">Lead Inbox</CardTitle>
-            <p className="text-sm text-muted-foreground">
-              All website form submissions are captured here for quick follow-up.
-            </p>
-          </div>
-          <div className="relative w-full md:w-80">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              value={searchTerm}
-              onChange={(event) => setSearchTerm(event.target.value)}
-              placeholder="Search leads by name, email, phone, or keyword"
-              className="pl-9"
-            />
-          </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {Object.keys(leadsByStatus).map((status) => {
+          const config = statusConfig[status]
+          const count = leadsByStatus[status].length
+          return (
+            <button key={status} onClick={() => setSelectedStatus(status)} className={cn("p-4 rounded-lg border-b-4 bg-card text-left transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2", selectedStatus === status ? "border-[hsl(var(--primary))] shadow-lg" : "border-transparent hover:bg-muted/50")}>
+              <div className="flex justify-between items-center">
+                <h3 className="text-md font-semibold capitalize text-muted-foreground">{status}</h3>
+                <config.icon className={cn("h-6 w-6", `text-[hsl(var(${config.varName}))]`)} />
+              </div>
+              <p className="text-3xl font-bold mt-2 text-foreground">{count}</p>
+            </button>
+          )
+        })}
+      </div>
+
+      <Card className="shadow-sm">
+        <CardHeader>
+          <CardTitle className="capitalize text-xl font-semibold flex items-center gap-3">
+            <div className={cn("w-3 h-3 rounded-full", `bg-[hsl(var(${statusConfig[selectedStatus].varName}))]`)} />
+            {selectedStatus} Leads
+          </CardTitle>
         </CardHeader>
-        <CardContent className="p-0">
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Email</TableHead>
-                  <TableHead>Phone</TableHead>
-                  <TableHead>Form</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Received</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {loading ? (
-                  <TableRow>
-                    <TableCell colSpan={7} className="h-32 text-center text-muted-foreground">
-                      <div className="inline-flex items-center gap-2">
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                        Loading leads...
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ) : filteredLeads.length ? (
-                  filteredLeads.map((lead) => (
-                    <TableRow key={lead.id}>
-                      <TableCell className="font-medium">{lead.name}</TableCell>
-                      <TableCell className="text-muted-foreground">{lead.email}</TableCell>
-                      <TableCell className="text-muted-foreground">{lead.phone}</TableCell>
-                      <TableCell>
-                        <Badge variant="outline" className="uppercase">
-                          {lead.formType.replace(/_/g, " ")}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <Badge className={statusColor(lead.status)}>{lead.status}</Badge>
-                      </TableCell>
-                      <TableCell className="text-muted-foreground">{formatDate(lead.createdAt)}</TableCell>
-                      <TableCell className="text-right">
-                        <Button size="sm" variant="secondary" onClick={() => setSelectedLead(lead)}>
-                          <Eye className="h-4 w-4 mr-2" />
-                          View Lead
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell colSpan={7} className="h-24 text-center text-muted-foreground">
-                      No leads found.
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+            {loading ? (
+              <p className="text-muted-foreground col-span-full text-center p-8">
+                <Loader2 className="h-5 w-5 animate-spin inline-block mr-2" />
+                Loading leads...
+              </p>
+            ) : leadsByStatus[selectedStatus].length > 0 ? (
+              leadsByStatus[selectedStatus].map((lead) => (
+                <Card key={lead.id} onClick={() => setSelectedLead(lead)} className="cursor-pointer overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                  <CardHeader className="p-4">
+                    <CardTitle className="text-lg truncate">{lead.name}</CardTitle>
+                  </CardHeader>
+                  <CardContent className="p-4 pt-0">
+                    <p className="text-sm text-muted-foreground truncate">{lead.email}</p>
+                    <div className="flex justify-between items-center mt-2">
+                      <Badge variant="outline" className="uppercase text-xs">{lead.formType.replace(/_/g, " ")}</Badge>
+                      <p className="text-xs text-muted-foreground">{new Date(lead.createdAt).toLocaleDateString()}</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))
+            ) : (
+              <p className="text-muted-foreground col-span-full text-center p-8">
+                No leads in this category.
+              </p>
+            )}
           </div>
         </CardContent>
       </Card>
 
       <Dialog open={Boolean(selectedLead)} onOpenChange={() => setSelectedLead(null)}>
-        <DialogContent className="sm:max-w-lg">
-          <DialogHeader>
-            <DialogTitle>Lead Details</DialogTitle>
-            <DialogDescription>
-              Submitted on {selectedLead ? formatDate(selectedLead.createdAt) : ""}
+        <DialogContent className="max-w-lg p-0 overflow-hidden">
+          <DialogHeader className="p-6 border-b text-center">
+            <DialogTitle className="text-2xl font-serif">
+              <span className="bg-accent text-accent-foreground px-2 py-1 rounded-md">{selectedLead?.name}</span>
+            </DialogTitle>
+            <DialogDescription className="text-muted-foreground mt-2">
+              From '{selectedLead?.formType.replace(/_/g, " ")}' &middot; Received on{" "}
+              {selectedLead ? new Date(selectedLead.createdAt).toLocaleString() : ""}
             </DialogDescription>
           </DialogHeader>
-
           {selectedLead && (
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                <div>
-                  <p className="text-muted-foreground">Name</p>
-                  <p className="font-medium text-foreground">{selectedLead.name}</p>
-                </div>
-                <div>
-                  <p className="text-muted-foreground">Email</p>
-                  <p className="font-medium text-foreground break-all">{selectedLead.email}</p>
-                </div>
-                <div>
-                  <p className="text-muted-foreground">Phone</p>
-                  <p className="font-medium text-foreground">{selectedLead.phone}</p>
-                </div>
-                <div>
-                  <p className="text-muted-foreground">Form Source</p>
-                  <Badge variant="outline" className="uppercase">
-                    {selectedLead.formType.replace(/_/g, " ")}
-                  </Badge>
+            <div className="p-6 space-y-6 max-h-[70vh] overflow-y-auto">
+              <div className="space-y-4">
+                <InfoField label="Email" icon={Mail}><a href={`mailto:${selectedLead.email}`} className="hover:underline break-words">{selectedLead.email}</a></InfoField>
+                <InfoField label="Phone" icon={Phone}><a href={`tel:${selectedLead.phone}`} className="hover:underline break-words">{selectedLead.phone}</a></InfoField>
+              </div>
+              <div className="space-y-3">
+                <h3 className="text-sm font-semibold text-muted-foreground">Full Form Details</h3>
+                <div className="p-4 border rounded-lg space-y-3 max-h-48 overflow-y-auto">
+                  {Object.keys(selectedLead.rawData).length > 0 ? Object.entries(selectedLead.rawData).map(([key, value]) => (
+                    <div key={key} className="grid grid-cols-3 gap-2 text-sm"><span className="col-span-1 font-medium text-muted-foreground capitalize">{key.replace(/_/g, " ")}</span><span className="col-span-2 text-foreground break-words">{String(value) || <span className="text-muted-foreground/60">empty</span>}</span></div>
+                  )) : <p className="text-sm text-muted-foreground text-center">No additional data submitted.</p>}
                 </div>
               </div>
-
-              <div className="space-y-2">
-                <p className="text-sm font-semibold text-foreground">Submitted Data</p>
-                <div className="rounded-md border border-border bg-muted/40">
-                  <dl className="grid grid-cols-1 gap-x-4 gap-y-3 p-4 text-sm">
-                    {Object.entries(selectedLead.rawData).map(([key, value]) => (
-                      <div key={key} className="grid grid-cols-[120px_1fr] items-start gap-3">
-                        <dt className="font-medium text-muted-foreground uppercase tracking-wide text-xs">{key}</dt>
-                        <dd className="text-foreground whitespace-pre-wrap break-words">
-                          {Array.isArray(value) ? value.join(", ") : typeof value === "object" ? JSON.stringify(value, null, 2) : String(value ?? "")}
-                        </dd>
-                      </div>
-                    ))}
-                    {!Object.keys(selectedLead.rawData).length && (
-                      <p className="text-muted-foreground">No additional fields submitted.</p>
-                    )}
-                  </dl>
-                </div>
+              <div>
+                <h3 className="text-sm font-semibold text-muted-foreground mb-2">Update Status</h3>
+                <Select value={selectedLead.status} onValueChange={(newStatus) => handleStatusChange(selectedLead.id, newStatus)}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    {Object.keys(statusConfig).map(status => <SelectItem key={status} value={status}><span className="capitalize">{status}</span></SelectItem>)}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
           )}

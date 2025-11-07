@@ -122,10 +122,10 @@ export default function ServicesPage() {
           <div className="flex flex-col md:flex-row gap-8 justify-center items-center">
             <div className="flex flex-col items-center">
               <label className="text-primary font-semibold mb-3">Material Type</label>
-              <div className="flex gap-4">
+              <div className="flex flex-wrap justify-center gap-2">
                 <button
                   onClick={() => setSelectedCategory("all")}
-                  className={`px-6 py-3 rounded-lg font-semibold transition-colors duration-300 ${
+                  className={`px-4 py-2 text-sm rounded-lg font-semibold transition-colors duration-300 ${
                     selectedCategory === "all"
                       ? "bg-primary text-primary-foreground"
                       : "border border-primary text-primary hover:bg-primary hover:text-primary-foreground"
@@ -135,7 +135,7 @@ export default function ServicesPage() {
                 </button>
                 <button
                   onClick={() => setSelectedCategory("marble")}
-                  className={`px-6 py-3 rounded-lg font-semibold transition-colors duration-300 ${
+                  className={`px-4 py-2 text-sm rounded-lg font-semibold transition-colors duration-300 ${
                     selectedCategory === "marble"
                       ? "bg-primary text-primary-foreground"
                       : "border border-primary text-primary hover:bg-primary hover:text-primary-foreground"
@@ -145,7 +145,7 @@ export default function ServicesPage() {
                 </button>
                 <button
                   onClick={() => setSelectedCategory("granite")}
-                  className={`px-6 py-3 rounded-lg font-semibold transition-colors duration-300 ${
+                  className={`px-4 py-2 text-sm rounded-lg font-semibold transition-colors duration-300 ${
                     selectedCategory === "granite"
                       ? "bg-primary text-primary-foreground"
                       : "border border-primary text-primary hover:bg-primary hover:text-primary-foreground"
@@ -158,10 +158,10 @@ export default function ServicesPage() {
 
             <div className="flex flex-col items-center">
               <label className="text-primary font-semibold mb-3">Application</label>
-              <div className="flex gap-4">
+              <div className="flex flex-wrap justify-center gap-2">
                 <button
                   onClick={() => setSelectedType("all")}
-                  className={`px-6 py-3 rounded-lg font-semibold transition-colors duration-300 ${
+                  className={`px-4 py-2 text-sm rounded-lg font-semibold transition-colors duration-300 ${
                     selectedType === "all"
                       ? "bg-primary text-primary-foreground"
                       : "border border-primary text-primary hover:bg-primary hover:text-primary-foreground"
@@ -171,7 +171,7 @@ export default function ServicesPage() {
                 </button>
                 <button
                   onClick={() => setSelectedType("flooring")}
-                  className={`px-6 py-3 rounded-lg font-semibold transition-colors duration-300 ${
+                  className={`px-4 py-2 text-sm rounded-lg font-semibold transition-colors duration-300 ${
                     selectedType === "flooring"
                       ? "bg-primary text-primary-foreground"
                       : "border border-primary text-primary hover:bg-primary hover:text-primary-foreground"
@@ -181,7 +181,7 @@ export default function ServicesPage() {
                 </button>
                 <button
                   onClick={() => setSelectedType("wall")}
-                  className={`px-6 py-3 rounded-lg font-semibold transition-colors duration-300 ${
+                  className={`px-4 py-2 text-sm rounded-lg font-semibold transition-colors duration-300 ${
                     selectedType === "wall"
                       ? "bg-primary text-primary-foreground"
                       : "border border-primary text-primary hover:bg-primary hover:text-primary-foreground"
@@ -191,7 +191,7 @@ export default function ServicesPage() {
                 </button>
                 <button
                   onClick={() => setSelectedType("countertop")}
-                  className={`px-6 py-3 rounded-lg font-semibold transition-colors duration-300 ${
+                  className={`px-4 py-2 text-sm rounded-lg font-semibold transition-colors duration-300 ${
                     selectedType === "countertop"
                       ? "bg-primary text-primary-foreground"
                       : "border border-primary text-primary hover:bg-primary hover:text-primary-foreground"
@@ -209,11 +209,11 @@ export default function ServicesPage() {
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredProducts.map((product) => (
               <div key={product.id} className="group cursor-pointer">
-                <div className="relative overflow-hidden rounded-lg mb-6">
+                <div className="relative overflow-hidden rounded-lg mb-6 aspect-video">
                   <img
                     src={product.image || "/placeholder.svg"}
                     alt={product.name}
-                    className="w-full h-80 object-cover group-hover:scale-105 transition-transform duration-500"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                     <div className="absolute bottom-6 left-6 right-6">
@@ -229,25 +229,25 @@ export default function ServicesPage() {
 
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-h2">{product.name}</h3>
-                    <span className="text-primary text-sm font-semibold uppercase tracking-wide">
+                    <h3 className="text-h2 truncate">{product.name}</h3>
+                    <span className="text-primary text-sm font-semibold uppercase tracking-wide shrink-0">
                       {product.category}
                     </span>
                   </div>
 
-                  <p className="text-muted-foreground leading-relaxed">{product.description}</p>
+                  <p className="text-muted-foreground leading-relaxed line-clamp-3">{product.description}</p>
 
                   <div className="flex flex-wrap gap-2">
                     {product.applications.map((app) => (
-                      <span key={app} className="bg-primary/20 text-primary px-3 py-1 rounded-full text-sm">
+                      <span key={app} className="bg-primary/20 text-primary px-3 py-1 rounded-full text-sm break-words">
                         {app}
                       </span>
                     ))}
                   </div>
 
                   <div className="flex items-center justify-between text-sm text-muted-foreground">
-                    <span>Origin: {product.origin}</span>
-                    <span>Finish: {product.finish}</span>
+                    <span className="truncate">Origin: {product.origin}</span>
+                    <span className="truncate">Finish: {product.finish}</span>
                   </div>
                 </div>
               </div>

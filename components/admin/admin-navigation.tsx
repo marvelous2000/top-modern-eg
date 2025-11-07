@@ -1,37 +1,33 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { useTheme } from "next-themes"
 import { Button } from "@/components/ui/button"
-import { LogOut, User, Moon, Sun, BarChart3, MessageSquare, FolderOpen } from "lucide-react"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { LogOut, User, Moon, Sun, Menu } from "lucide-react"
 import { createBrowserClient } from "@/lib/supabase/client"
 
 interface AdminNavigationProps {
   onMenuClick?: () => void
 }
 
-interface QuickAction {
-  id: string
-  label: string
-  icon: React.ComponentType<{ className?: string }>
-  action: () => void
-}
-
 export function AdminNavigation({ onMenuClick }: AdminNavigationProps) {
   const [userEmail, setUserEmail] = useState<string>("")
-  const [loading, setLoading] = useState(false)
   const { theme, setTheme } = useTheme()
   const router = useRouter()
+  const searchParams = useSearchParams()
   const supabase = createBrowserClient()
+
+  const page = searchParams.get("page")
+  const pageTitle = page ? page.charAt(0).toUpperCase() + page.slice(1) : "Dashboard"
 
   useEffect(() => {
     const fetchUser = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
+      const { data: { user } } = await supabase.auth.getUser()
       if (user) {
-        setUserEmail(user.email || "Admin User")
+        setUserEmail(user.email || "Admin")
       }
     }
     fetchUser()
@@ -42,87 +38,51 @@ export function AdminNavigation({ onMenuClick }: AdminNavigationProps) {
   }
 
   const handleLogout = async () => {
-    setLoading(true)
-    try {
-      const { error } = await supabase.auth.signOut()
-      if (error) throw error
-
-      router.push("/admin/login")
-      router.refresh()
-    } catch (error) {
-      console.error("Logout error:", error)
-      alert("Failed to logout. Please try again.")
-    } finally {
-      setLoading(false)
-    }
+    await supabase.auth.signOut()
+    router.push("/admin/login")
+    router.refresh()
   }
 
   return (
-    <nav className="bg-card/95 backdrop-blur-sm border-b border-accent/30 p-4 shadow-lg admin-card h-20">
-      <div className="flex justify-between items-center h-full">
-        <div className="flex items-center space-x-4">
-          <img src="/top-modern-logo-gold.png" alt="Top Modern Admin" className="h-16 w-auto" />
-          <span className="font-serif text-xl font-bold text-card-foreground">Admin Panel</span>
-        </div>
-
-        <div className="flex items-center space-x-4">
-          {/* Quick Actions */}
-          <div className="hidden md:flex items-center space-x-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => router.push('/admin?page=dashboard')}
-              className="text-muted-foreground hover:text-accent hover:bg-accent/10 admin-focus"
-              title="Dashboard Overview"
-            >
-              <BarChart3 className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => router.push('/admin?page=contacts')}
-              className="text-muted-foreground hover:text-accent hover:bg-accent/10 admin-focus"
-              title="View Contacts"
-            >
-              <MessageSquare className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => router.push('/admin?page=projects')}
-              className="text-muted-foreground hover:text-accent hover:bg-accent/10 admin-focus"
-              title="Manage Projects"
-            >
-              <FolderOpen className="h-4 w-4" />
-            </Button>
-          </div>
-
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={toggleTheme}
-            className="border-accent/30 hover:bg-accent/10 hover:border-accent text-card-foreground admin-focus transition-theme"
-          >
-            {theme === "dark" ? <Sun className="h-4 w-4 transition-theme" /> : <Moon className="h-4 w-4 transition-theme" />}
-          </Button>
-
-          <div className="flex items-center space-x-2 px-3 py-2 bg-secondary/50 rounded-md admin-card">
-            <User className="h-4 w-4 text-accent" />
-            <span className="text-sm text-secondary-foreground font-medium">{userEmail || "Loading..."}</span>
-          </div>
-
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleLogout}
-            disabled={loading}
-            className="border-accent/30 hover:bg-accent/10 hover:border-accent text-card-foreground admin-focus"
-          >
-            <LogOut className="h-4 w-4 mr-2" />
-            {loading ? "Logging out..." : "Logout"}
-          </Button>
-        </div>
+    <header className="flex h-16 items-center justify-between gap-4 border-b bg-card px-4 md:px-6">
+      <div className="flex items-center gap-4">
+        <Button variant="outline" size="icon" className="lg:hidden h-8 w-8" onClick={onMenuClick}>
+          <Menu className="h-4 w-4" />
+          <span className="sr-only">Toggle Menu</span>
+        </Button>
+        <h1 className="text-lg font-semibold md:text-xl font-serif">{pageTitle}</h1>
       </div>
-    </nav>
+
+      <div className="flex items-center gap-4">
+        <Button variant="ghost" size="icon" onClick={toggleTheme} className="h-8 w-8">
+          <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+          <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+          <span className="sr-only">Toggle theme</span>
+        </Button>
+
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+              <Avatar className="h-8 w-8">
+                <AvatarFallback>{userEmail ? userEmail.charAt(0).toUpperCase() : "A"}</AvatarFallback>
+              </Avatar>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-56" align="end" forceMount>
+            <DropdownMenuLabel className="font-normal">
+              <div className="flex flex-col space-y-1">
+                <p className="text-sm font-medium leading-none">Logged in as</p>
+                <p className="text-xs leading-none text-muted-foreground truncate">{userEmail}</p>
+              </div>
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={handleLogout}>
+              <LogOut className="mr-2 h-4 w-4" />
+              <span>Log out</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+    </header>
   )
 }

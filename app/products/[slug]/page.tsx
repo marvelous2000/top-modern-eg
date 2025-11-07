@@ -7,7 +7,7 @@ type ProductPageProps = {
 }
 
 export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
-  const { data: product } = await getProductBySlug(params.slug)
+  const { data: product } = await getProductBySlug((await params).slug)
 
   if (!product) {
     return {
@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
 }
 
 export default async function ProductPage({ params }: ProductPageProps) {
-  const { data: product } = await getProductBySlug(params.slug)
+  const { data: product } = await getProductBySlug((await params).slug)
 
-  return <ProductPageClient product={product ?? null} params={params} />
+  return <ProductPageClient product={product ?? null} params={await params} />
 }

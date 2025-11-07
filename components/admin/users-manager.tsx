@@ -6,56 +6,19 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Label } from "@/components/ui/label"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { useSupabaseClient } from "@/components/providers/SupabaseProvider"
 import { toast } from "sonner"
-import { Loader2, ShieldCheck, Shield } from "lucide-react"
+import { Loader2, ShieldCheck, MoreVertical, Pencil, Eye, Search, UserPlus } from "lucide-react"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { cn } from "@/lib/utils"
 
-type AdminUser = {
-  id: string
-  email: string
-  name: string
-  role: "admin" | "editor" | "viewer" | "advertiser"
-  status: "active" | "invited" | "suspended"
-  lastActive: string
-  createdAt: string
-}
-
-const seedUsers: AdminUser[] = [
-  {
-    id: "1",
-    email: "sarah.johnson@topmodern.com",
-    name: "Sarah Johnson",
-    role: "admin",
-    status: "active",
-    lastActive: "2025-09-10T10:15:00Z",
-    createdAt: "2024-12-01T08:00:00Z",
-  },
-  {
-    id: "2",
-    email: "ahmed.mansour@topmodern.com",
-    name: "Ahmed Mansour",
-    role: "editor",
-    status: "active",
-    lastActive: "2025-09-22T13:45:00Z",
-    createdAt: "2025-01-15T09:30:00Z",
-  },
-  {
-    id: "3",
-    email: "nada.elshamy@topmodern.com",
-    name: "Nada El Shamy",
-    role: "advertiser",
-    status: "invited",
-    lastActive: "2025-09-01T07:20:00Z",
-    createdAt: "2025-06-05T11:10:00Z",
-  },
-]
+type AdminUser = { id: string; email: string; name: string; role: "admin" | "editor" | "viewer" | "advertiser"; status: "active" | "invited" | "suspended"; lastActive: string; createdAt: string; }
 
 export function UsersManager() {
   const supabase = useSupabaseClient({ optional: true })
-  const [users, setUsers] = useState<AdminUser[]>(seedUsers)
-  const [loading, setLoading] = useState(false)
+  const [users, setUsers] = useState<AdminUser[]>([])
+  const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState("")
   const [roleFilter, setRoleFilter] = useState<string>("all")
 
@@ -64,60 +27,29 @@ export function UsersManager() {
       setLoading(false)
       return
     }
-
-    const client = supabase
     let isMounted = true
-
     async function fetchUsers() {
       setLoading(true)
       try {
-        const { data, error } = await client
-          .from("profiles")
-          .select("id, username, first_name, last_name, role, created_at")
-          .order("created_at", { ascending: false })
-
-        if (error) {
-          throw error
-        }
-
+        const { data, error } = await supabase.from("profiles").select("id, username, first_name, last_name, role, created_at").order("created_at", { ascending: false })
+        if (error) throw error
         if (!isMounted) return
-
-        const mapped = (data ?? []).map<AdminUser>((profile) => ({
-          id: profile.id,
-          email: profile.username ?? "",
-          name:
-            [profile.first_name, profile.last_name].filter(Boolean).join(" ") || profile.username || "Unknown",
-          role: (profile.role ?? "viewer") as AdminUser["role"],
-          status: "active",
-          lastActive: profile.created_at ?? new Date().toISOString(),
-          createdAt: profile.created_at ?? new Date().toISOString(),
-        }))
-
-        if (mapped.length) {
-          setUsers(mapped)
-        }
+        const mapped = (data ?? []).map<AdminUser>((p) => ({ id: p.id, email: p.username ?? "", name: [p.first_name, p.last_name].filter(Boolean).join(" ") || p.username || "Unknown", role: (p.role ?? "viewer") as AdminUser["role"], status: "active", lastActive: p.created_at ?? new Date().toISOString(), createdAt: p.created_at ?? new Date().toISOString() }))
+        setUsers(mapped)
       } catch (error) {
         console.error("Failed to load users", error)
-        toast.error("Unable to load users from Supabase. Showing sample data.")
+        toast.error("Unable to load users from Supabase.")
       } finally {
-        if (isMounted) {
-          setLoading(false)
-        }
+        if (isMounted) setLoading(false)
       }
     }
-
     fetchUsers()
-
-    return () => {
-      isMounted = false
-    }
+    return () => { isMounted = false }
   }, [supabase])
 
   const filteredUsers = useMemo(() => {
     return users.filter((user) => {
-      const matchesSearch = `${user.name} ${user.email}`
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase())
+      const matchesSearch = `${user.name} ${user.email}`.toLowerCase().includes(searchTerm.toLowerCase())
       const matchesRole = roleFilter === "all" || user.role === roleFilter
       return matchesSearch && matchesRole
     })
@@ -125,161 +57,115 @@ export function UsersManager() {
 
   const handleRoleChange = async (userId: string, role: AdminUser["role"]) => {
     setUsers((prev) => prev.map((user) => (user.id === userId ? { ...user, role } : user)))
-
     if (!supabase) {
-      toast.info("Supabase is not configured yet. Update will sync once credentials are added.")
+      toast.info("Supabase not configured. Update will sync when available.")
       return
     }
-
     try {
-      const { error } = await supabase
-        .from("profiles")
-        .update({ role })
-        .eq("id", userId)
-
-      if (error) {
-        throw error
-      }
-
-      toast.success("Role updated")
+      const { error } = await supabase.from("profiles").update({ role }).eq("id", userId)
+      if (error) throw error
+      toast.success("Role updated successfully")
     } catch (error) {
       console.error("Failed to update role", error)
       toast.error("Could not update role. Please try again.")
     }
   }
 
+  const roleConfig: { [key: string]: { icon: React.ElementType; varName: string } } = {
+    admin: { icon: ShieldCheck, varName: "--primary" },
+    editor: { icon: Pencil, varName: "--chart-3" },
+    advertiser: { icon: Eye, varName: "--chart-1" },
+    viewer: { icon: Eye, varName: "--chart-5" },
+  }
+
+  const statusConfig: { [key: string]: { color: string } } = {
+    active: { color: "bg-[hsl(var(--chart-2)_/_0.2)] text-[hsl(var(--chart-2))]" },
+    invited: { color: "bg-[hsl(var(--chart-3)_/_0.2)] text-[hsl(var(--chart-3))]" },
+    suspended: { color: "bg-destructive/20 text-destructive" },
+  }
+
   return (
     <div className="space-y-6">
-      <Card className="border-border bg-card">
-        <CardHeader>
-          <CardTitle className="font-serif text-2xl text-foreground flex items-center gap-2">
-            <ShieldCheck className="h-5 w-5 text-primary" />
-            Team Access Control
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="grid gap-4 md:grid-cols-3">
-          <div className="space-y-2">
-            <Label htmlFor="search">Search team members</Label>
-            <Input
-              id="search"
-              value={searchTerm}
-              onChange={(event) => setSearchTerm(event.target.value)}
-              placeholder="Search by name or email"
-            />
+      <Card className="shadow-sm">
+        <CardHeader className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <CardTitle className="text-2xl font-serif text-foreground">Team Management</CardTitle>
+            <p className="text-sm text-muted-foreground">Invite and manage team member roles and permissions.</p>
           </div>
-          <div className="space-y-2">
-            <Label>Filter by role</Label>
+          <div className="flex flex-col sm:flex-row items-center gap-2 w-full sm:w-auto">
+            <div className="relative w-full sm:w-64">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder="Search by name or email" className="pl-10 bg-muted/50 w-full" />
+            </div>
             <Select value={roleFilter} onValueChange={setRoleFilter}>
-              <SelectTrigger>
-                <SelectValue placeholder="All roles" />
-              </SelectTrigger>
+              <SelectTrigger className="w-full sm:w-40"><SelectValue placeholder="All roles" /></SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All roles</SelectItem>
-                <SelectItem value="admin">Admin</SelectItem>
-                <SelectItem value="editor">Editor</SelectItem>
-                <SelectItem value="viewer">Viewer</SelectItem>
-                <SelectItem value="advertiser">Advertiser</SelectItem>
+                <SelectItem value="all">All Roles</SelectItem>
+                {Object.keys(roleConfig).map(role => <SelectItem key={role} value={role}><span className="capitalize">{role}</span></SelectItem>)}
               </SelectContent>
             </Select>
+            <Button className="w-full sm:w-auto" disabled={!supabase}><UserPlus className="mr-2 h-4 w-4" /> Invite User</Button>
           </div>
-          <div className="space-y-2">
-            <Label>Invite member</Label>
-            <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/80" disabled={!supabase}>
-              Invite User
-            </Button>
-            {!supabase && (
-              <p className="text-xs text-muted-foreground">Connect Supabase to enable invites.</p>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card className="border-border bg-card">
-        <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="font-serif text-xl text-foreground">Team Members</CardTitle>
-          <Badge variant="outline">
-            {filteredUsers.length} active
-          </Badge>
         </CardHeader>
-        <CardContent className="p-0">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Role</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Last active</TableHead>
-                <TableHead>Created</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredUsers.map((user) => (
-                <TableRow key={user.id}>
-                  <TableCell className="font-medium flex items-center gap-2">
-                    <span>{user.name}</span>
-                    {user.role === "admin" ? (
-                      <ShieldCheck className="h-4 w-4 text-primary" aria-hidden="true" />
-                    ) : (
-                      <Shield className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
-                    )}
-                  </TableCell>
-                  <TableCell className="text-muted-foreground">{user.email}</TableCell>
-                  <TableCell>
-                    <Select
-                      value={user.role}
-                      onValueChange={(value) => handleRoleChange(user.id, value as AdminUser["role"])}
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="admin">Admin</SelectItem>
-                        <SelectItem value="editor">Editor</SelectItem>
-                        <SelectItem value="viewer">Viewer</SelectItem>
-                        <SelectItem value="advertiser">Advertiser</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </TableCell>
-                  <TableCell>
-                    <Badge
-                      className={
-                        user.status === "active"
-                          ? "bg-primary/20 text-primary"
-                          : user.status === "invited"
-                            ? "bg-accent/20 text-accent"
-                            : "bg-destructive/20 text-destructive"
-                      }
-                    >
-                      {user.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-muted-foreground">
-                    {new Date(user.lastActive).toLocaleString()}
-                  </TableCell>
-                  <TableCell className="text-muted-foreground">
-                    {new Date(user.createdAt).toLocaleDateString()}
-                  </TableCell>
-                </TableRow>
-              ))}
-
-              {!filteredUsers.length && (
-                <TableRow>
-                  <TableCell colSpan={6} className="h-24 text-center text-muted-foreground">
-                    {loading ? (
-                      <span className="inline-flex items-center justify-center gap-2">
-                        <Loader2 className="h-4 w-4 animate-spin" /> Loading team members...
-                      </span>
-                    ) : (
-                      "No team members found"
-                    )}
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </CardContent>
       </Card>
+
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+        {filteredUsers.map((user) => {
+          const RoleIcon = roleConfig[user.role]?.icon || ShieldCheck
+          const roleVarName = roleConfig[user.role]?.varName || "--primary"
+          const userStatusConfig = statusConfig[user.status] || {}
+          const userInitials = user.name.split(" ").map((n) => n[0]).join("").substring(0, 2)
+
+          return (
+            <Card key={user.id} className="shadow-sm hover:shadow-md transition-shadow flex flex-col">
+              <CardHeader className="flex flex-row items-start gap-4 space-y-0">
+                <Avatar className="w-10 h-10 border">
+                  <AvatarFallback>{userInitials}</AvatarFallback>
+                </Avatar>
+                <div className="flex-1">
+                  <CardTitle className="text-lg truncate">{user.name}</CardTitle>
+                  <p className="text-sm text-muted-foreground truncate">{user.email}</p>
+                </div>
+                <Badge className={cn("capitalize", userStatusConfig.color)}>{user.status}</Badge>
+              </CardHeader>
+              <CardContent className="flex-grow space-y-2">
+                <div className="text-xs text-muted-foreground space-y-1 pt-4 border-t">
+                  <p><span className="font-semibold text-foreground">Last Active:</span> {new Date(user.lastActive).toLocaleString()}</p>
+                  <p><span className="font-semibold text-foreground">Member Since:</span> {new Date(user.createdAt).toLocaleDateString()}</p>
+                </div>
+              </CardContent>
+              <div className="p-4 bg-muted/10 border-t flex items-center justify-between">
+                <div className="w-48">
+                  <Select value={user.role} onValueChange={(value) => handleRoleChange(user.id, value as AdminUser["role"])}>
+                    <SelectTrigger className="bg-background h-9">
+                      <div className="flex items-center gap-2">
+                        <RoleIcon className={cn("h-4 w-4", `text-[hsl(var(${roleVarName}))]`)} />
+                        <SelectValue />
+                      </div>
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Object.keys(roleConfig).map((role) => <SelectItem key={role} value={role}><span className="capitalize">{role}</span></SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild><Button variant="ghost" size="icon" className="h-8 w-8"><MoreVertical className="h-4 w-4" /></Button></DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem>Suspend User</DropdownMenuItem>
+                    <DropdownMenuItem className="text-destructive focus:bg-destructive/10 focus:text-destructive">Delete User</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            </Card>
+          )
+        })}
+      </div>
+
+      {!filteredUsers.length && (
+        <div className="w-full h-48 flex items-center justify-center text-muted-foreground bg-card rounded-lg border border-dashed">
+          {loading ? <span className="inline-flex items-center justify-center gap-2"><Loader2 className="h-5 w-5 animate-spin" /> Loading...</span> : "No team members found."}
+        </div>
+      )}
     </div>
   )
 }

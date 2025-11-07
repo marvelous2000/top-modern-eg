@@ -1,11 +1,13 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { usePathname } from "next/navigation"
 import { useTheme } from "next-themes"
 import { Button } from "@/components/ui/button"
 import { Menu, X, Phone, Mail, Moon, Sun } from "lucide-react"
 import { useContactTracking } from "@/components/contact-tracking"
+import { cn } from "@/lib/utils"
+import Link from "next/link"
 
 export function Navigation() {
   const [isOpen, setIsOpen] = useState(false)
@@ -43,73 +45,50 @@ export function Navigation() {
 
   return (
     <>
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-black/50 backdrop-blur-md border-b border-primary/40">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-black border-b border-primary/40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-3 items-center w-full h-16">
-            {/* Left Section - CTA Buttons (Desktop) / Hamburger (Mobile) */}
-            <div className="flex items-center justify-start">
-              <div className="hidden md:flex items-center gap-4">
-                <Button
-                  variant="glass"
-                  className="glass-primary rounded-xl px-6 py-3 font-sans font-semibold"
-                  onClick={handlePhoneClick}
-                >
-                  <Phone className="w-4 h-4 mr-2" />
-                  Call Now
-                </Button>
-                <Button
-                  variant="glass"
-                  className="glass-primary rounded-xl px-6 py-3 font-sans font-semibold"
-                  onClick={handleEmailClick}
-                >
-                  <Mail className="w-4 h-4 mr-2" />
-                  Get Quote
-                </Button>
-              </div>
-              {/* Mobile menu button */}
-              <div className="md:hidden">
-                <button onClick={() => setIsOpen(!isOpen)} className="text-foreground hover:text-primary transition-colors">
-                  {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-                </button>
-              </div>
+          <div className="flex h-16 items-center justify-between">
+            {/* Left Section - Logo */}
+            <div className="flex items-center">
+              <Link href="/" className="py-0 px-0">
+                <img src="/Sticker TOP MODERN.png" alt="Top Modern" className="h-12 md:h-16 w-auto filter brightness-110" />
+              </Link>
             </div>
 
-            {/* Center Section - Logo */}
-            <div className="flex justify-center py-0 px-0">
-              <a href="/" className="py-0 px-0">
-                <img src="/Sticker TOP MODERN.png" alt="Top Modern" className="h-24 w-auto filter brightness-110" />
-              </a>
+            {/* Center Section - Empty for balance */}
+            <div className="flex justify-center">
             </div>
 
             {/* Right Section - Navigation Links (Desktop) / Single CTA (Mobile) */}
-            <div className="flex items-center justify-end">
+            <div className="flex items-center justify-end gap-4">
               <div className="hidden md:flex items-center gap-8">
                 {navLinks.map((link) => (
-                  <a
+                  <Link
                     key={link.href}
                     href={link.href}
-                    className={`text-foreground hover:text-accent transition-colors font-sans font-medium ${
-                      (link.href === "/" ? pathname === "/" : pathname.startsWith(link.href)) ? "text-accent border-b-2 border-accent bg-accent/10" : ""
-                    }`}
+                    className={cn(
+                      "relative text-sm font-medium text-white/90 transition-colors hover:text-accent after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-0 after:bg-accent after:transition-all after:duration-500 hover:after:w-full",
+                      (link.href === "/" ? pathname === "/" : pathname.startsWith(link.href)) && "text-accent after:w-full"
+                    )}
                   >
                     {link.label}
-                  </a>
+                  </Link>
                 ))}
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={toggleTheme}
-                  className="text-foreground hover:text-accent hover:bg-accent/10 transition-colors"
-                  title="Toggle theme"
-                >
-                  {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-                </Button>
               </div>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={toggleTheme}
+                className="text-white hover:bg-white/10 hover:text-accent"
+                title="Toggle theme"
+              >
+                {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+              </Button>
               {/* Mobile single CTA */}
               <div className="md:hidden">
                 <Button
-                  variant="glass"
-                  className="glass-primary rounded-xl px-4 py-2 font-sans font-semibold"
+                  variant="default"
+                  className="bg-accent text-accent-foreground hover:bg-accent/90"
                   onClick={handleEmailClick}
                 >
                   <Mail className="w-4 h-4" />
@@ -119,58 +98,58 @@ export function Navigation() {
           </div>
         </div>
 
-        {/* Mobile Navigation */}
+        {/* Mobile Navigation Overlay */}
         {isOpen && (
-          <div className="md:hidden bg-black/50 backdrop-blur-md">
-            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-              {navLinks.map((link) => (
-                <a
-                  key={link.href}
-                  href={link.href}
-                  className={`block px-3 py-2 text-primary hover:text-primary/80 transition-colors text-base ${
-                    pathname === link.href ? "text-primary underline" : ""
-                  }`}
-                >
-                  {link.label}
-                </a>
-              ))}
-              <div className="flex flex-col space-y-2 px-3 pt-4">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="border border-primary/30 bg-background/50 backdrop-blur-md shadow-xs hover:bg-primary/10 hover:text-primary-foreground hover:border-primary/50"
-                  onClick={handlePhoneClick}
-                >
-                  <Phone className="w-4 h-4 mr-2" />
-                  Call Now
-                </Button>
-                <Button variant="luxury" size="sm" className="bg-gradient-to-br from-primary/20 to-primary/10 backdrop-blur-md border border-primary/40 text-primary-foreground shadow-xl hover:shadow-primary/50 hover:bg-primary/25 hover:border-primary/60 font-bold" onClick={handleEmailClick}>
-                  <Mail className="w-4 h-4 mr-2" />
-                  Get Quote
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={toggleTheme}
-                  className="text-primary hover:text-accent hover:bg-accent/10 transition-colors"
-                  title="Toggle theme"
-                >
-                  {theme === "dark" ? <Sun className="h-4 w-4 mr-2" /> : <Moon className="h-4 w-4 mr-2" />}
-                  Toggle Theme
-                </Button>
+          <div className="fixed inset-0 top-16 bg-black/70 backdrop-blur-sm z-40 md:hidden" onClick={() => setIsOpen(false)}>
+            <div className="absolute top-0 left-0 w-full bg-black/80 border-b border-primary/40 py-4">
+              <div className="px-2 space-y-1">
+                {navLinks.map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className={cn(
+                      "block px-3 py-2 text-base font-medium text-white/90 transition-colors hover:text-accent hover:bg-white/10 rounded-md",
+                      (link.href === "/" ? pathname === "/" : pathname.startsWith(link.href)) && "text-accent bg-white/10"
+                    )}
+                    onClick={() => setIsOpen(false)}
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+                <div className="flex flex-col space-y-2 px-3 pt-4">
+                  <Button
+                    variant="ghost"
+                    className="text-white/90 hover:text-accent hover:bg-white/10"
+                    onClick={handlePhoneClick}
+                  >
+                    <Phone className="w-4 h-4 mr-2" />
+                    Call Now
+                  </Button>
+                  <Button
+                    variant="default"
+                    className="bg-accent text-accent-foreground hover:bg-accent/90"
+                    onClick={handleEmailClick}
+                  >
+                    <Mail className="w-4 h-4 mr-2" />
+                    Get Quote
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    onClick={toggleTheme}
+                    className="text-white hover:text-accent hover:bg-white/10"
+                    title="Toggle theme"
+                  >
+                    {theme === "dark" ? <Sun className="h-4 w-4 mr-2" /> : <Moon className="h-4 w-4 mr-2" />}
+                    Toggle Theme
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
         )}
       </nav>
 
-      <div className="fixed top-16 left-1/2 transform -translate-x-1/2 z-40 hidden md:block">
-        <div className="floating-cta-bridge px-6 py-3 rounded-full animate-fade-in-up animation-delay-800">
-          <p className="text-body-sm text-primary font-inter font-medium gold-text-glow">
-            ✨ Premium Marble & Granite Solutions for MENA Region
-          </p>
-        </div>
-      </div>
+
     </>
   )
 }

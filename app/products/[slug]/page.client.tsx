@@ -37,7 +37,7 @@ export function ProductPageClient({ params, product }: ProductPageProps) {
 
       <main className="relative z-10 pt-32">
         <section className="container mx-auto px-6 py-20">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
+          <div className="grid lg:grid-cols-2 gap-8 items-center">
             <div>
               <div className="flex items-center gap-4 mb-6">
                 <span className="text-primary font-semibold uppercase tracking-wide">{formattedCategory}</span>
@@ -45,9 +45,9 @@ export function ProductPageClient({ params, product }: ProductPageProps) {
                 <span className="text-muted-foreground">{product.origin}</span>
               </div>
 
-              <h1 className="text-h1 mb-8 text-balance">{product.name}</h1>
+              <h1 className="text-h1 mb-8 text-balance break-words">{product.name}</h1>
 
-              <p className="text-body text-muted-foreground mb-8">{product.description}</p>
+              <p className="text-body text-muted-foreground mb-8 break-words">{product.description}</p>
 
               {featureList.length > 0 && (
                 <div className="space-y-3 mb-8">
@@ -56,7 +56,7 @@ export function ProductPageClient({ params, product }: ProductPageProps) {
                     {featureList.map((feature, index) => (
                       <li key={index} className="flex gap-3">
                         <span className="mt-2 size-1.5 rounded-full bg-primary/80" aria-hidden="true" />
-                        <span>{feature}</span>
+                        <span className="break-words">{feature}</span>
                       </li>
                     ))}
                   </ul>
@@ -87,11 +87,11 @@ export function ProductPageClient({ params, product }: ProductPageProps) {
             </div>
 
             <div className="relative">
-              <div className="rounded-3xl overflow-hidden border border-primary/30">
+              <div className="rounded-3xl overflow-hidden border border-primary/30 aspect-video lg:aspect-[4/3]">
                 <img
                   src={product.images?.[0] || "/placeholder.svg"}
                   alt={product.name}
-                  className="w-full h-[420px] object-cover"
+                  className="w-full h-full object-cover"
                 />
               </div>
               <div className="absolute inset-x-0 -bottom-12 hidden lg:flex justify-center gap-4">
@@ -106,11 +106,11 @@ export function ProductPageClient({ params, product }: ProductPageProps) {
         </section>
 
         <section className="container mx-auto px-6 py-16">
-          <div className="grid lg:grid-cols-2 gap-16 items-start">
+          <div className="grid lg:grid-cols-2 gap-8 items-start">
             <div className="space-y-10">
               <div className="rounded-2xl border border-primary/20 bg-card/80 p-10">
-                <h2 className="text-h2 text-primary mb-6">Material Overview</h2>
-                <p className="text-muted-foreground leading-relaxed">
+                <h2 className="text-h2 text-primary break-words mb-6">Material Overview</h2>
+                <p className="text-muted-foreground leading-relaxed break-words">
                   {product.name} is sourced from {product.origin} and finished with a {product.finish.toLowerCase()} surface,
                   offering exceptional durability for premium interior and exterior applications. Available in {product.thickness},
                   it balances structural integrity with refined aesthetics.
@@ -119,12 +119,12 @@ export function ProductPageClient({ params, product }: ProductPageProps) {
 
               {featureList.length > 0 && (
                 <div className="rounded-2xl border border-primary/20 bg-card/80 p-10">
-                  <h2 className="text-h2 text-primary mb-6">Recommended Uses</h2>
+                  <h2 className="text-h2 text-primary break-words mb-6">Recommended Uses</h2>
                   <div className="flex flex-wrap gap-3">
                     {featureList.map((application) => (
                       <span
                         key={application}
-                        className="bg-primary/20 text-primary px-4 py-2 rounded-full font-semibold"
+                        className="bg-primary/20 text-primary px-4 py-2 rounded-full font-semibold break-words"
                       >
                         {application}
                       </span>
@@ -135,7 +135,7 @@ export function ProductPageClient({ params, product }: ProductPageProps) {
             </div>
 
             <div>
-              <h2 className="text-h1 mb-8">
+              <h2 className="text-h1 mb-8 break-words">
                 Technical <span className="text-primary">Specifications</span>
               </h2>
 
@@ -143,27 +143,27 @@ export function ProductPageClient({ params, product }: ProductPageProps) {
                 <div className="grid grid-cols-2 gap-4 p-6 border border-primary/20 rounded-lg">
                   <div>
                     <p className="text-primary font-semibold mb-2">Origin</p>
-                    <p className="text-foreground/90">{product.origin}</p>
+                    <p className="text-foreground/90 break-words">{product.origin}</p>
                   </div>
                   <div>
                     <p className="text-primary font-semibold mb-2">Finish</p>
-                    <p className="text-foreground/90">{product.finish}</p>
+                    <p className="text-foreground/90 break-words">{product.finish}</p>
                   </div>
                   <div>
                     <p className="text-primary font-semibold mb-2">Thickness</p>
-                    <p className="text-foreground/90">{product.thickness}</p>
+                    <p className="text-foreground/90 break-words">{product.thickness}</p>
                   </div>
                   <div>
                     <p className="text-primary font-semibold mb-2">Category</p>
-                    <p className="text-foreground/90">{formattedCategory}</p>
+                    <p className="text-foreground/90 break-words">{formattedCategory}</p>
                   </div>
                 </div>
 
                 <div className="space-y-4">
                   {specificationEntries.map(([key, value]) => (
                     <div key={key} className="flex justify-between items-center py-3 border-b border-primary/20">
-                      <span className="text-muted-foreground">{key}</span>
-                      <span className="text-primary font-semibold text-right max-w-[60%]">{value}</span>
+                      <span className="text-muted-foreground break-words">{key}</span>
+                      <span className="text-primary font-semibold text-right max-w-[60%] break-words">{value}</span>
                     </div>
                   ))}
                 </div>
@@ -174,7 +174,7 @@ export function ProductPageClient({ params, product }: ProductPageProps) {
 
         {showcaseItems.length > 0 && (
           <section className="container mx-auto px-6 py-20">
-            <h2 className="text-h1 mb-12 text-center">
+            <h2 className="text-h1 mb-12 text-center break-words">
               Featured <span className="text-primary">Installations</span>
             </h2>
 
@@ -184,8 +184,8 @@ export function ProductPageClient({ params, product }: ProductPageProps) {
                   <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-6">
                     <span className="text-primary-foreground text-2xl font-bold">{index + 1}</span>
                   </div>
-                  <h3 className="text-h2 mb-4">{item}</h3>
-                  <p className="text-muted-foreground">
+                  <h3 className="text-h2 mb-4 break-words">{item}</h3>
+                  <p className="text-muted-foreground break-words">
                     Premium installation showcasing the beauty and durability of {product.name}.
                   </p>
                 </div>
@@ -196,22 +196,22 @@ export function ProductPageClient({ params, product }: ProductPageProps) {
 
         <section className="container mx-auto px-6 py-20">
           <div className="text-center max-w-4xl mx-auto">
-            <h2 className="text-h1 mb-8">
+            <h2 className="text-h1 mb-8 break-words">
               Ready to Use <span className="text-primary">{product.name}</span>?
             </h2>
-            <p className="text-body text-muted-foreground mb-12 leading-relaxed">
+            <p className="text-body text-muted-foreground mb-12 leading-relaxed break-words">
               Contact our experts to discuss your project requirements and get a detailed quote for {product.name}.
             </p>
             <div className="flex flex-col sm:flex-row gap-6 justify-center">
               <a
                 href="/contact"
-                className="bg-primary text-primary-foreground px-8 py-4 rounded-lg font-semibold text-lg hover:bg-primary/80 hover:text-primary-foreground transition-colors duration-300"
+                className="bg-primary text-primary-foreground px-8 py-4 rounded-lg font-semibold text-lg hover:bg-primary/80 hover:text-primary-foreground transition-colors duration-300 text-center"
               >
                 Get Quote
               </a>
               <a
                 href="mailto:info@topmodern.com"
-                className="border border-primary text-primary px-8 py-4 rounded-lg font-semibold text-lg hover:bg-primary hover:text-primary-foreground transition-colors duration-300"
+                className="border border-primary text-primary px-8 py-4 rounded-lg font-semibold text-lg hover:bg-primary hover:text-primary-foreground transition-colors duration-300 text-center"
                 onClick={() =>
                   window.dispatchEvent(
                     new CustomEvent("contactClick", {

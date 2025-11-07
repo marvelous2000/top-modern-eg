@@ -1,6 +1,6 @@
 "use client"
 
-import { Header } from "@/components/header"
+import { Navigation } from "@/components/navigation"
 import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -19,7 +19,7 @@ export default function HomePage() {
   return (
     <PageTransition>
       <div className="flex flex-col">
-        <Header />
+        <Navigation />
 
         <main className="flex-1">
           {/* Hero Section with Parallax */}
@@ -52,13 +52,13 @@ export default function HomePage() {
                   transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
                   className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row"
                 >
-                  <Button asChild size="lg" className="min-w-[160px]">
+                  <Button asChild size="lg" className="w-full sm:w-auto">
                     <Link href="/products">
                       Explore Products
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </Link>
                   </Button>
-                  <Button asChild variant="outline" size="lg" className="min-w-[160px] bg-transparent">
+                  <Button asChild variant="outline" size="lg" className="w-full sm:w-auto bg-transparent">
                     <Link href="/contact">Contact Us</Link>
                   </Button>
                 </motion.div>
@@ -299,7 +299,7 @@ export default function HomePage() {
                     Schedule a consultation with our stone experts today
                   </p>
                   <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                    <Button asChild size="lg" variant="secondary" className="mt-8 min-w-[200px]">
+                    <Button asChild size="lg" variant="secondary" className="mt-8 w-full sm:w-auto">
                       <Link href="/contact">Get Started</Link>
                     </Button>
                   </motion.div>

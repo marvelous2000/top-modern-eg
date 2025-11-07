@@ -1,704 +1,180 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useMemo } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
-import { getProjects, createProject, updateProject, deleteProject } from "@/lib/actions/projects"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { getProjects, createProject, updateProject, deleteProject, type Project } from "@/lib/actions/projects"
 import { useSupabaseClient } from "@/components/providers/SupabaseProvider"
-import { Plus, Edit, Trash2, Upload, Link, X, Save } from "lucide-react"
+import { Plus, Edit, Trash2, X, Save, Search, Loader2, Upload, Link as LinkIcon } from "lucide-react"
+import { cn } from "@/lib/utils"
 
 export function ProjectsManager() {
-  const [projects, setProjects] = useState<any[]>([])
+  const [projects, setProjects] = useState<Project[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [selectedProject, setSelectedProject] = useState<any | null>(null)
-  const [isEditing, setIsEditing] = useState(false)
+  const [isFormOpen, setIsFormOpen] = useState(false)
+  const [editingProject, setEditingProject] = useState<Partial<Project> | null>(null)
   const [searchTerm, setSearchTerm] = useState("")
-  const [filterStatus, setFilterStatus] = useState<"all" | "active" | "draft" | "archived">("all")
+  const [filterStatus, setFilterStatus] = useState("all")
   const supabase = useSupabaseClient({ optional: true })
   const fileInputRef = useRef<HTMLInputElement | null>(null)
   const [uploading, setUploading] = useState(false)
-  const [uploadError, setUploadError] = useState<string | null>(null)
-  const [uploadSuccess, setUploadSuccess] = useState<string | null>(null)
 
   useEffect(() => {
     const fetchProjects = async () => {
-      setLoading(true)
-      setError(null)
-      const result = await getProjects()
-      if (result.success) {
-        setProjects(result.data)
-      } else {
-        setError(result.error || "Failed to fetch projects")
-        console.error("[v0] Failed to fetch projects:", result.error)
-      }
-      setLoading(false)
+      setLoading(true); setError(null)
+      try {
+        const result = await getProjects()
+        if (result.success) setProjects(result.data as Project[])
+        else setError(result.error || "Failed to fetch projects")
+      } catch (e: any) { setError(e.message) }
+      finally { setLoading(false) }
     }
     fetchProjects()
   }, [])
 
-  const filteredProjects = projects.filter((project) => {
-    const matchesSearch =
-      project.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      project.description.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesStatus = filterStatus === "all" || project.status === filterStatus
+  const filteredProjects = useMemo(() => {
+    return projects.filter((p) =>
+      (filterStatus === "all" || p.status === filterStatus) &&
+      (p.title.toLowerCase().includes(searchTerm.toLowerCase()) || p.description.toLowerCase().includes(searchTerm.toLowerCase()))
+    )
+  }, [projects, searchTerm, filterStatus])
 
-    return matchesSearch && matchesStatus
-  })
-
-  const handleCreateProject = () => {
-    const newProject = {
-      title: "",
-      category: "",
-      location: "",
-      year: new Date().getFullYear().toString(),
-      client: "",
-      slug: "",
-      description: "",
-      challenge: "",
-      solution: "",
-      results: [],
-      materials: [],
-      images: [],
-      testimonial: {
-        quote: "",
-        author: "",
-        position: "",
-      },
-      status: "draft",
-      featured: false,
+  const handleOpenForm = (project: Partial<Project> | null = null) => {
+    if (project) {
+      setEditingProject(project)
+    } else {
+      setEditingProject({ title: "", category: "", location: "", year: new Date().getFullYear().toString(), client: "", slug: "", description: "", challenge: "", solution: "", results: [], materials: [], images: [], testimonial: { quote: "", author: "", position: "" }, status: "draft", featured: false })
     }
-    setSelectedProject(newProject)
-    setIsEditing(true)
+    setIsFormOpen(true)
   }
 
-  const handleSaveProject = async (project: any) => {
+  const handleSaveProject = async () => {
+    if (!editingProject) return
     try {
-      if (project.id) {
-        // Update existing project
-        const result = await updateProject(project.id, project)
-        if (result.success) {
-          setProjects(projects.map((p) => (p.id === project.id ? result.data : p)))
-        } else {
-          alert(`Failed to update project: ${result.error}`)
-          return
-        }
+      if (editingProject.id) {
+        const result = await updateProject(editingProject.id, editingProject as Project)
+        if (result.success) setProjects(projects.map((p) => (p.id === editingProject.id ? (result.data as Project) : p)))
+        else throw new Error(result.error)
       } else {
-        // Create new project
-        const result = await createProject(project)
-        if (result.success) {
-          setProjects([result.data, ...projects])
-        } else {
-          alert(`Failed to create project: ${result.error}`)
-          return
-        }
+        const result = await createProject(editingProject as Project)
+        if (result.success) setProjects([result.data as Project, ...projects])
+        else throw new Error(result.error)
       }
-      setSelectedProject(null)
-      setIsEditing(false)
-    } catch (err: any) {
-      alert(`Error saving project: ${err.message}`)
-    }
+      setIsFormOpen(false)
+      setEditingProject(null)
+    } catch (err: any) { alert(`Error saving project: ${err.message}`) }
   }
 
   const handleDeleteProject = async (projectId: string) => {
     if (confirm("Are you sure you want to delete this project?")) {
       const result = await deleteProject(projectId)
-      if (result.success) {
-        setProjects(projects.filter((p) => p.id !== projectId))
-        if (selectedProject?.id === projectId) {
-          setSelectedProject(null)
-          setIsEditing(false)
-        }
-      } else {
-        alert(`Failed to delete project: ${result.error}`)
-      }
+      if (result.success) setProjects(projects.filter((p) => p.id !== projectId))
+      else alert(`Failed to delete project: ${result.error}`)
     }
   }
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "active":
-        return "bg-accent/20 text-accent"
-      case "draft":
-        return "bg-yellow-500/20 text-yellow-400"
-      case "archived":
-        return "bg-muted/20 text-muted-foreground"
-      default:
-        return "bg-muted/20 text-muted-foreground"
+  
+  const handleImageUpload = async (files: FileList | null) => {
+    if (!files || !editingProject || !supabase) return;
+    setUploading(true);
+    const file = files[0];
+    const safeSlug = (editingProject.slug || editingProject.title || "project").toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
+    const path = `projects/${safeSlug}/${file.name}`;
+    const { error: uploadError } = await supabase.storage.from("uploads").upload(path, file, { upsert: true });
+    if (uploadError) {
+      alert("Image upload failed: " + uploadError.message);
+    } else {
+      const { data: { publicUrl } } = supabase.storage.from("uploads").getPublicUrl(path);
+      setEditingProject({ ...editingProject, images: [...(editingProject.images || []), publicUrl] });
     }
-  }
+    setUploading(false);
+  };
 
-  const handleAddImage = () => {
-    if (!selectedProject) return
-    setSelectedProject({
-      ...selectedProject,
-      images: [...(selectedProject.images ?? []), ""],
-    })
-  }
-
-  const handleUpdateImage = (index: number, value: string) => {
-    if (!selectedProject) return
-    const updatedImages = [...(selectedProject.images ?? [])]
-    updatedImages[index] = value
-    setSelectedProject({
-      ...selectedProject,
-      images: updatedImages,
-    })
-  }
-
-  const handleRemoveImage = (index: number) => {
-    if (!selectedProject) return
-    const updatedImages = (selectedProject.images ?? []).filter((_, idx) => idx !== index)
-    setSelectedProject({
-      ...selectedProject,
-      images: updatedImages,
-    })
-  }
-
-  const openFilePicker = () => {
-    setUploadError(null)
-    setUploadSuccess(null)
-    fileInputRef.current?.click()
-  }
-
-  const handleFilesSelected = async (files: FileList | null) => {
-    if (!files || !selectedProject || !supabase) {
-      if (!supabase) {
-        setUploadError("Storage client unavailable. Ensure Supabase env vars are set.")
-      }
-      return
-    }
-
-    const safeSlug = (selectedProject.slug || selectedProject.title || "project")
-      .toLowerCase()
-      .replace(/\s+/g, "-")
-      .replace(/[^a-z0-9-]/g, "")
-    const folder = `projects/${safeSlug || "project"}`
-
-    const uploadedUrls: string[] = []
-    setUploading(true)
-    setUploadError(null)
-    setUploadSuccess(null)
-
-    try {
-      for (const file of Array.from(files)) {
-        const extension = file.name.split(".").pop() ?? "jpg"
-        const sanitizedName = file.name
-          .toLowerCase()
-          .replace(/\s+/g, "-")
-          .replace(/[^a-z0-9.-]/g, "")
-        const uniqueName = `${Date.now()}-${Math.random().toString(36).slice(2)}-${sanitizedName || `image.${extension}`}`
-        const path = `${folder}/${uniqueName}`
-
-        const { error: uploadError } = await supabase.storage.from("uploads").upload(path, file, {
-          upsert: false,
-        })
-
-        if (uploadError) {
-          throw uploadError
-        }
-
-        const {
-          data: { publicUrl },
-        } = supabase.storage.from("uploads").getPublicUrl(path)
-
-        uploadedUrls.push(publicUrl)
-      }
-
-      setSelectedProject({
-        ...selectedProject,
-        images: [...(selectedProject.images ?? []), ...uploadedUrls],
-      })
-
-      setUploadSuccess(`${uploadedUrls.length} image${uploadedUrls.length > 1 ? "s" : ""} uploaded successfully.`)
-    } catch (err: any) {
-      console.error("Image upload failed", err)
-      setUploadError(err.message || "Failed to upload images")
-    } finally {
-      setUploading(false)
-      if (fileInputRef.current) {
-        fileInputRef.current.value = ""
-      }
-    }
-  }
-
-  if (loading) {
-    return (
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <h2 className="font-serif text-3xl font-bold text-card-foreground">Projects Manager</h2>
-        </div>
-        <div className="text-center py-12">
-          <p className="text-muted-foreground text-lg">Loading projects...</p>
-        </div>
-      </div>
-    )
-  }
-
-  if (error) {
-    return (
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <h2 className="font-serif text-3xl font-bold text-card-foreground">Projects Manager</h2>
-          <Button onClick={handleCreateProject} className="bg-accent text-accent-foreground hover:bg-accent/90">
-            Add New Project
-          </Button>
-        </div>
-        <div className="text-center py-12">
-          <p className="text-destructive text-lg mb-4">Error: {error}</p>
-          <p className="text-muted-foreground text-sm">
-            The projects table may not exist yet. Please create it in your Supabase database.
-          </p>
-        </div>
-      </div>
-    )
+  const statusConfig: { [key: string]: { color: string } } = {
+    active: { color: "bg-[hsl(var(--chart-2)_/_0.2)] text-[hsl(var(--chart-2))]" },
+    draft: { color: "bg-[hsl(var(--chart-3)_/_0.2)] text-[hsl(var(--chart-3))]" },
+    archived: { color: "bg-muted text-muted-foreground" },
   }
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h2 className="font-serif text-3xl font-bold text-card-foreground">Projects Manager</h2>
-        <Button onClick={handleCreateProject} className="bg-accent text-accent-foreground hover:bg-accent/90">
-          <Plus className="h-4 w-4 mr-2" />
-          Add New Project
-        </Button>
-      </div>
+      <Card className="shadow-sm">
+        <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div><CardTitle className="text-2xl font-serif text-foreground">Projects</CardTitle><p className="text-sm text-muted-foreground">Manage your portfolio of completed projects.</p></div>
+          <Button onClick={() => handleOpenForm()}><Plus className="h-4 w-4 mr-2" />Add Project</Button>
+        </CardHeader>
+        <CardContent className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+          <div className="relative sm:col-span-2 md:col-span-1"><Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" /><Input placeholder="Search projects..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="pl-10 bg-muted/50 w-full" /></div>
+          <Select value={filterStatus} onValueChange={setFilterStatus}><SelectTrigger><SelectValue placeholder="Status" /></SelectTrigger><SelectContent><SelectItem value="all">All Statuses</SelectItem><SelectItem value="active">Active</SelectItem><SelectItem value="draft">Draft</SelectItem><SelectItem value="archived">Archived</SelectItem></SelectContent></Select>
+          <div className="text-sm text-muted-foreground flex items-center justify-end">{filteredProjects.length} projects</div>
+        </CardContent>
+      </Card>
 
-      {/* Filters */}
-      <div className="grid md:grid-cols-3 gap-4">
-        <Input
-          placeholder="Search projects..."
-          value={searchTerm}
-        />
-
-        <select
-          value={filterStatus}
-          onChange={(e) => setFilterStatus(e.target.value as any)}
-          className="admin-form-input admin-focus"
-        >
-          <option value="all">All Status</option>
-          <option value="active">Active</option>
-          <option value="draft">Draft</option>
-          <option value="archived">Archived</option>
-        </select>
-
-        <div className="text-muted-foreground flex items-center">{filteredProjects.length} projects found</div>
-      </div>
-
-      {/* Projects Grid */}
-      <div className="grid lg:grid-cols-2 gap-6">
+      {loading ? <div className="h-64 flex items-center justify-center text-muted-foreground"><Loader2 className="h-6 w-6 animate-spin" /></div> :
+       error ? <div className="h-64 flex flex-col items-center justify-center text-destructive bg-card border border-dashed rounded-lg">{error}</div> :
+       filteredProjects.length === 0 ? <div className="h-64 flex items-center justify-center text-muted-foreground bg-card border border-dashed rounded-lg">No projects found.</div> :
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         {filteredProjects.map((project) => (
-          <div key={project.id} className="border border-border rounded-lg p-6 space-y-4 min-h-[280px] flex flex-col">
-            <div className="flex items-start justify-between flex-1">
-              <div className="flex-1 min-w-0 pr-4">
-                <div className="flex items-start gap-2 mb-2">
-                  <h3 className="font-playfair text-xl font-bold text-foreground break-words line-clamp-2 leading-tight">{project.title}</h3>
-                  {project.featured && <Badge className="bg-primary text-primary-foreground border-0 text-xs shrink-0">Featured</Badge>}
+          <Card key={project.id} className="shadow-sm hover:shadow-md transition-shadow flex flex-col">
+            <CardHeader className="flex flex-row justify-between items-start gap-4">
+              <div className="flex-1 min-w-0">
+                <CardTitle className="text-lg break-words">{project.title}</CardTitle>
+                <p className="text-sm text-muted-foreground capitalize">{project.category}</p>
+              </div>
+              {project.images?.[0] && <img src={project.images[0]} alt={project.title} className="w-12 h-12 object-cover rounded-md border flex-shrink-0" />}
+            </CardHeader>
+            <CardContent className="flex-grow flex flex-col">
+              <p className="text-sm text-muted-foreground line-clamp-3 flex-grow break-words">{project.description}</p>
+              <div className="space-y-3 pt-4 mt-4 border-t">
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
+                  <Badge className={cn("capitalize self-start", statusConfig[project.status]?.color)}>{project.status}</Badge>
+                  <p className="text-xs text-muted-foreground break-words">Location: {project.location}</p>
                 </div>
-
-                <p className="text-muted-foreground text-sm mb-3 line-clamp-2 break-words">{project.description}</p>
-
-                <div className="flex flex-wrap items-center gap-2 mb-3">
-                  <Badge className={`${getStatusColor(project.status)} border-0 shrink-0`}>{project.status}</Badge>
-                  <Badge className="bg-primary/20 text-primary border-0 break-words max-w-full">{project.category}</Badge>
-                </div>
-
-                <div className="text-xs text-muted-foreground space-y-1">
-                  <p className="truncate">Location: {project.location}</p>
-                  <p className="truncate">Year: {project.year}</p>
-                  <p className="truncate">Client: {project.client}</p>
-                  <p className="truncate">Updated: {project.updatedAt}</p>
+                <div className="flex flex-col sm:flex-row gap-2 pt-2">
+                  <Button size="sm" variant="outline" className="flex-1" onClick={() => handleOpenForm(project)}><Edit className="h-4 w-4 mr-2" />Edit</Button>
+                  <Button size="sm" variant="destructive" className="flex-1" onClick={() => handleDeleteProject(project.id)}><Trash2 className="h-4 w-4 mr-2" />Delete</Button>
                 </div>
               </div>
-
-              {project.images[0] && (
-                <img
-                  src={project.images[0] || "/placeholder.svg"}
-                  alt={project.title}
-                  className="w-20 h-16 object-cover rounded-lg shrink-0"
-                />
-              )}
-            </div>
-
-            <div className="flex gap-2">
-              <Button
-                size="sm"
-                onClick={() => {
-                  setSelectedProject(project)
-                  setIsEditing(true)
-                }}
-                className="bg-accent text-accent-foreground hover:bg-accent/90 flex-1"
-              >
-                <Edit className="h-4 w-4 mr-2" />
-                Edit
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() => handleDeleteProject(project.id)}
-                className="border-destructive text-destructive-foreground hover:bg-destructive/20"
-              >
-                <Trash2 className="h-4 w-4 mr-2" />
-                Delete
-              </Button>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         ))}
-      </div>
+      </div>}
 
-      {filteredProjects.length === 0 && (
-        <div className="text-center py-12">
-          <p className="text-muted-foreground text-lg">No projects found matching your criteria.</p>
-        </div>
-      )}
-
-      {isEditing && selectedProject && (
-        <div className="fixed inset-0 admin-modal-backdrop flex items-center justify-center z-50 p-4">
-          <div className="bg-card border border-accent/20 rounded-lg p-6 max-w-6xl w-full max-h-[90vh] overflow-y-auto admin-card">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="font-playfair text-2xl font-bold text-primary">
-                {selectedProject.id ? "Edit Project" : "Create Project"}
-              </h3>
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setSelectedProject(null)
-                  setIsEditing(false)
-                }}
-              >
-                <X className="h-4 w-4 mr-2" />
-                Cancel
-              </Button>
+      <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
+        <DialogContent className="max-w-4xl max-h-[90vh] p-0 flex flex-col">
+          <DialogHeader className="p-6 border-b text-center flex-shrink-0">
+            <DialogTitle className="text-2xl font-serif">
+              {editingProject?.id ? <span className="bg-accent text-accent-foreground px-2 py-1 rounded-md">Edit Project</span> : <span className="bg-accent text-accent-foreground px-2 py-1 rounded-md">Create New Project</span>}
+            </DialogTitle>
+            <DialogDescription className="text-muted-foreground mt-2">
+              Fill in the project details below, organized into sections.
+            </DialogDescription>
+          </DialogHeader>
+          {editingProject && <Tabs defaultValue="details" className="w-full flex-1 flex flex-col min-h-0">
+            <div className="p-6 border-b flex-shrink-0"><TabsList className="grid w-full grid-cols-4"><TabsTrigger value="details">Details</TabsTrigger><TabsTrigger value="content">Content</TabsTrigger><TabsTrigger value="media">Media</TabsTrigger><TabsTrigger value="testimonial">Testimonial</TabsTrigger></TabsList></div>
+            <div className="p-6 flex-1 overflow-y-auto min-h-0">
+              <TabsContent value="details" className="space-y-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4"><div className="space-y-2"><Label>Project Title</Label><Input value={editingProject.title} onChange={(e) => setEditingProject({ ...editingProject, title: e.target.value, slug: e.target.value.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "") })} /></div><div className="space-y-2"><Label>Slug</Label><Input value={editingProject.slug} onChange={(e) => setEditingProject({ ...editingProject, slug: e.target.value })} /></div></div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4"><div className="space-y-2"><Label>Category</Label><Input value={editingProject.category} onChange={(e) => setEditingProject({ ...editingProject, category: e.target.value })} /></div><div className="space-y-2"><Label>Year</Label><Input type="number" value={editingProject.year} onChange={(e) => setEditingProject({ ...editingProject, year: e.target.value })} /></div></div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4"><div className="space-y-2"><Label>Location</Label><Input value={editingProject.location} onChange={(e) => setEditingProject({ ...editingProject, location: e.target.value })} /></div><div className="space-y-2"><Label>Client</Label><Input value={editingProject.client} onChange={(e) => setEditingProject({ ...editingProject, client: e.target.value })} /></div></div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4"><div className="space-y-2"><Label>Status</Label><Select value={editingProject.status} onValueChange={(v) => setEditingProject({ ...editingProject, status: v as any })}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="draft">Draft</SelectItem><SelectItem value="active">Active</SelectItem><SelectItem value="archived">Archived</SelectItem></SelectContent></Select></div><div className="flex items-center pt-6 gap-2"><Checkbox id="featured" checked={editingProject.featured} onCheckedChange={(c) => setEditingProject({ ...editingProject, featured: !!c })} /><Label htmlFor="featured">Featured Project</Label></div></div>
+              </TabsContent>
+              <TabsContent value="content" className="space-y-4 mt-0"><div className="space-y-2"><Label>Description</Label><Textarea value={editingProject.description} onChange={(e) => setEditingProject({ ...editingProject, description: e.target.value })} className="min-h-[100px] resize-none" /></div><div className="space-y-2"><Label>Challenge</Label><Textarea value={editingProject.challenge} onChange={(e) => setEditingProject({ ...editingProject, challenge: e.target.value })} className="min-h-[80px] resize-none" /></div><div className="space-y-2"><Label>Solution</Label><Textarea value={editingProject.solution} onChange={(e) => setEditingProject({ ...editingProject, solution: e.target.value })} className="min-h-[80px] resize-none" /></div></TabsContent>
+              <TabsContent value="media" className="space-y-4"><div className="flex items-center justify-between"><Label>Project Images</Label><div className="flex items-center gap-2"><Button variant="outline" size="sm" onClick={() => fileInputRef.current?.click()} disabled={!supabase || uploading}><Upload className="h-4 w-4 mr-2" />{uploading ? "Uploading..." : "Upload"}</Button><input ref={fileInputRef} type="file" accept="image/*" multiple className="hidden" onChange={(e) => handleImageUpload(e.target.files)} /></div></div><div className="space-y-2">{editingProject.images?.map((url, i) => <div key={i} className="flex items-center gap-2"><Input value={url} onChange={(e) => setEditingProject({ ...editingProject, images: editingProject.images?.map((u, j) => i === j ? e.target.value : u) })} /><Button variant="ghost" size="icon" onClick={() => setEditingProject({ ...editingProject, images: editingProject.images?.filter((_, j) => i !== j) })}><Trash2 className="h-4 w-4 text-destructive" /></Button></div>)}</div><Button variant="secondary" size="sm" onClick={() => setEditingProject({ ...editingProject, images: [...(editingProject.images || []), ""] })}><Plus className="h-4 w-4 mr-2" />Add Image URL</Button></TabsContent>
+              <TabsContent value="testimonial" className="space-y-4"><div className="space-y-2"><Label>Quote</Label><Textarea value={editingProject.testimonial?.quote || ""} onChange={(e) => setEditingProject({ ...editingProject, testimonial: { ...editingProject.testimonial, quote: e.target.value } })} className="min-h-[100px] resize-none" /></div><div className="grid grid-cols-2 gap-4"><div className="space-y-2"><Label>Author</Label><Input value={editingProject.testimonial?.author || ""} onChange={(e) => setEditingProject({ ...editingProject, testimonial: { ...editingProject.testimonial, author: e.target.value } })} /></div><div className="space-y-2"><Label>Position</Label><Input value={editingProject.testimonial?.position || ""} onChange={(e) => setEditingProject({ ...editingProject, testimonial: { ...editingProject.testimonial, position: e.target.value } })} /></div></div></TabsContent>
             </div>
-
-            <div className="grid md:grid-cols-2 gap-6">
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-primary font-semibold mb-2">Project Title</label>
-                  <Input
-                    value={selectedProject.title}
-                    onChange={(e) =>
-                      setSelectedProject({
-                        ...selectedProject,
-                        title: e.target.value,
-                        slug: e.target.value
-                          .toLowerCase()
-                          .replace(/\s+/g, "-")
-                          .replace(/[^a-z0-9-]/g, ""),
-                      })
-                    }
-                    placeholder="Enter project title"
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-primary font-semibold mb-2">Category</label>
-                    <Input
-                      value={selectedProject.category}
-                      onChange={(e) =>
-                        setSelectedProject({
-                          ...selectedProject,
-                          category: e.target.value,
-                        })
-                      }
-                      placeholder="e.g., Luxury Hotel"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-primary font-semibold mb-2">Year</label>
-                    <Input
-                      value={selectedProject.year}
-                      onChange={(e) =>
-                        setSelectedProject({
-                          ...selectedProject,
-                          year: e.target.value,
-                        })
-                      }
-                      placeholder="2024"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-primary font-semibold mb-2">Location</label>
-                  <Input
-                    value={selectedProject.location}
-                    onChange={(e) =>
-                      setSelectedProject({
-                        ...selectedProject,
-                        location: e.target.value,
-                      })
-                    }
-                    placeholder="e.g., Cairo, Egypt"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-primary font-semibold mb-2">Client</label>
-                  <Input
-                    value={selectedProject.client}
-                    onChange={(e) =>
-                      setSelectedProject({
-                        ...selectedProject,
-                        client: e.target.value,
-                      })
-                    }
-                    placeholder="Client name"
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-primary font-semibold mb-2">Status</label>
-                    <select
-                      value={selectedProject.status}
-                      onChange={(e) =>
-                        setSelectedProject({
-                          ...selectedProject,
-                          status: e.target.value as "active" | "draft" | "archived",
-                        })
-                      }
-                      className="admin-form-input admin-focus"
-                    >
-                      <option value="draft">Draft</option>
-                      <option value="active">Active</option>
-                      <option value="archived">Archived</option>
-                    </select>
-                  </div>
-
-                  <div className="flex items-center gap-2 pt-8">
-                    <Checkbox
-                      id="featured"
-                      checked={selectedProject.featured}
-                      onCheckedChange={(checked) =>
-                        setSelectedProject({
-                          ...selectedProject,
-                          featured: checked,
-                        })
-                      }
-                    />
-                    <label htmlFor="featured" className="text-primary font-semibold">
-                      Featured Project
-                    </label>
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-primary font-semibold mb-2">Description</label>
-                  <Textarea
-                    value={selectedProject.description}
-                    onChange={(e) =>
-                      setSelectedProject({
-                        ...selectedProject,
-                        description: e.target.value,
-                      })
-                    }
-                    className="min-h-[100px]"
-                    placeholder="Project description"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-primary font-semibold mb-2">Challenge</label>
-                  <Textarea
-                    value={selectedProject.challenge}
-                    onChange={(e) =>
-                      setSelectedProject({
-                        ...selectedProject,
-                        challenge: e.target.value,
-                      })
-                    }
-                    isAdmin={true}
-                    className="min-h-[80px]"
-                    placeholder="How challenges were solved"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-primary font-semibold mb-2">Solution</label>
-                  <Textarea
-                    value={selectedProject.solution}
-                    onChange={(e) =>
-                      setSelectedProject({
-                        ...selectedProject,
-                        solution: e.target.value,
-                      })
-                    }
-                    isAdmin={true}
-                    className="min-h-[80px]"
-                    placeholder="How challenges were solved"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-primary font-semibold mb-2">Results (one per line)</label>
-                  <Textarea
-                    value={selectedProject.results.join("\n")}
-                    onChange={(e) =>
-                      setSelectedProject({
-                        ...selectedProject,
-                        results: e.target.value.split("\n").filter(Boolean),
-                      })
-                    }
-                    isAdmin={true}
-                    className="min-h-[80px]"
-                    placeholder="Project results and achievements"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-6 mt-6">
-              <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <label className="block text-primary font-semibold">Project Images</label>
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="secondary"
-                  onClick={openFilePicker}
-                  disabled={!supabase || uploading}
-                >
-                  <Upload className="h-4 w-4 mr-2" />
-                  {uploading ? "Uploading..." : "Upload Images"}
-                </Button>
-                <Button variant="outline" onClick={handleAddImage}>
-                  <Link className="h-4 w-4 mr-2" />
-                  Add Image URL
-                </Button>
-              </div>
-            </div>
-            <p className="text-sm text-muted-foreground">
-              Upload directly to Supabase storage or paste image URLs. The first image is treated as the primary visual.
-            </p>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              multiple
-              className="hidden"
-              onChange={(event) => handleFilesSelected(event.target.files)}
-            />
-            {uploadError && <p className="text-sm text-destructive">{uploadError}</p>}
-            {uploadSuccess && <p className="text-sm text-accent">{uploadSuccess}</p>}
-            <div className="space-y-3">
-              {(selectedProject.images ?? []).length === 0 && (
-                <p className="text-muted-foreground text-sm">No images added yet.</p>
-              )}
-                  {(selectedProject.images ?? []).map((url: string, index: number) => (
-                    <div key={`project-image-${index}`} className="flex items-center gap-3">
-                      <Input
-                        value={url}
-                        onChange={(e) => handleUpdateImage(index, e.target.value)}
-                                              isAdmin={true}
-                                              placeholder="https://example.com/project-image.jpg"
-                                            />                      <Button
-                        type="button"
-                        variant="destructive"
-                        onClick={() => handleRemoveImage(index)}
-                        className="admin-focus"
-                      >
-                        <X className="h-4 w-4 mr-2" />
-                        Remove
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <label className="block text-primary font-semibold mb-2">Materials Used (one per line)</label>
-                <Textarea
-                  value={selectedProject.materials.join("\n")}
-                  onChange={(e) =>
-                    setSelectedProject({
-                      ...selectedProject,
-                      materials: e.target.value.split("\n").filter(Boolean),
-                    })
-                  }
-                  isAdmin={true}
-                  className="min-h-[100px]"
-                  placeholder="Materials and quantities used"
-                />
-              </div>
-
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-primary font-semibold mb-2">Testimonial Quote</label>
-                  <Textarea
-                    value={selectedProject.testimonial.quote}
-                    onChange={(e) =>
-                      setSelectedProject({
-                        ...selectedProject,
-                        testimonial: {
-                          ...selectedProject.testimonial,
-                          quote: e.target.value,
-                        },
-                      })
-                    }
-                    isAdmin={true}
-                    className="min-h-[60px]"
-                    placeholder="Client testimonial"
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-primary font-semibold mb-2">Author</label>
-                    <Input
-                      value={selectedProject.testimonial.author}
-                      onChange={(e) =>
-                        setSelectedProject({
-                          ...selectedProject,
-                          testimonial: {
-                            ...selectedProject.testimonial,
-                            author: e.target.value,
-                          },
-                        })
-                      }
-                      placeholder="Author name"
-                      isAdmin={true}
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-primary font-semibold mb-2">Position</label>
-                    <Input
-                      value={selectedProject.testimonial.position}
-                      onChange={(e) =>
-                        setSelectedProject({
-                          ...selectedProject,
-                          testimonial: {
-                            ...selectedProject.testimonial,
-                            position: e.target.value,
-                          },
-                        })
-                      }
-                      placeholder="Job title"
-                      isAdmin={true}
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex justify-end gap-4 mt-6">
-              <Button
-                onClick={() => handleSaveProject(selectedProject)}
-                className="bg-accent text-accent-foreground hover:bg-accent/90"
-              >
-                <Save className="h-4 w-4 mr-2" />
-                Save Project
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
+          </Tabs>}
+          <DialogFooter className="p-4 border-t flex-shrink-0"><Button variant="outline" onClick={() => setIsFormOpen(false)}>Cancel</Button><Button onClick={handleSaveProject}><Save className="h-4 w-4 mr-2" />Save Project</Button></DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

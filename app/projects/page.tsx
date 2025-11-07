@@ -2,12 +2,16 @@
 
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
+import { Navigation } from "@/components/navigation"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import { AnimatedSection } from "@/components/ui/animated-section"
 import { StaggerContainer, itemVariants } from "@/components/ui/stagger-container"
 import { PageTransition } from "@/components/ui/page-transition"
 import { motion } from "framer-motion"
+import Link from "next/link"
+import { ArrowRight } from "lucide-react"
 
 const projects = [
   {
@@ -70,12 +74,12 @@ export default function ProjectsPage() {
   return (
     <PageTransition>
       <div className="flex flex-col">
-        <Header />
+        <Navigation />
 
-        <main className="flex-1">
+        <main className="flex-1 pt-16">
           {/* Hero Section */}
           <AnimatedSection>
-            <section className="border-b border-border bg-secondary/30 py-16">
+            <section className="border-b border-border bg-secondary/30 py-16 md:py-20">
               <div className="container mx-auto px-4">
                 <div className="mx-auto max-w-2xl text-center">
                   <h1 className="font-serif text-4xl font-bold tracking-tight md:text-5xl">Our Projects</h1>
@@ -111,10 +115,18 @@ export default function ProjectsPage() {
                         </div>
                         <h3 className="font-serif text-xl font-semibold">{project.title}</h3>
                         <p className="mt-2 text-sm text-muted-foreground">{project.location}</p>
-                        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{project.description}</p>
+                        <p className="mt-3 text-sm leading-relaxed text-muted-foreground line-clamp-3">{project.description}</p>
                         <div className="mt-4 border-t border-border pt-4">
                           <p className="text-xs font-medium text-muted-foreground">Material Used</p>
                           <p className="mt-1 text-sm font-medium">{project.material}</p>
+                        </div>
+                        <div className="mt-4 flex justify-center">
+                          <Button asChild variant="link" className="p-0 text-accent hover:text-accent/80">
+                            <Link href={`/projects/${project.id}`}>
+                              View Project Details
+                              <ArrowRight className="ml-2 h-4 w-4" />
+                            </Link>
+                          </Button>
                         </div>
                       </CardContent>
                     </Card>

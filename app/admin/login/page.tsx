@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { createSupabaseBrowserClient } from "@/lib/supabase/index"
-import Image from "next/image"
+import { MarbleBackground } from "@/components/marble-background"
 
 export default function AdminLoginPage() {
   const [email, setEmail] = useState("")
@@ -90,27 +90,29 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-black p-4">
-      <Card className="w-full max-w-md bg-gray-900 border-gray-700">
+    <div className="min-h-screen flex items-center justify-center p-4 relative">
+      <MarbleBackground />
+      <div className="absolute inset-0 bg-gradient-to-br from-black/80 via-black/60 to-black/80" />
+      <Card className="w-full max-w-md bg-card/95 backdrop-blur-md border-border/50 shadow-2xl relative z-10">
         <CardHeader className="space-y-4 text-center">
           <div className="flex justify-center">
-            <div className="text-4xl font-bold text-yellow-500">TM</div>
+            <div className="text-4xl font-bold text-accent">TM</div>
           </div>
           <div>
-            <CardTitle className="text-white text-2xl">Admin Login</CardTitle>
-            <CardDescription className="text-gray-400">Sign in to access the admin dashboard</CardDescription>
+            <CardTitle className="text-foreground text-2xl font-serif">Admin Login</CardTitle>
+            <CardDescription className="text-muted-foreground">Sign in to access the admin dashboard</CardDescription>
           </div>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleLogin} className="space-y-4">
             {error && (
-              <Alert variant="destructive" className="bg-red-900 border-red-700">
-                <AlertDescription className="text-red-200">{error}</AlertDescription>
+              <Alert variant="destructive" className="bg-destructive/10 border-destructive/20">
+                <AlertDescription className="text-destructive">{error}</AlertDescription>
               </Alert>
             )}
 
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-white">Email</Label>
+              <Label htmlFor="email" className="text-foreground font-medium">Email</Label>
               <Input
                 id="email"
                 type="email"
@@ -119,12 +121,12 @@ export default function AdminLoginPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 disabled={loading}
-                className="bg-gray-800 border-gray-600 text-white placeholder-gray-400"
+                className="bg-background border-input text-foreground placeholder-muted-foreground focus:border-accent focus:ring-accent/20"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-white">Password</Label>
+              <Label htmlFor="password" className="text-foreground font-medium">Password</Label>
               <Input
                 id="password"
                 type="password"
@@ -133,11 +135,11 @@ export default function AdminLoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 disabled={loading}
-                className="bg-gray-800 border-gray-600 text-white placeholder-gray-400"
+                className="bg-background border-input text-foreground placeholder-muted-foreground focus:border-accent focus:ring-accent/20"
               />
             </div>
 
-            <Button type="submit" className="w-full bg-red-600 hover:bg-red-700 text-white" disabled={loading}>
+            <Button type="submit" className="w-full bg-accent hover:bg-accent/90 text-accent-foreground font-medium transition-all duration-200" disabled={loading}>
               {loading ? "Signing in..." : "Sign In"}
             </Button>
           </form>

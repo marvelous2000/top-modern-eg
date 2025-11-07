@@ -90,7 +90,7 @@ export function StoneCard({ image, title, description, href, badge }: StoneCardP
         </div>
         <CardContent className="p-6 text-center">
           <h3 className="font-serif text-xl font-semibold text-card-foreground">{title}</h3>
-          <p className="mt-2 text-sm leading-relaxed text-card-foreground/70">{description}</p>
+          <p className="mt-2 text-sm leading-relaxed text-card-foreground/70 line-clamp-3">{description}</p>
           {href && (
             <div className="mt-4 flex justify-center">
               <Button asChild variant="link" className="p-0 text-accent hover:text-accent/80">

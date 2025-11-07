@@ -2,6 +2,7 @@
 
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
+import { Navigation } from "@/components/navigation"
 import { Card, CardContent } from "@/components/ui/card"
 import { AnimatedSection } from "@/components/ui/animated-section"
 import { StaggerContainer, itemVariants } from "@/components/ui/stagger-container"
@@ -14,12 +15,12 @@ export default function AboutPage() {
   return (
     <PageTransition>
       <div className="flex flex-col">
-        <Header />
+        <Navigation />
 
-        <main className="flex-1">
+        <main className="flex-1 pt-16">
           {/* Hero Section */}
           <AnimatedSection>
-            <section className="border-b border-border bg-secondary/30 py-16">
+            <section className="border-b border-border bg-secondary/30 py-16 md:py-20">
               <div className="container mx-auto px-4">
                 <div className="mx-auto max-w-2xl text-center">
                   <h1 className="font-serif text-4xl font-bold tracking-tight md:text-5xl">About Top Modern</h1>
@@ -59,9 +60,9 @@ export default function AboutPage() {
           </AnimatedSection>
 
           {/* Our Journey Timeline */}
-          <section className="border-b border-border py-20">
+          <section className="border-b border-border py-16 md:py-20">
             <div className="container mx-auto px-4">
-              <AnimatedSection className="mx-auto mb-16 max-w-2xl text-center">
+              <AnimatedSection className="mx-auto mb-12 md:mb-16 max-w-2xl text-center">
                 <h2 className="font-serif text-3xl font-bold tracking-tight md:text-4xl">Our Journey</h2>
                 <p className="mt-4 text-lg leading-relaxed text-muted-foreground">
                   Three decades of growth, innovation, and commitment to excellence
@@ -69,7 +70,7 @@ export default function AboutPage() {
               </AnimatedSection>
 
               <div className="relative mx-auto max-w-4xl">
-                <div className="space-y-16">
+                <div className="space-y-12 md:space-y-16">
                   <TimelineItem year="1994" title="The Beginning" isLeft={true}>
                     <p>
                       Top Modern was founded as a small family workshop in Dubai, UAE. Our founders, with a vision
