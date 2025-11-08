@@ -13,9 +13,7 @@
 [functions]
   directory = "netlify/functions"
 
-[[edge_functions]]
-  function = "supabase-init"
-  path = "/*"
+
 
 [[build.hooks]]
   command = "node scripts/setup-netlify-db.js"
