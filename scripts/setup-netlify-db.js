@@ -125,11 +125,11 @@ async function main() {
 
   // Test the connection
   try {
-    const { data, error } = await supabase.from('site_settings').select('key').limit(1)
+    const { error } = await supabase.from('site_settings').select('key').limit(1)
     if (!error) {
       console.log("✅ Database connection test passed!")
     }
-  } catch (error) {
+  } catch {
     console.log("⚠️  Database connection test failed, but continuing...")
   }
 }
