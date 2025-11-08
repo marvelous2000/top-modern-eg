@@ -8,4 +8,7 @@ export default [
       'no-console': 'off',
     },
   },
+  {
+    ignores: ['.next/**', 'node_modules/**', 'out/**'],
+  },
 ];
