@@ -5,8 +5,16 @@ export async function createSupabaseServerClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
   const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
+  // During build time, environment variables might not be available
+  // Return a mock client that will be replaced at runtime
   if (!url || !anonKey) {
-    throw new Error("Missing Supabase environment variables")
+    return createServerClient("https://placeholder.supabase.co", "placeholder-key", {
+      cookies: {
+        get() { return null },
+        set() {},
+        remove() {},
+      },
+    })
   }
 
   const cookieStore = await cookies()

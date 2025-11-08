@@ -226,7 +226,7 @@ export default function HomePage() {
                     description: "Comprehensive warranty and dedicated customer support",
                   },
                 ].map((item, index) => (
-                  <motion.div key={index} variants={itemVariants}>
+                  <motion.div key={index} variants={itemVariants} transition={{ ease: [0.4, 0, 0.2, 1] }}>
                     <Card className="border-border bg-card">
                       <CardContent className="pt-6">
                         <div className="flex flex-col items-center text-center">
@@ -279,7 +279,7 @@ export default function HomePage() {
                     href: "/products#quartz",
                   },
                 ].map((product, index) => (
-                  <motion.div key={index} variants={itemVariants}>
+                  <motion.div key={index} variants={itemVariants} transition={{ ease: [0.4, 0, 0.2, 1] }}>
                     <StoneCard {...product} />
                   </motion.div>
                 ))}

@@ -57,3 +57,6 @@ export default function AdminPage() {
 
   return <>{renderContent()}</>
 }
+
+// Force dynamic rendering to avoid prerendering issues
+export const dynamic = 'force-dynamic'

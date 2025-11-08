@@ -1,0 +1,22 @@
+[build]
+  command = "pnpm build && node scripts/setup-netlify-db.js"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "18"
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+
+[functions]
+  directory = "netlify/functions"
+
+[[edge_functions]]
+  function = "supabase-init"
+  path = "/*"
+
+[dev]
+  command = "pnpm dev"
+  port = 3000
