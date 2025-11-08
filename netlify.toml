@@ -15,8 +15,8 @@
 
 
 
-[[build.hooks]]
-  command = "node scripts/setup-netlify-db.js"
+# [[build.hooks]]
+#   command = "node scripts/setup-netlify-db.js"
 
 [dev]
   command = "pnpm dev"

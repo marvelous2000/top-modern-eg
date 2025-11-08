@@ -15,6 +15,13 @@ require("dotenv").config({ path: ".env.local" })
 
 const { createClient } = require("@supabase/supabase-js")
 
+// Set timeout to prevent hanging
+const TIMEOUT_MS = 30000 // 30 seconds
+const timeoutHandle = setTimeout(() => {
+  console.error("❌ Superadmin script timed out after 30 seconds")
+  process.exit(1)
+}, TIMEOUT_MS)
+
 const email = process.argv[2] ?? "admin@topmodern.com"
 const password = process.argv[3]
 const role = process.argv[4] ?? "super_admin"
@@ -24,18 +31,27 @@ async function main() {
     console.error(
       "Missing password argument.\nRun: node scripts/create-superadmin.js admin@example.com \"SuperSecure123!\" super_admin",
     )
+    clearTimeout(timeoutHandle)
     process.exit(1)
   }
 
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
-  if (!url || !serviceKey) {
-    console.error(
-      "Missing Supabase credentials. Ensure NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are set.",
-    )
+  console.log("🔍 Validating superadmin script environment variables...")
+  if (!url) {
+    console.error("❌ NEXT_PUBLIC_SUPABASE_URL is not set")
+    clearTimeout(timeoutHandle)
     process.exit(1)
   }
+
+  if (!serviceKey) {
+    console.error("❌ SUPABASE_SERVICE_ROLE_KEY is not set")
+    clearTimeout(timeoutHandle)
+    process.exit(1)
+  }
+
+  console.log("✅ Superadmin script environment variables validated")
 
   const supabase = createClient(url, serviceKey, {
     auth: {
@@ -155,4 +171,10 @@ async function main() {
   }
 }
 
-main()
+main().catch((error) => {
+  console.error("❌ Superadmin script failed:", error.message)
+  clearTimeout(timeoutHandle)
+  process.exit(1)
+}).finally(() => {
+  clearTimeout(timeoutHandle)
+})

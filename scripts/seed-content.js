@@ -1,13 +1,30 @@
 require("dotenv").config({ path: ".env.local" })
 const { createClient } = require("@supabase/supabase-js")
 
+// Set timeout to prevent hanging
+const TIMEOUT_MS = 30000 // 30 seconds
+const timeoutHandle = setTimeout(() => {
+  console.error("❌ Seed script timed out after 30 seconds")
+  process.exit(1)
+}, TIMEOUT_MS)
+
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL
 const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
-if (!url || !serviceKey) {
-  console.error("Missing Supabase credentials. Ensure NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are set.")
+console.log("🔍 Validating seed script environment variables...")
+if (!url) {
+  console.error("❌ NEXT_PUBLIC_SUPABASE_URL is not set")
+  clearTimeout(timeoutHandle)
   process.exit(1)
 }
+
+if (!serviceKey) {
+  console.error("❌ SUPABASE_SERVICE_ROLE_KEY is not set")
+  clearTimeout(timeoutHandle)
+  process.exit(1)
+}
+
+console.log("✅ Seed script environment variables validated")
 
 const supabase = createClient(url, serviceKey, {
   auth: {
@@ -36,7 +53,7 @@ const productSeeds = [
       "/carrara-marble-kitchen-countertop-with-gold-fixtur.jpg",
     ],
     specifications: {
-      Density: "2.7 g/cm�",
+      Density: "2.7 g/cm�",
       "Water Absorption": "< 0.5%",
       "Compressive Strength": "120 MPa",
       "Flexural Strength": "15 MPa",
@@ -60,7 +77,7 @@ const productSeeds = [
       "/luxurious-white-carrara-marble-with-grey-veining.jpg",
     ],
     specifications: {
-      Density: "2.7 g/cm�",
+      Density: "2.7 g/cm�",
       "Water Absorption": "< 0.4%",
       "Compressive Strength": "110 MPa",
       "Flexural Strength": "12 MPa",
@@ -84,7 +101,7 @@ const productSeeds = [
       "/luxury-marble-workshop-with-craftsmen-working-on-p.jpg",
     ],
     specifications: {
-      Density: "2.9 g/cm�",
+      Density: "2.9 g/cm�",
       "Water Absorption": "< 0.2%",
       "Compressive Strength": "200 MPa",
       "Flexural Strength": "18 MPa",
@@ -238,5 +255,11 @@ async function main() {
   }
 }
 
-main()
+main().catch((error) => {
+  console.error("❌ Seed script failed:", error.message)
+  clearTimeout(timeoutHandle)
+  process.exit(1)
+}).finally(() => {
+  clearTimeout(timeoutHandle)
+})
 

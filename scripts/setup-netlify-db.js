@@ -17,15 +17,31 @@ const { createClient } = require("@supabase/supabase-js")
 const fs = require("fs")
 const path = require("path")
 
+// Set timeout to prevent hanging
+const TIMEOUT_MS = 30000 // 30 seconds
+const timeoutHandle = setTimeout(() => {
+  console.error("❌ Script timed out after 30 seconds")
+  process.exit(1)
+}, TIMEOUT_MS)
+
 // Get environment variables from Netlify build environment
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
 const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
-if (!supabaseUrl || !serviceKey) {
-  console.log("⚠️  Supabase environment variables not found. Skipping database setup.")
-  console.log("This is normal during local development. Database will be set up when deployed to Netlify.")
-  process.exit(0)
+console.log("🔍 Validating environment variables...")
+if (!supabaseUrl) {
+  console.error("❌ NEXT_PUBLIC_SUPABASE_URL is not set")
+  clearTimeout(timeoutHandle)
+  process.exit(1)
 }
+
+if (!serviceKey) {
+  console.error("❌ SUPABASE_SERVICE_ROLE_KEY is not set")
+  clearTimeout(timeoutHandle)
+  process.exit(1)
+}
+
+console.log("✅ Environment variables validated")
 
 const supabase = createClient(supabaseUrl, serviceKey, {
   auth: {
@@ -118,4 +134,10 @@ async function main() {
   }
 }
 
-main().catch(console.error)
+main().catch((error) => {
+  console.error("❌ Script failed:", error.message)
+  clearTimeout(timeoutHandle)
+  process.exit(1)
+}).finally(() => {
+  clearTimeout(timeoutHandle)
+})
