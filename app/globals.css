@@ -139,7 +139,7 @@
 /* Typography Scale System */
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-gray-200 outline-ring/50;
   }
   body {
     @apply bg-background text-foreground font-sans;
@@ -297,7 +297,7 @@
 }
 
 .admin-modal-header {
-  @apply text-[1.5rem] font-semibold leading-1.25 font-serif mb-6 border-b border-border pb-4;
+  @apply text-[1.5rem] font-semibold leading-1.25 font-serif mb-6 border-b border-gray-200 pb-4;
 }
 
 .admin-modal-actions {
