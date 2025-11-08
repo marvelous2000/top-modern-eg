@@ -3,14 +3,8 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
   images: {
     unoptimized: true,
-  },
-  experimental: {
-    buildTraces: false,
   },
   env: {
     NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
