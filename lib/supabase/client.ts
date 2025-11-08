@@ -12,3 +12,29 @@ export function createBrowserClient() {
 
   return createSupabaseBrowserClient(url, anonKey)
 }
+
+export async function signInWithPassword(email: string, password: string) {
+  try {
+    const response = await fetch('/auth', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        action: 'signIn',
+        email,
+        password,
+      }),
+    })
+
+    if (!response.ok) {
+      throw new Error('Authentication failed')
+    }
+
+    const result = await response.json()
+    return result
+  } catch (error) {
+    console.error('Sign in error:', error)
+    throw error
+  }
+}
