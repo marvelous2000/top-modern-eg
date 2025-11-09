@@ -22,6 +22,9 @@ export const metadata: Metadata = {
   description:
     "Premium natural stone solutions for discerning clients. Explore our curated collection of granite, marble, and quartz.",
   generator: "v0.app",
+  icons: {
+    icon: "/favicon.ico",
+  },
 }
 
 export default function RootLayout({
