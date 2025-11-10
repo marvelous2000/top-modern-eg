@@ -234,7 +234,7 @@ fbq('track', 'PageView');
         <select
           value={filterType}
           onChange={(e) => setFilterType(e.target.value as any)}
-          className="w-full bg-background border border-border text-foreground rounded-md px-3 py-2"
+          className="w-full bg-background border border-border text-foreground rounded-md px-3 py-2 focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring/20"
         >
           <option value="all">All Types</option>
           <option value="facebook">Facebook</option>

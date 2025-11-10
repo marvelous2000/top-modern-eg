@@ -25,6 +25,7 @@ const navigationGroups = [
   {
     title: "Administration",
     items: [
+      { page: "setup", label: "Database Setup", icon: ShieldCheck },
       { page: "users", label: "Team Users", icon: ShieldCheck },
       { page: "legal", label: "Legal Pages", icon: FileText },
       { page: "pixels", label: "Marketing Pixels", icon: Target },
@@ -41,7 +42,7 @@ const NavLink = ({ page, label, icon: Icon }: { page: string | null; label: stri
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const currentPage = searchParams.get("page")
-  
+
   const href = page ? `/admin?page=${page}` : "/admin"
   const isActive = page === currentPage && pathname === '/admin'
 

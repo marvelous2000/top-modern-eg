@@ -13,6 +13,7 @@ import { UsersManager } from "@/components/admin/users-manager"
 import { PixelManager } from "@/components/admin/pixel-manager"
 import { LeadsManager } from "@/components/admin/leads-manager"
 import { SettingsManager } from "@/components/admin/settings-manager"
+import { DatabaseSetupManager } from "@/components/admin/database-setup-manager"
 
 // A simple component for the default dashboard view
 function DashboardView() {
@@ -49,6 +50,8 @@ export default function AdminPage() {
         return <PixelManager />
       case "settings":
         return <SettingsManager />
+      case "setup":
+        return <DatabaseSetupManager />
       // The default case renders the main dashboard overview
       default:
         return <DashboardView />
