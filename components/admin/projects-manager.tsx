@@ -98,9 +98,9 @@ export function ProjectsManager() {
     setUploading(false);
   };
 
-  const statusConfig: { [key: string]: { color: string } } = {
-    active: { color: "bg-[hsl(var(--chart-2)_/_0.2)] text-[hsl(var(--chart-2))]" },
-    draft: { color: "bg-[hsl(var(--chart-3)_/_0.2)] text-[hsl(var(--chart-3))]" },
+  const statusConfig: { [key: string]: { color: string; textColor?: string } } = {
+    active: { color: "bg-[hsl(var(--chart-2)_/_0.2)]", textColor: "hsl(var(--chart-2))" },
+    draft: { color: "bg-[hsl(var(--chart-3)_/_0.2)]", textColor: "hsl(var(--chart-3))" },
     archived: { color: "bg-muted text-muted-foreground" },
   }
 
@@ -135,7 +135,7 @@ export function ProjectsManager() {
               <p className="text-sm text-muted-foreground line-clamp-3 flex-grow break-words">{project.description}</p>
               <div className="space-y-3 pt-4 mt-4 border-t">
                 <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
-                  <Badge className={cn("capitalize self-start", statusConfig[project.status]?.color)}>{project.status}</Badge>
+                  <Badge className={cn("capitalize self-start", statusConfig[project.status]?.color)} style={{ color: statusConfig[project.status]?.textColor }}>{project.status}</Badge>
                   <p className="text-xs text-muted-foreground break-words">Location: {project.location}</p>
                 </div>
                 <div className="flex flex-col sm:flex-row gap-2 pt-2">

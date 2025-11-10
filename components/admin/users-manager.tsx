@@ -79,8 +79,8 @@ export function UsersManager() {
   }
 
   const statusConfig: { [key: string]: { color: string } } = {
-    active: { color: "bg-[hsl(var(--chart-2)_/_0.2)] text-[hsl(var(--chart-2))]" },
-    invited: { color: "bg-[hsl(var(--chart-3)_/_0.2)] text-[hsl(var(--chart-3))]" },
+    active: { color: "bg-[hsl(var(--chart-2)/0.2)] text-[hsl(var(--chart-2))]" },
+    invited: { color: "bg-[hsl(var(--chart-3)/0.2)] text-[hsl(var(--chart-3))]" },
     suspended: { color: "bg-destructive/20 text-destructive" },
   }
 
@@ -139,7 +139,7 @@ export function UsersManager() {
                   <Select value={user.role} onValueChange={(value) => handleRoleChange(user.id, value as AdminUser["role"])}>
                     <SelectTrigger className="bg-background h-9">
                       <div className="flex items-center gap-2">
-                        <RoleIcon className={cn("h-4 w-4", `text-[hsl(var(${roleVarName}))]`)} />
+                        <RoleIcon className="h-4 w-4" style={{ color: `hsl(var(${roleVarName}))` }} />
                         <SelectValue />
                       </div>
                     </SelectTrigger>

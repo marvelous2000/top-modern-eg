@@ -31,10 +31,10 @@ export function ContactsTable() {
   const [isEditing, setIsEditing] = useState(false)
   const [editedContact, setEditedContact] = useState<any>(null)
 
-  const statusConfig: { [key: string]: { color: string } } = {
-    New: { color: "bg-[hsl(var(--chart-1)_/_0.2)] text-[hsl(var(--chart-1))]" },
-    Contacted: { color: "bg-[hsl(var(--chart-3)_/_0.2)] text-[hsl(var(--chart-3))]" },
-    Qualified: { color: "bg-[hsl(var(--chart-2)_/_0.2)] text-[hsl(var(--chart-2))]" },
+  const statusConfig: { [key: string]: { color: string; textColor?: string } } = {
+    New: { color: "bg-[hsl(var(--chart-1)_/_0.2)]", textColor: "hsl(var(--chart-1))" },
+    Contacted: { color: "bg-[hsl(var(--chart-3)_/_0.2)]", textColor: "hsl(var(--chart-3))" },
+    Qualified: { color: "bg-[hsl(var(--chart-2)_/_0.2)]", textColor: "hsl(var(--chart-2))" },
     Closed: { color: "bg-destructive/20 text-destructive" },
   }
 
@@ -68,7 +68,7 @@ export function ContactsTable() {
             </CardHeader>
             <CardContent className="p-4 pt-0">
               <div className="flex justify-between items-center mt-2">
-                <Badge className={cn("capitalize text-xs", statusConfig[contact.status]?.color)}>{contact.status}</Badge>
+                <Badge className={cn("capitalize text-xs", statusConfig[contact.status]?.color)} style={{ color: statusConfig[contact.status]?.textColor }}>{contact.status}</Badge>
                 <p className="text-xs text-muted-foreground">{contact.date}</p>
               </div>
             </CardContent>
@@ -97,7 +97,7 @@ export function ContactsTable() {
                 <InfoField label="Budget" value={editedContact.budget} isEditing={isEditing}><Input value={editedContact.budget} onChange={(e) => handleInputChange("budget", e.target.value)} /></InfoField>
                 <InfoField label="Timeline" value={editedContact.timeline} isEditing={isEditing}><Input value={editedContact.timeline} onChange={(e) => handleInputChange("timeline", e.target.value)} /></InfoField>
                 <InfoField label="Source" value={editedContact.source} isEditing={isEditing}><Input value={editedContact.source} onChange={(e) => handleInputChange("source", e.target.value)} /></InfoField>
-                <InfoField label="Status" value={<Badge className={cn("capitalize", statusConfig[selectedContact.status]?.color)}>{selectedContact.status}</Badge>} isEditing={isEditing}><Select value={editedContact.status} onValueChange={(v) => handleInputChange("status", v)}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="New">New</SelectItem><SelectItem value="Contacted">Contacted</SelectItem><SelectItem value="Qualified">Qualified</SelectItem><SelectItem value="Closed">Closed</SelectItem></SelectContent></Select></InfoField>
+                <InfoField label="Status" value={<Badge className={cn("capitalize", statusConfig[selectedContact.status]?.color)} style={{ color: statusConfig[selectedContact.status]?.textColor }}>{selectedContact.status}</Badge>} isEditing={isEditing}><Select value={editedContact.status} onValueChange={(v) => handleInputChange("status", v)}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="New">New</SelectItem><SelectItem value="Contacted">Contacted</SelectItem><SelectItem value="Qualified">Qualified</SelectItem><SelectItem value="Closed">Closed</SelectItem></SelectContent></Select></InfoField>
               </div>
               <div className="space-y-2"><Label className="text-sm font-medium text-muted-foreground">Notes</Label>{isEditing ? <Textarea value={editedContact.notes} onChange={(e) => handleInputChange("notes", e.target.value)} className="min-h-[100px]" /> : <div className="text-sm text-foreground bg-muted/50 p-4 rounded-md border min-h-[100px] whitespace-pre-wrap">{selectedContact.notes || <span className="text-muted-foreground/70">No notes added.</span>}</div>}</div>
               <div className="mt-6 pt-4 border-t text-xs text-muted-foreground flex justify-between"><p>Created: {selectedContact.date}</p><p>Last Updated: {selectedContact.lastUpdated} by {selectedContact.lastUpdatedBy}</p></div>

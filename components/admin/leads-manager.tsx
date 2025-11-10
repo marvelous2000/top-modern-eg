@@ -108,7 +108,7 @@ export function LeadsManager() {
             <button key={status} onClick={() => setSelectedStatus(status)} className={cn("p-4 rounded-lg border-b-4 bg-card text-left transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2", selectedStatus === status ? "border-[hsl(var(--primary))] shadow-lg" : "border-transparent hover:bg-muted/50")}>
               <div className="flex justify-between items-center">
                 <h3 className="text-md font-semibold capitalize text-muted-foreground">{status}</h3>
-                <config.icon className={cn("h-6 w-6")} style={{ color: `hsl(var(${config.varName}))` }} />
+                <config.icon className={cn("h-6 w-6", status === "new" ? "text-chart-1" : status === "contacted" ? "text-chart-3" : status === "qualified" ? "text-chart-2" : "text-chart-5")} />
               </div>
               <p className="text-3xl font-bold mt-2 text-foreground">{count}</p>
             </button>
@@ -119,7 +119,7 @@ export function LeadsManager() {
       <Card className="shadow-sm">
         <CardHeader>
           <CardTitle className="capitalize text-xl font-semibold flex items-center gap-3">
-            <div className={cn("w-3 h-3 rounded-full")} style={{ backgroundColor: `hsl(var(${statusConfig[selectedStatus].varName}))` }} />
+            <div className={cn("w-3 h-3 rounded-full", selectedStatus === "new" ? "bg-chart-1" : selectedStatus === "contacted" ? "bg-chart-3" : selectedStatus === "qualified" ? "bg-chart-2" : "bg-chart-5")} />
             {selectedStatus} Leads
           </CardTitle>
         </CardHeader>

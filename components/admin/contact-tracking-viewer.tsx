@@ -31,10 +31,10 @@ const StatCard = ({ title, value, icon: Icon, varName }: { title: string; value:
   <Card className="shadow-sm">
     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
       <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
-      <Icon className={cn("h-4 w-4", `text-[hsl(var(${varName}))]`)} />
+      <Icon className="h-4 w-4" style={{ color: `hsl(var(${varName}))` }} />
     </CardHeader>
     <CardContent>
-      <div className={cn("text-2xl font-bold", `text-[hsl(var(${varName}))]`)}>{value}</div>
+      <div className="text-2xl font-bold" style={{ color: `hsl(var(${varName}))` }}>{value}</div>
     </CardContent>
   </Card>
 )
@@ -217,7 +217,7 @@ export function ContactTrackingViewer() {
                         const { icon: MethodIcon, varName } = getMethodStyling(item.method)
                         return (
                           <TableRow key={index}>
-                            <TableCell><div className="flex items-center gap-2"><MethodIcon className={cn("h-4 w-4", `text-[hsl(var(${varName}))]`)} /> <span className="capitalize">{item.method.replace("_", " ")}</span></div></TableCell>
+                            <TableCell><div className="flex items-center gap-2"><MethodIcon className="h-4 w-4" style={{ color: `hsl(var(${varName}))` }} /> <span className="capitalize">{item.method.replace("_", " ")}</span></div></TableCell>
                             <TableCell><Badge variant="outline">{item.details?.source || "Unknown"}</Badge></TableCell>
                             <TableCell className="text-muted-foreground">{item.details?.number || item.details?.email || "N/A"}</TableCell>
                             <TableCell className="text-muted-foreground">{new Date(item.timestamp).toLocaleString()}</TableCell>

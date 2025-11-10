@@ -1,0 +1,7 @@
+{
+    "deepseek.baseURL": "https://api.deepseek.com",
+    "deepseek.model": "deepseek-coder",
+    "deepseek.temperature": "0.3",
+    "deepseek.max_tokens": "4096",
+    "deepseek.apikey": "sk-6097f23eb3b34c5ab9828f35488e312a"
+}

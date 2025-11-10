@@ -84,16 +84,16 @@ export function Navigation() {
               >
                 {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
               </Button>
-              {/* Mobile single CTA */}
-              <div className="md:hidden">
-                <Button
-                  variant="default"
-                  className="bg-accent text-accent-foreground hover:bg-accent/90"
-                  onClick={handleEmailClick}
-                >
-                  <Mail className="w-4 h-4" />
-                </Button>
-              </div>
+              {/* Mobile Menu Button */}
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-white hover:bg-white/10 hover:text-accent md:hidden"
+                onClick={() => setIsOpen(!isOpen)}
+                aria-label="Toggle menu"
+              >
+                {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              </Button>
             </div>
           </div>
         </div>
@@ -132,15 +132,6 @@ export function Navigation() {
                   >
                     <Mail className="w-4 h-4 mr-2" />
                     Get Quote
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    onClick={toggleTheme}
-                    className="text-white hover:text-accent hover:bg-white/10"
-                    title="Toggle theme"
-                  >
-                    {theme === "dark" ? <Sun className="h-4 w-4 mr-2" /> : <Moon className="h-4 w-4 mr-2" />}
-                    Toggle Theme
                   </Button>
                 </div>
               </div>
