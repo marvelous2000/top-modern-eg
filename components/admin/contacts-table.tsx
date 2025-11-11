@@ -5,8 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogClose } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -20,8 +19,18 @@ const mockContacts = [
 ]
 
 const InfoField = ({ label, value, isEditing, children }: { label: string; value: React.ReactNode; isEditing?: boolean; children?: React.ReactNode }) => (
-  <div className="space-y-1"><Label className="text-sm font-medium text-muted-foreground">{label}</Label>{isEditing ? <div className="text-sm">{children}</div> : <div className="text-sm font-semibold text-foreground">{value}</div>}</div>
+  <div className="space-y-2">
+    <Label className="font-semibold">{label}</Label>
+    {isEditing ? <div>{children}</div> : <div className="text-sm text-foreground">{value}</div>}
+  </div>
 )
+
+const getInitials = (name: string) => {
+  if (!name) return ''
+  const names = name.split(' ')
+  if (names.length === 1) return names[0].charAt(0).toUpperCase()
+  return `${names[0].charAt(0)}${names[names.length - 1].charAt(0)}`.toUpperCase()
+}
 
 export function ContactsTable() {
   const [searchTerm, setSearchTerm] = useState("")
@@ -31,11 +40,11 @@ export function ContactsTable() {
   const [isEditing, setIsEditing] = useState(false)
   const [editedContact, setEditedContact] = useState<any>(null)
 
-  const statusConfig: { [key: string]: { color: string; textColor?: string } } = {
-    New: { color: "bg-[hsl(var(--chart-1)_/_0.2)]", textColor: "hsl(var(--chart-1))" },
-    Contacted: { color: "bg-[hsl(var(--chart-3)_/_0.2)]", textColor: "hsl(var(--chart-3))" },
-    Qualified: { color: "bg-[hsl(var(--chart-2)_/_0.2)]", textColor: "hsl(var(--chart-2))" },
-    Closed: { color: "bg-destructive/20 text-destructive" },
+  const statusConfig: { [key: string]: string } = {
+    New: "bg-blue-500/20 text-blue-500",
+    Contacted: "bg-orange-500/20 text-orange-500",
+    Qualified: "bg-green-500/20 text-green-500",
+    Closed: "bg-red-500/20 text-red-500",
   }
 
   const handleViewContact = (contact: any) => { setSelectedContact(contact); setEditedContact({ ...contact }); setIsModalOpen(true); setIsEditing(false) }
@@ -47,11 +56,11 @@ export function ContactsTable() {
   const filteredContacts = useMemo(() => contacts.filter((contact) => JSON.stringify(contact).toLowerCase().includes(searchTerm.toLowerCase())), [contacts, searchTerm])
 
   return (
-    <div className="space-y-6" style={{ fontFamily: "'Segoe UI', sans-serif", animation: "slideIn 0.5s ease-out" }}>
-      <Card className="shadow-sm border-0 bg-gradient-to-br from-card to-card/50 backdrop-blur-sm">
+    <div className="space-y-6 animate-slide-in">
+      <Card>
         <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <CardTitle className="text-2xl font-serif text-foreground">Contacts</CardTitle>
+            <CardTitle className="text-2xl font-bold">Contacts</CardTitle>
             <p className="text-sm text-muted-foreground">Manage all business and client contacts.</p>
           </div>
           <div className="flex flex-col sm:flex-row items-center gap-2 w-full sm:w-auto">
@@ -61,17 +70,14 @@ export function ContactsTable() {
                 placeholder="Search contacts..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 bg-background/50 border-border/50 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200 w-full"
+                className="pl-10 rounded-lg"
               />
             </div>
-            <Button
-              variant="outline"
-              className="w-full sm:w-auto hover:bg-accent hover:text-accent-foreground transition-all duration-200"
-            >
+            <Button variant="outline" className="w-full sm:w-auto rounded-lg">
               <Filter className="h-4 w-4 mr-2" />
               Filter
             </Button>
-            <Button className="w-full sm:w-auto bg-accent text-accent-foreground hover:bg-accent/90 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl">
+            <Button className="w-full sm:w-auto rounded-lg transition-transform duration-200 hover:-translate-y-0.5">
               <UserPlus className="h-4 w-4 mr-2" />
               Add Contact
             </Button>
@@ -84,7 +90,7 @@ export function ContactsTable() {
           <Card
             key={contact.id}
             onClick={() => handleViewContact(contact)}
-            className="cursor-pointer overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 border-0 bg-gradient-to-br from-card to-card/50 backdrop-blur-sm hover:scale-[1.02]"
+            className="cursor-pointer overflow-hidden group transition-all duration-300 hover:shadow-lg hover:-translate-y-1 rounded-xl"
           >
             <CardHeader className="p-4">
               <CardTitle className="text-lg truncate group-hover:text-accent transition-colors duration-200">{contact.name}</CardTitle>
@@ -95,10 +101,7 @@ export function ContactsTable() {
             </CardHeader>
             <CardContent className="p-4 pt-0">
               <div className="flex justify-between items-center mt-2">
-                <Badge
-                  className={cn("capitalize text-xs", statusConfig[contact.status]?.color)}
-                  style={{ color: statusConfig[contact.status]?.textColor }}
-                >
+                <Badge className={cn("capitalize text-xs rounded-md", statusConfig[contact.status])}>
                   {contact.status}
                 </Badge>
                 <p className="text-xs text-muted-foreground">{contact.date}</p>
@@ -109,64 +112,57 @@ export function ContactsTable() {
       </div>
 
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent
-          className="max-w-3xl p-0 overflow-hidden bg-gradient-to-br from-card to-card/50 backdrop-blur-sm border-0 shadow-2xl"
-          style={{ animation: "scaleIn 0.3s ease-out" }}
-        >
-          <DialogHeader className="p-6 border-b border-border/50 text-center bg-gradient-to-r from-accent/10 to-accent/5">
-            <DialogTitle className="text-2xl font-serif">
-              {isEditing ? (
-                <span className="bg-accent text-accent-foreground px-3 py-1 rounded-full shadow-sm">
-                  Edit Contact
-                </span>
-              ) : (
-                <span className="bg-accent text-accent-foreground px-3 py-1 rounded-full shadow-sm">
-                  {selectedContact?.name}
-                </span>
-              )}
-            </DialogTitle>
-            <DialogDescription className="text-muted-foreground mt-2">
-              {isEditing ? "Update the contact's information below." : "Viewing contact details and project information."}
-            </DialogDescription>
+        <DialogContent className="max-w-2xl p-0 rounded-xl animate-fade-in-slide-down">
+          <DialogHeader className="p-6 bg-accent text-accent-foreground text-center relative rounded-t-xl">
+            <div className="flex items-center justify-center gap-4">
+                <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center text-xl font-bold">
+                    {getInitials(selectedContact?.name)}
+                </div>
+                <div>
+                    <DialogTitle className="text-2xl font-bold">{selectedContact?.name}</DialogTitle>
+                    <DialogDescription className="text-accent-foreground/80">{isEditing ? "Update the contact's information below." : "Viewing contact details and project information."}</DialogDescription>
+                </div>
+            </div>
+            <DialogClose className="absolute top-4 right-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
+              <X className="h-6 w-6" />
+              <span className="sr-only">Close</span>
+            </DialogClose>
           </DialogHeader>
           {selectedContact && <>
             <div className="p-6 max-h-[70vh] overflow-y-auto space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <InfoField label="Full Name" value={selectedContact.name} isEditing={isEditing}><Input value={editedContact.name} onChange={(e) => handleInputChange("name", e.target.value)} /></InfoField>
-                <InfoField label="Company" value={selectedContact.company} isEditing={isEditing}><Input value={editedContact.company} onChange={(e) => handleInputChange("company", e.target.value)} /></InfoField>
-                <InfoField label="Email" value={selectedContact.email} isEditing={isEditing}><Input type="email" value={editedContact.email} onChange={(e) => handleInputChange("email", e.target.value)} /></InfoField>
-                <InfoField label="Phone" value={selectedContact.phone} isEditing={isEditing}><Input value={editedContact.phone} onChange={(e) => handleInputChange("phone", e.target.value)} /></InfoField>
-                <InfoField label="Project Type" value={selectedContact.projectType} isEditing={isEditing}><Select value={editedContact.projectType} onValueChange={(v) => handleInputChange("projectType", v)}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="Residential">Residential</SelectItem><SelectItem value="Commercial">Commercial</SelectItem><SelectItem value="Industrial">Industrial</SelectItem></SelectContent></Select></InfoField>
-                <InfoField label="Budget" value={editedContact.budget} isEditing={isEditing}><Input value={editedContact.budget} onChange={(e) => handleInputChange("budget", e.target.value)} /></InfoField>
-                <InfoField label="Timeline" value={editedContact.timeline} isEditing={isEditing}><Input value={editedContact.timeline} onChange={(e) => handleInputChange("timeline", e.target.value)} /></InfoField>
-                <InfoField label="Source" value={editedContact.source} isEditing={isEditing}><Input value={editedContact.source} onChange={(e) => handleInputChange("source", e.target.value)} /></InfoField>
-                <InfoField label="Status" value={<Badge className={cn("capitalize", statusConfig[selectedContact.status]?.color)} style={{ color: statusConfig[selectedContact.status]?.textColor }}>{selectedContact.status}</Badge>} isEditing={isEditing}><Select value={editedContact.status} onValueChange={(v) => handleInputChange("status", v)}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="New">New</SelectItem><SelectItem value="Contacted">Contacted</SelectItem><SelectItem value="Qualified">Qualified</SelectItem><SelectItem value="Closed">Closed</SelectItem></SelectContent></Select></InfoField>
+                <InfoField label="Full Name" value={selectedContact.name} isEditing={isEditing}><Input className="rounded-lg p-3" value={editedContact.name} onChange={(e) => handleInputChange("name", e.target.value)} /></InfoField>
+                <InfoField label="Company" value={selectedContact.company} isEditing={isEditing}><Input className="rounded-lg p-3" value={editedContact.company} onChange={(e) => handleInputChange("company", e.target.value)} /></InfoField>
+                <InfoField label="Email" value={selectedContact.email} isEditing={isEditing}><Input className="rounded-lg p-3" type="email" value={editedContact.email} onChange={(e) => handleInputChange("email", e.target.value)} /></InfoField>
+                <InfoField label="Phone" value={selectedContact.phone} isEditing={isEditing}><Input className="rounded-lg p-3" value={editedContact.phone} onChange={(e) => handleInputChange("phone", e.target.value)} /></InfoField>
+                <InfoField label="Project Type" value={selectedContact.projectType} isEditing={isEditing}><Select value={editedContact.projectType} onValueChange={(v) => handleInputChange("projectType", v)}><SelectTrigger className="rounded-lg p-3"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="Residential">Residential</SelectItem><SelectItem value="Commercial">Commercial</SelectItem><SelectItem value="Industrial">Industrial</SelectItem></SelectContent></Select></InfoField>
+                <InfoField label="Budget" value={editedContact.budget} isEditing={isEditing}><Input className="rounded-lg p-3" value={editedContact.budget} onChange={(e) => handleInputChange("budget", e.target.value)} /></InfoField>
+                <InfoField label="Timeline" value={editedContact.timeline} isEditing={isEditing}><Input className="rounded-lg p-3" value={editedContact.timeline} onChange={(e) => handleInputChange("timeline", e.target.value)} /></InfoField>
+                <InfoField label="Source" value={editedContact.source} isEditing={isEditing}><Input className="rounded-lg p-3" value={editedContact.source} onChange={(e) => handleInputChange("source", e.target.value)} /></InfoField>
+                <InfoField label="Status" value={<Badge className={cn("capitalize text-xs rounded-md", statusConfig[selectedContact.status])}>{selectedContact.status}</Badge>} isEditing={isEditing}><Select value={editedContact.status} onValueChange={(v) => handleInputChange("status", v)}><SelectTrigger className="rounded-lg p-3"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="New">New</SelectItem><SelectItem value="Contacted">Contacted</SelectItem><SelectItem value="Qualified">Qualified</SelectItem><SelectItem value="Closed">Closed</SelectItem></SelectContent></Select></InfoField>
               </div>
-              <div className="space-y-2"><Label className="text-sm font-medium text-muted-foreground">Notes</Label>{isEditing ? <Textarea value={editedContact.notes} onChange={(e) => handleInputChange("notes", e.target.value)} className="min-h-[100px]" /> : <div className="text-sm text-foreground bg-muted/50 p-4 rounded-md border min-h-[100px] whitespace-pre-wrap">{selectedContact.notes || <span className="text-muted-foreground/70">No notes added.</span>}</div>}</div>
-              <div className="mt-6 pt-4 border-t text-xs text-muted-foreground flex justify-between"><p>Created: {selectedContact.date}</p><p>Last Updated: {selectedContact.lastUpdated} by {selectedContact.lastUpdatedBy}</p></div>
+              <div className="space-y-2">
+                <Label className="font-semibold">Notes</Label>
+                {isEditing 
+                  ? <Textarea value={editedContact.notes} onChange={(e) => handleInputChange("notes", e.target.value)} className="min-h-[120px] rounded-lg p-3" /> 
+                  : <div className="text-sm text-foreground bg-muted/20 p-4 rounded-lg border min-h-[120px] whitespace-pre-wrap">{selectedContact.notes || <span className="text-muted-foreground/70">No notes added.</span>}</div>
+                }
+              </div>
+              <div className="mt-6 pt-4 border-t text-xs text-muted-foreground flex justify-between">
+                <p>Created: {selectedContact.date}</p>
+                <p>Last Updated: {selectedContact.lastUpdated} by {selectedContact.lastUpdatedBy}</p>
+              </div>
             </div>
-            <div className="flex justify-end space-x-2 p-4 bg-muted/20 border-t border-border/50">
+            <div className="flex justify-end space-x-3 p-4 bg-muted/30 border-t rounded-b-xl">
               {!isEditing ? (
-                <Button
-                  onClick={handleEditContact}
-                  className="bg-accent text-accent-foreground hover:bg-accent/90 hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl"
-                >
+                <Button onClick={handleEditContact} className="rounded-lg transition-transform duration-200 hover:-translate-y-0.5">
                   <Edit className="h-4 w-4 mr-2" />
                   Edit Contact
                 </Button>
               ) : (
                 <>
-                  <Button
-                    onClick={handleCancelEdit}
-                    variant="outline"
-                    className="hover:bg-muted transition-all duration-200"
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    onClick={handleSaveContact}
-                    className="bg-accent text-accent-foreground hover:bg-accent/90 hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl"
-                  >
+                  <Button onClick={handleCancelEdit} variant="outline" className="rounded-lg">Cancel</Button>
+                  <Button onClick={handleSaveContact} className="rounded-lg transition-transform duration-200 hover:-translate-y-0.5">
                     <Save className="h-4 w-4 mr-2" />
                     Save Changes
                   </Button>
