@@ -13,7 +13,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { getProjects, createProject, updateProject, deleteProject, type Project } from "@/lib/actions/projects"
 import { useSupabaseClient } from "@/components/providers/SupabaseProvider"
-import { Plus, Edit, Trash2, X, Save, Search, Loader2, Upload, Link as LinkIcon } from "lucide-react"
+import { Plus, Edit, Trash2, X, Save, Search, Loader2, Upload, Link as LinkIcon, Moon, Sun } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 export function ProjectsManager() {
@@ -105,20 +105,30 @@ export function ProjectsManager() {
   }
 
   return (
-    <div className="space-y-6 animate-slide-in">
+    <div className="space-y-6" style={{ fontFamily: "'Segoe UI', sans-serif", animation: "slideIn 0.5s ease-out" }}>
       <Card className="shadow-sm border-0 bg-gradient-to-br from-card to-card/50 backdrop-blur-sm">
         <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <CardTitle className="text-2xl font-serif text-foreground">Projects</CardTitle>
             <p className="text-sm text-muted-foreground">Manage your portfolio of completed projects.</p>
           </div>
-          <Button
-            onClick={() => handleOpenForm()}
-            className="bg-accent text-accent-foreground hover:bg-accent/90 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            Add Project
-          </Button>
+          <div className="flex items-center gap-4">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => document.body.classList.toggle('dark')}
+              className="bg-background/80 backdrop-blur-sm border-border/50 hover:bg-accent hover:text-accent-foreground transition-all duration-200"
+            >
+              {document.body.classList.contains('dark') ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+            </Button>
+            <Button
+              onClick={() => handleOpenForm()}
+              className="bg-accent text-accent-foreground hover:bg-accent/90 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Add Project
+            </Button>
+          </div>
         </CardHeader>
         <CardContent className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           <div className="relative sm:col-span-2 md:col-span-1">
@@ -230,7 +240,7 @@ export function ProjectsManager() {
       )}
 
       <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
-        <DialogContent className="max-w-4xl max-h-[90vh] p-0 flex flex-col bg-gradient-to-br from-card to-card/50 backdrop-blur-sm border-0 shadow-2xl animate-scale-in">
+        <DialogContent className="max-w-4xl max-h-[90vh] p-0 flex flex-col bg-gradient-to-br from-card to-card/50 backdrop-blur-sm border-0 shadow-2xl" style={{ animation: "scaleIn 0.3s ease-out" }}>
           <DialogHeader className="p-6 border-b border-border/50 text-center bg-gradient-to-r from-accent/10 to-accent/5 flex-shrink-0">
             <DialogTitle className="text-2xl font-serif">
               {editingProject?.id ? (

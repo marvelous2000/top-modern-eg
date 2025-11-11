@@ -47,28 +47,60 @@ export function ContactsTable() {
   const filteredContacts = useMemo(() => contacts.filter((contact) => JSON.stringify(contact).toLowerCase().includes(searchTerm.toLowerCase())), [contacts, searchTerm])
 
   return (
-    <div className="space-y-6">
-      <Card className="shadow-sm">
+    <div className="space-y-6" style={{ fontFamily: "'Segoe UI', sans-serif", animation: "slideIn 0.5s ease-out" }}>
+      <Card className="shadow-sm border-0 bg-gradient-to-br from-card to-card/50 backdrop-blur-sm">
         <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div><CardTitle className="text-2xl font-serif text-foreground">Contacts</CardTitle><p className="text-sm text-muted-foreground">Manage all business and client contacts.</p></div>
+          <div>
+            <CardTitle className="text-2xl font-serif text-foreground">Contacts</CardTitle>
+            <p className="text-sm text-muted-foreground">Manage all business and client contacts.</p>
+          </div>
           <div className="flex flex-col sm:flex-row items-center gap-2 w-full sm:w-auto">
-            <div className="relative w-full sm:w-64"><Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" /><Input placeholder="Search contacts..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="pl-10 bg-muted/50 w-full" /></div>
-            <Button variant="outline" className="w-full sm:w-auto"><Filter className="h-4 w-4 mr-2" />Filter</Button>
-            <Button className="w-full sm:w-auto bg-primary text-primary-foreground hover:bg-primary/90"><UserPlus className="h-4 w-4 mr-2" />Add Contact</Button>
+            <div className="relative w-full sm:w-64">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                placeholder="Search contacts..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 bg-background/50 border-border/50 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200 w-full"
+              />
+            </div>
+            <Button
+              variant="outline"
+              className="w-full sm:w-auto hover:bg-accent hover:text-accent-foreground transition-all duration-200"
+            >
+              <Filter className="h-4 w-4 mr-2" />
+              Filter
+            </Button>
+            <Button className="w-full sm:w-auto bg-accent text-accent-foreground hover:bg-accent/90 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl">
+              <UserPlus className="h-4 w-4 mr-2" />
+              Add Contact
+            </Button>
           </div>
         </CardHeader>
       </Card>
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         {filteredContacts.map(contact => (
-          <Card key={contact.id} onClick={() => handleViewContact(contact)} className="cursor-pointer overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+          <Card
+            key={contact.id}
+            onClick={() => handleViewContact(contact)}
+            className="cursor-pointer overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 border-0 bg-gradient-to-br from-card to-card/50 backdrop-blur-sm hover:scale-[1.02]"
+          >
             <CardHeader className="p-4">
-              <CardTitle className="text-lg truncate">{contact.name}</CardTitle>
-              <p className="text-sm text-muted-foreground flex items-center gap-2 truncate"><Building className="h-4 w-4 flex-shrink-0" />{contact.company}</p>
+              <CardTitle className="text-lg truncate group-hover:text-accent transition-colors duration-200">{contact.name}</CardTitle>
+              <p className="text-sm text-muted-foreground flex items-center gap-2 truncate">
+                <Building className="h-4 w-4 flex-shrink-0" />
+                {contact.company}
+              </p>
             </CardHeader>
             <CardContent className="p-4 pt-0">
               <div className="flex justify-between items-center mt-2">
-                <Badge className={cn("capitalize text-xs", statusConfig[contact.status]?.color)} style={{ color: statusConfig[contact.status]?.textColor }}>{contact.status}</Badge>
+                <Badge
+                  className={cn("capitalize text-xs", statusConfig[contact.status]?.color)}
+                  style={{ color: statusConfig[contact.status]?.textColor }}
+                >
+                  {contact.status}
+                </Badge>
                 <p className="text-xs text-muted-foreground">{contact.date}</p>
               </div>
             </CardContent>
@@ -77,10 +109,21 @@ export function ContactsTable() {
       </div>
 
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="max-w-3xl p-0 overflow-hidden">
-          <DialogHeader className="p-6 border-b text-center">
+        <DialogContent
+          className="max-w-3xl p-0 overflow-hidden bg-gradient-to-br from-card to-card/50 backdrop-blur-sm border-0 shadow-2xl"
+          style={{ animation: "scaleIn 0.3s ease-out" }}
+        >
+          <DialogHeader className="p-6 border-b border-border/50 text-center bg-gradient-to-r from-accent/10 to-accent/5">
             <DialogTitle className="text-2xl font-serif">
-              {isEditing ? "Edit Contact" : <span className="bg-accent text-accent-foreground px-2 py-1 rounded-md">{selectedContact?.name}</span>}
+              {isEditing ? (
+                <span className="bg-accent text-accent-foreground px-3 py-1 rounded-full shadow-sm">
+                  Edit Contact
+                </span>
+              ) : (
+                <span className="bg-accent text-accent-foreground px-3 py-1 rounded-full shadow-sm">
+                  {selectedContact?.name}
+                </span>
+              )}
             </DialogTitle>
             <DialogDescription className="text-muted-foreground mt-2">
               {isEditing ? "Update the contact's information below." : "Viewing contact details and project information."}
@@ -102,11 +145,33 @@ export function ContactsTable() {
               <div className="space-y-2"><Label className="text-sm font-medium text-muted-foreground">Notes</Label>{isEditing ? <Textarea value={editedContact.notes} onChange={(e) => handleInputChange("notes", e.target.value)} className="min-h-[100px]" /> : <div className="text-sm text-foreground bg-muted/50 p-4 rounded-md border min-h-[100px] whitespace-pre-wrap">{selectedContact.notes || <span className="text-muted-foreground/70">No notes added.</span>}</div>}</div>
               <div className="mt-6 pt-4 border-t text-xs text-muted-foreground flex justify-between"><p>Created: {selectedContact.date}</p><p>Last Updated: {selectedContact.lastUpdated} by {selectedContact.lastUpdatedBy}</p></div>
             </div>
-            <div className="flex justify-end space-x-2 p-4 bg-card border-t">
-              {!isEditing ? <Button onClick={handleEditContact} className="bg-primary text-primary-foreground hover:bg-primary/90"><Edit className="h-4 w-4 mr-2" /> Edit Contact</Button> : <>
-                <Button onClick={handleCancelEdit} variant="outline">Cancel</Button>
-                <Button onClick={handleSaveContact} className="bg-primary text-primary-foreground hover:bg-primary/90"><Save className="h-4 w-4 mr-2" /> Save Changes</Button>
-              </>}
+            <div className="flex justify-end space-x-2 p-4 bg-muted/20 border-t border-border/50">
+              {!isEditing ? (
+                <Button
+                  onClick={handleEditContact}
+                  className="bg-accent text-accent-foreground hover:bg-accent/90 hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl"
+                >
+                  <Edit className="h-4 w-4 mr-2" />
+                  Edit Contact
+                </Button>
+              ) : (
+                <>
+                  <Button
+                    onClick={handleCancelEdit}
+                    variant="outline"
+                    className="hover:bg-muted transition-all duration-200"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={handleSaveContact}
+                    className="bg-accent text-accent-foreground hover:bg-accent/90 hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl"
+                  >
+                    <Save className="h-4 w-4 mr-2" />
+                    Save Changes
+                  </Button>
+                </>
+              )}
             </div>
           </>}
         </DialogContent>

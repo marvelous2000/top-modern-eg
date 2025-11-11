@@ -10,7 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
 import { getProducts, createProduct, updateProduct, deleteProduct, type Product } from "@/lib/actions/products"
-import { Plus, Edit, Trash2, X, Save, Search, Loader2, Package } from "lucide-react"
+import { Plus, Edit, Trash2, X, Save, Search, Loader2, Package, Moon, Sun } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 export function ProductsManager() {
@@ -96,20 +96,30 @@ export function ProductsManager() {
   }
 
   return (
-    <div className="space-y-6 animate-slide-in">
+    <div className="space-y-6" style={{ fontFamily: "'Segoe UI', sans-serif", animation: "slideIn 0.5s ease-out" }}>
       <Card className="shadow-sm border-0 bg-gradient-to-br from-card to-card/50 backdrop-blur-sm">
         <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <CardTitle className="text-2xl font-serif text-foreground">Products</CardTitle>
             <p className="text-sm text-muted-foreground">Manage your material inventory.</p>
           </div>
-          <Button
-            onClick={() => handleOpenForm()}
-            className="bg-accent text-accent-foreground hover:bg-accent/90 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            Add Product
-          </Button>
+          <div className="flex items-center gap-4">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => document.body.classList.toggle('dark')}
+              className="fixed top-4 right-4 z-50 bg-background/80 backdrop-blur-sm border-border/50 hover:bg-accent hover:text-accent-foreground transition-all duration-200"
+            >
+              {document.body.classList.contains('dark') ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+            </Button>
+            <Button
+              onClick={() => handleOpenForm()}
+              className="bg-accent text-accent-foreground hover:bg-accent/90 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Add Product
+            </Button>
+          </div>
         </CardHeader>
         <CardContent className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
           <div className="relative sm:col-span-2 md:col-span-1">
@@ -118,11 +128,11 @@ export function ProductsManager() {
               placeholder="Search products..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 bg-background/50 border-border/50 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200"
+              className="w-full h-12 pl-10 px-3 py-2 bg-background border border-border rounded-lg focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200"
             />
           </div>
           <Select value={filterCategory} onValueChange={setFilterCategory}>
-            <SelectTrigger className="bg-background/50 border-border/50 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200">
+            <SelectTrigger className="w-full h-12 bg-background border border-border rounded-lg focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200">
               <SelectValue placeholder="Category" />
             </SelectTrigger>
             <SelectContent>
@@ -132,7 +142,7 @@ export function ProductsManager() {
             </SelectContent>
           </Select>
           <Select value={filterStatus} onValueChange={setFilterStatus}>
-            <SelectTrigger className="bg-background/50 border-border/50 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200">
+            <SelectTrigger className="w-full h-12 bg-background border border-border rounded-lg focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent>
@@ -219,26 +229,26 @@ export function ProductsManager() {
       )}
 
       <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
-        <DialogContent className="max-w-3xl p-0 overflow-hidden bg-gradient-to-br from-card to-card/50 backdrop-blur-sm border-0 shadow-2xl animate-scale-in">
-          <DialogHeader className="p-6 border-b border-border/50 text-center bg-gradient-to-r from-accent/10 to-accent/5">
+        <DialogContent className="max-w-2xl mx-auto p-0 overflow-hidden bg-gradient-to-br from-card to-card/50 backdrop-blur-sm border-0 shadow-2xl" style={{ animation: "scaleIn 0.3s ease-out, slideDown 0.4s ease-out" }}>
+          <DialogHeader className="p-6 border-b border-border/50 text-center bg-accent text-accent-foreground">
             <DialogTitle className="text-2xl font-serif">
-              {editingProduct?.id ? (
-                <span className="bg-accent text-accent-foreground px-3 py-1 rounded-full shadow-sm">
-                  Edit Product
-                </span>
-              ) : (
-                <span className="bg-accent text-accent-foreground px-3 py-1 rounded-full shadow-sm">
-                  Create New Product
-                </span>
-              )}
+              {editingProduct?.id ? "Edit Product" : "Create New Product"}
             </DialogTitle>
-            <DialogDescription className="text-muted-foreground mt-2">
+            <DialogDescription className="text-accent-foreground/80 mt-2">
               Fill in the details of the product below.
             </DialogDescription>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIsFormOpen(false)}
+              className="absolute top-4 right-4 text-accent-foreground hover:bg-accent-foreground/20"
+            >
+              <X className="h-4 w-4" />
+            </Button>
           </DialogHeader>
           {editingProduct && (
-            <>
-              <div className="p-6 max-h-[70vh] overflow-y-auto grid grid-cols-1 md:grid-cols-2 gap-6">
+            <form onSubmit={(e) => { e.preventDefault(); handleSaveProduct(); }} className="p-6 space-y-6 max-h-[70vh] overflow-y-auto">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-4">
                   <div className="space-y-2">
                     <Label className="text-sm font-semibold text-foreground">Product Name *</Label>
@@ -251,8 +261,9 @@ export function ProductsManager() {
                           slug: e.target.value.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, ""),
                         })
                       }
-                      className="bg-background border-border/50 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200"
+                      className="w-full h-12 px-3 py-2 bg-background border border-border rounded-lg focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200"
                       placeholder="Enter product name"
+                      required
                     />
                   </div>
                   <div className="space-y-2">
@@ -260,8 +271,9 @@ export function ProductsManager() {
                     <Textarea
                       value={editingProduct.description}
                       onChange={(e) => setEditingProduct({ ...editingProduct, description: e.target.value })}
-                      className="min-h-[120px] bg-background border-border/50 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200 resize-none"
+                      className="w-full min-h-[120px] px-3 py-2 bg-background border border-border rounded-lg focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200 resize-none"
                       placeholder="Describe the product"
+                      required
                     />
                   </div>
                 </div>
@@ -272,7 +284,7 @@ export function ProductsManager() {
                       value={editingProduct.category}
                       onValueChange={(v) => setEditingProduct({ ...editingProduct, category: v as any })}
                     >
-                      <SelectTrigger className="bg-background border-border/50 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200">
+                      <SelectTrigger className="w-full h-12 bg-background border border-border rounded-lg focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -287,7 +299,7 @@ export function ProductsManager() {
                       value={editingProduct.status}
                       onValueChange={(v) => setEditingProduct({ ...editingProduct, status: v as any })}
                     >
-                      <SelectTrigger className="bg-background border-border/50 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200">
+                      <SelectTrigger className="w-full h-12 bg-background border border-border rounded-lg focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -302,14 +314,15 @@ export function ProductsManager() {
                     <Input
                       value={editingProduct.origin}
                       onChange={(e) => setEditingProduct({ ...editingProduct, origin: e.target.value })}
-                      className="bg-background border-border/50 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200"
+                      className="w-full h-12 px-3 py-2 bg-background border border-border rounded-lg focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200"
                       placeholder="Country of origin"
                     />
                   </div>
                 </div>
               </div>
-              <DialogFooter className="p-4 border-t border-border/50 bg-muted/20">
+              <div className="flex justify-end gap-4 pt-4 border-t border-border/50">
                 <Button
+                  type="button"
                   variant="outline"
                   onClick={() => setIsFormOpen(false)}
                   className="hover:bg-muted transition-all duration-200"
@@ -317,14 +330,14 @@ export function ProductsManager() {
                   Cancel
                 </Button>
                 <Button
-                  onClick={handleSaveProduct}
+                  type="submit"
                   className="bg-accent text-accent-foreground hover:bg-accent/90 hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl"
                 >
                   <Save className="h-4 w-4 mr-2" />
                   Save Product
                 </Button>
-              </DialogFooter>
-            </>
+              </div>
+            </form>
           )}
         </DialogContent>
       </Dialog>

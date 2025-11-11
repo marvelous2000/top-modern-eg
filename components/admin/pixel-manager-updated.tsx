@@ -214,9 +214,9 @@ fbq('track', 'PageView');
   }
 
   return (
-    <div className="space-y-6 animate-slide-in">
+    <div className="space-y-6" style={{ fontFamily: "'Segoe UI', sans-serif", animation: "slideIn 0.5s ease-out" }}>
       <div className="flex items-center justify-between">
-        <h2 className="font-playfair text-3xl font-bold text-primary">Pixel Manager</h2>
+        <h2 className="text-[3rem] font-bold leading-tight font-serif text-foreground">Pixel Manager</h2>
         <Button
           onClick={handleCreatePixel}
           className="bg-accent text-accent-foreground hover:bg-accent/90 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"

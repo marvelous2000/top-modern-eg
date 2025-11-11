@@ -99,7 +99,7 @@ export function LeadsManager() {
   }
 
   return (
-    <div className="space-y-6 animate-slide-in">
+    <div className="space-y-6" style={{ fontFamily: "'Segoe UI', sans-serif", animation: "slideIn 0.5s ease-out" }}>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {Object.keys(leadsByStatus).map((status) => {
           const config = statusConfig[status]
