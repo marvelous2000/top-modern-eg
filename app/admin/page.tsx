@@ -14,15 +14,11 @@ import { PixelManager } from "@/components/admin/pixel-manager-updated"
 import { LeadsManager } from "@/components/admin/leads-manager-updated"
 import { SettingsManager } from "@/components/admin/settings-manager-updated"
 import { DatabaseSetupManager } from "@/components/admin/database-setup-manager"
+import { DashboardOverview } from "@/components/admin/dashboard-overview"
 
 // A simple component for the default dashboard view
 function DashboardView() {
-  return (
-    <div className="space-y-6">
-      <AdminStats />
-      {/* We can add more dashboard-specific components here in the future */}
-    </div>
-  )
+  return <DashboardOverview />
 }
 
 export default function AdminPage() {
