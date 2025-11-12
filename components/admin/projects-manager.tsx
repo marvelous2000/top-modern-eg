@@ -92,6 +92,15 @@ export function ProjectsManager() {
       else alert(`Failed to delete project: ${result.error}`)
     }
   }
+
+  const handleToggleFeatured = async (projectId: string, featured: boolean) => {
+    const result = await updateProject(projectId, { featured })
+    if (result.success) {
+      setProjects(projects.map((p) => (p.id === projectId ? { ...p, featured } : p)))
+    } else {
+      alert(`Failed to update featured status: ${result.error}`)
+    }
+  }
   
   const handleImageUpload = async (files: FileList | null) => {
     if (!files || !editingProject || !supabase) return;
@@ -148,6 +157,14 @@ export function ProjectsManager() {
                 <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
                   <Badge className={cn("capitalize self-start text-xs rounded-md", statusConfig[project.status])}>{project.status}</Badge>
                   <p className="text-xs text-muted-foreground break-words">Location: {project.location}</p>
+                </div>
+                <div className="flex items-center gap-2 pt-2">
+                  <Checkbox
+                    id={`featured-${project.id}`}
+                    checked={project.featured}
+                    onCheckedChange={(checked) => handleToggleFeatured(project.id, !!checked)}
+                  />
+                  <Label htmlFor={`featured-${project.id}`} className="text-xs text-muted-foreground">Featured</Label>
                 </div>
                 <div className="flex flex-col sm:flex-row gap-2 pt-2">
                   <Button size="sm" variant="outline" className="flex-1 rounded-md" onClick={() => handleOpenForm(project)}><Edit className="h-4 w-4 mr-2" />Edit</Button>
