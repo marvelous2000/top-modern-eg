@@ -1,11 +1,15 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
-import { Plus, ToggleLeft, ToggleRight, Edit, Trash2, X, Code, Save } from "lucide-react"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Plus, ToggleLeft, ToggleRight, Edit, Trash2, X, Code, Save, Search, Filter, Loader2, AlertCircle } from "lucide-react"
+import { cn } from "@/lib/utils"
+import { getTrackingPixels, createTrackingPixel, updateTrackingPixel, deleteTrackingPixel, type TrackingPixel } from "@/lib/actions/tracking-pixels"
 
 interface PixelConfig {
   id: string
@@ -67,17 +71,41 @@ fbq('track', 'PageView');
 ]
 
 export function PixelManager() {
-  const [pixels, setPixels] = useState<PixelConfig[]>(samplePixels)
-  const [selectedPixel, setSelectedPixel] = useState<PixelConfig | null>(null)
+  const [pixels, setPixels] = useState<TrackingPixel[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [selectedPixel, setSelectedPixel] = useState<TrackingPixel | null>(null)
   const [isEditing, setIsEditing] = useState(false)
+  const [saving, setSaving] = useState(false)
   const [searchTerm, setSearchTerm] = useState("")
-  const [filterType, setFilterType] = useState<"all" | PixelConfig["type"]>("all")
+  const [filterType, setFilterType] = useState<"all" | TrackingPixel["type"]>("all")
   const [filterStatus, setFilterStatus] = useState<"all" | "active" | "inactive">("all")
+
+  useEffect(() => {
+    loadPixels()
+  }, [])
+
+  const loadPixels = async () => {
+    try {
+      setLoading(true)
+      setError(null)
+      const result = await getTrackingPixels()
+      if (result.success) {
+        setPixels(result.data)
+      } else {
+        setError(result.error || "Failed to load pixels")
+      }
+    } catch (err) {
+      setError("Failed to load pixels")
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const filteredPixels = pixels.filter((pixel) => {
     const matchesSearch =
       pixel.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      pixel.pixelId.toLowerCase().includes(searchTerm.toLowerCase())
+      pixel.pixel_id.toLowerCase().includes(searchTerm.toLowerCase())
     const matchesType = filterType === "all" || pixel.type === filterType
     const matchesStatus = filterStatus === "all" || pixel.status === filterStatus
 
@@ -85,56 +113,96 @@ export function PixelManager() {
   })
 
   const handleCreatePixel = () => {
-    const newPixel: PixelConfig = {
-      id: Date.now().toString(),
+    const newPixel: Omit<TrackingPixel, "id" | "created_at" | "updated_at" | "created_by"> = {
       name: "",
       type: "facebook",
-      pixelId: "",
+      pixel_id: "",
       code: "",
       status: "inactive",
       pages: ["all"],
       events: [],
-      createdAt: new Date().toISOString().split("T")[0],
-      updatedAt: new Date().toISOString().split("T")[0],
     }
-    setSelectedPixel(newPixel)
+    setSelectedPixel(newPixel as TrackingPixel)
     setIsEditing(true)
   }
 
-  const handleSavePixel = (pixel: PixelConfig) => {
-    if (pixels.find((p) => p.id === pixel.id)) {
-      setPixels(
-        pixels.map((p) => (p.id === pixel.id ? { ...pixel, updatedAt: new Date().toISOString().split("T")[0] } : p)),
-      )
-    } else {
-      setPixels([...pixels, pixel])
-    }
-    setSelectedPixel(null)
-    setIsEditing(false)
-  }
+  const handleSavePixel = async (pixel: TrackingPixel) => {
+    try {
+      setSaving(true)
+      let result
+      if (pixel.id) {
+        // Update existing pixel
+        result = await updateTrackingPixel(pixel.id, {
+          name: pixel.name,
+          type: pixel.type,
+          pixel_id: pixel.pixel_id,
+          code: pixel.code,
+          status: pixel.status,
+          pages: pixel.pages,
+          events: pixel.events,
+        })
+      } else {
+        // Create new pixel
+        result = await createTrackingPixel({
+          name: pixel.name,
+          type: pixel.type,
+          pixel_id: pixel.pixel_id,
+          code: pixel.code,
+          status: pixel.status,
+          pages: pixel.pages,
+          events: pixel.events,
+        })
+      }
 
-  const handleDeletePixel = (pixelId: string) => {
-    if (confirm("Are you sure you want to delete this pixel?")) {
-      setPixels(pixels.filter((p) => p.id !== pixelId))
-      if (selectedPixel?.id === pixelId) {
+      if (result.success) {
+        await loadPixels()
         setSelectedPixel(null)
         setIsEditing(false)
+      } else {
+        setError(result.error || "Failed to save pixel")
+      }
+    } catch (err) {
+      setError("Failed to save pixel")
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const handleDeletePixel = async (pixelId: string) => {
+    if (confirm("Are you sure you want to delete this pixel?")) {
+      try {
+        const result = await deleteTrackingPixel(pixelId)
+        if (result.success) {
+          await loadPixels()
+          if (selectedPixel?.id === pixelId) {
+            setSelectedPixel(null)
+            setIsEditing(false)
+          }
+        } else {
+          setError(result.error || "Failed to delete pixel")
+        }
+      } catch (err) {
+        setError("Failed to delete pixel")
       }
     }
   }
 
-  const togglePixelStatus = (pixelId: string) => {
-    setPixels(
-      pixels.map((p) =>
-        p.id === pixelId
-          ? {
-              ...p,
-              status: p.status === "active" ? "inactive" : "active",
-              updatedAt: new Date().toISOString().split("T")[0],
-            }
-          : p,
-      ),
-    )
+  const togglePixelStatus = async (pixelId: string) => {
+    try {
+      const pixel = pixels.find((p) => p.id === pixelId)
+      if (!pixel) return
+
+      const newStatus = pixel.status === "active" ? "inactive" : "active"
+      const result = await updateTrackingPixel(pixelId, { status: newStatus })
+
+      if (result.success) {
+        await loadPixels()
+      } else {
+        setError(result.error || "Failed to update pixel status")
+      }
+    } catch (err) {
+      setError("Failed to update pixel status")
+    }
   }
 
   const getStatusColor = (status: string) => {
@@ -227,98 +295,102 @@ fbq('track', 'PageView');
       </div>
 
       {/* Filters */}
-      <div className="grid md:grid-cols-4 gap-4">
-        <Input
-          placeholder="Search pixels..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="bg-background/50 border-border/50 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200"
-        />
+      <Card className="bg-card/50 border-border/30">
+        <CardContent className="p-4">
+          <div className="grid md:grid-cols-4 gap-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search pixels..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 bg-background border-border/50 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200 text-sm"
+              />
+            </div>
 
-        <select
-          value={filterType}
-          onChange={(e) => setFilterType(e.target.value as any)}
-          className="w-full bg-background/50 border border-border/50 text-foreground rounded-md px-3 py-2 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200"
-        >
-          <option value="all">All Types</option>
-          <option value="facebook">Facebook</option>
-          <option value="google_analytics">Google Analytics</option>
-          <option value="google_ads">Google Ads</option>
-          <option value="linkedin">LinkedIn</option>
-          <option value="twitter">Twitter</option>
-          <option value="tiktok">TikTok</option>
-          <option value="custom">Custom</option>
-        </select>
+            <div className="relative">
+              <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <select
+                value={filterType}
+                onChange={(e) => setFilterType(e.target.value as any)}
+                className="w-full pl-10 bg-background border border-border/50 text-foreground rounded-md px-3 py-2 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200 text-sm"
+              >
+                <option value="all">All Types</option>
+                <option value="facebook">Facebook</option>
+                <option value="google_analytics">Google Analytics</option>
+                <option value="google_ads">Google Ads</option>
+                <option value="linkedin">LinkedIn</option>
+                <option value="twitter">Twitter</option>
+                <option value="tiktok">TikTok</option>
+                <option value="custom">Custom</option>
+              </select>
+            </div>
 
-        <select
-          value={filterStatus}
-          onChange={(e) => setFilterStatus(e.target.value as any)}
-          className="w-full bg-background/50 border border-border/50 text-foreground rounded-md px-3 py-2 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200"
-        >
-          <option value="all">All Status</option>
-          <option value="active">Active</option>
-          <option value="inactive">Inactive</option>
-        </select>
+            <select
+              value={filterStatus}
+              onChange={(e) => setFilterStatus(e.target.value as any)}
+              className="w-full bg-background border border-border/50 text-foreground rounded-md px-3 py-2 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200 text-sm"
+            >
+              <option value="all">All Status</option>
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+            </select>
 
-        <div className="text-muted-foreground flex items-center">{filteredPixels.length} pixels found</div>
-      </div>
+            <div className="text-muted-foreground flex items-center text-sm">{filteredPixels.length} pixels found</div>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Pixels Grid */}
-      <div className="grid lg:grid-cols-2 gap-6">
+      <div className="grid gap-4">
         {filteredPixels.map((pixel) => (
-          <div
-            key={pixel.id}
-            className="border border-border/50 rounded-lg p-6 space-y-4 bg-gradient-to-br from-card to-card/50 backdrop-blur-sm shadow-sm hover:shadow-lg transition-all duration-300 hover:scale-[1.02]"
-          >
-            <div className="flex items-start justify-between">
-              <div className="flex-1">
-                <h3 className="font-playfair text-xl font-bold text-foreground mb-2">{pixel.name}</h3>
-                <p className="text-muted-foreground text-sm mb-3">ID: {pixel.pixelId}</p>
-
-                <div className="flex items-center gap-2 mb-3">
-                  <Badge className={`${getStatusColor(pixel.status)} border-0`}>{pixel.status}</Badge>
-                  <Badge className={`${getTypeColor(pixel.type)} border-0`}>{pixel.type.replace("_", " ")}</Badge>
+          <Card key={pixel.id} className="bg-card/50 border-border/30 hover:shadow-md transition-all duration-200">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div className="flex-1">
+                  <div className="flex items-center gap-3 mb-2">
+                    <h3 className="text-lg font-semibold text-foreground">{pixel.name}</h3>
+                    <Badge className={`${getStatusColor(pixel.status)} border-0 text-xs`}>{pixel.status}</Badge>
+                    <Badge className={`${getTypeColor(pixel.type)} border-0 text-xs`}>{pixel.type.replace("_", " ")}</Badge>
+                  </div>
+                  <p className="text-muted-foreground text-sm mb-2">ID: {pixel.pixel_id}</p>
+                  <div className="text-xs text-muted-foreground space-y-1">
+                    <p>Pages: {pixel.pages.join(", ")} | Events: {pixel.events.length} configured | Updated: {pixel.updated_at}</p>
+                  </div>
                 </div>
-
-                <div className="text-xs text-muted-foreground space-y-1">
-                  <p>Pages: {pixel.pages.join(", ")}</p>
-                  <p>Events: {pixel.events.length} configured</p>
-                  <p>Updated: {pixel.updatedAt}</p>
+                <div className="flex gap-2 ml-4">
+                  <Button
+                    size="sm"
+                    onClick={() => togglePixelStatus(pixel.id)}
+                    className={`${pixel.status === "active" ? "bg-destructive text-destructive-foreground hover:bg-destructive/80" : "bg-accent text-accent-foreground hover:bg-accent/80"} text-xs px-3 py-1`}
+                  >
+                    {pixel.status === "active" ? <ToggleLeft className="h-3 w-3 mr-1" /> : <ToggleRight className="h-3 w-3 mr-1" />}
+                    {pixel.status === "active" ? "Deactivate" : "Activate"}
+                  </Button>
+                  <Button
+                    size="sm"
+                    onClick={() => {
+                      setSelectedPixel(pixel)
+                      setIsEditing(true)
+                    }}
+                    className="bg-primary text-primary-foreground hover:bg-primary/80 text-xs px-3 py-1"
+                  >
+                    <Edit className="h-3 w-3 mr-1" />
+                    Edit
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => handleDeletePixel(pixel.id)}
+                    className="border-destructive text-destructive-foreground hover:bg-destructive/20 text-xs px-3 py-1"
+                  >
+                    <Trash2 className="h-3 w-3 mr-1" />
+                    Delete
+                  </Button>
                 </div>
               </div>
-            </div>
-
-            <div className="flex gap-2">
-              <Button
-                size="sm"
-                onClick={() => togglePixelStatus(pixel.id)}
-                className={`${pixel.status === "active" ? "bg-destructive text-destructive-foreground hover:bg-destructive/80" : "bg-accent text-accent-foreground hover:bg-accent/80"} hover:scale-105 transition-all duration-200`}
-              >
-                {pixel.status === "active" ? <ToggleLeft className="h-4 w-4 mr-2" /> : <ToggleRight className="h-4 w-4 mr-2" />}
-                {pixel.status === "active" ? "Deactivate" : "Activate"}
-              </Button>
-              <Button
-                size="sm"
-                onClick={() => {
-                  setSelectedPixel(pixel)
-                  setIsEditing(true)
-                }}
-                className="bg-primary text-primary-foreground hover:bg-primary/80 flex-1 hover:scale-105 transition-all duration-200"
-              >
-                <Edit className="h-4 w-4 mr-2" />
-                Edit
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() => handleDeletePixel(pixel.id)}
-                className="border-destructive text-destructive-foreground hover:bg-destructive/20 hover:scale-105 transition-all duration-200"
-              >
-                <Trash2 className="h-4 w-4 mr-2" />
-                Delete
-              </Button>
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         ))}
       </div>
 
@@ -375,7 +447,7 @@ fbq('track', 'PageView');
                       setSelectedPixel({
                         ...selectedPixel,
                         type: newType,
-                        code: generatePixelCode(newType, selectedPixel.pixelId),
+                        code: generatePixelCode(newType, selectedPixel.pixel_id),
                       })
                     }}
                     className="w-full bg-background border border-border/50 text-foreground rounded-md px-3 py-2 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200"
@@ -393,12 +465,12 @@ fbq('track', 'PageView');
                 <div>
                   <label className="block text-primary font-semibold mb-2">Pixel ID *</label>
                   <Input
-                    value={selectedPixel.pixelId}
+                    value={selectedPixel.pixel_id}
                     onChange={(e) => {
                       const newPixelId = e.target.value
                       setSelectedPixel({
                         ...selectedPixel,
-                        pixelId: newPixelId,
+                        pixel_id: newPixelId,
                         code: generatePixelCode(selectedPixel.type, newPixelId),
                       })
                     }}
@@ -481,7 +553,7 @@ fbq('track', 'PageView');
                   onClick={() =>
                     setSelectedPixel({
                       ...selectedPixel,
-                      code: generatePixelCode(selectedPixel.type, selectedPixel.pixelId),
+                      code: generatePixelCode(selectedPixel.type, selectedPixel.pixel_id),
                     })
                   }
                   className="w-full bg-primary/20 text-primary hover:bg-primary hover:text-primary-foreground hover:scale-105 transition-all duration-200"
