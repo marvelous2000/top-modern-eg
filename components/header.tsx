@@ -6,9 +6,61 @@ import { Menu, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { motion, AnimatePresence } from "framer-motion"
 
+interface SiteSettings {
+  logo: {
+    main: string
+    footer: string
+    admin: string
+  }
+  contact: {
+    phone1: string
+    phone2: string
+    email1: string
+    email2: string
+    whatsapp: string
+  }
+  social: {
+    facebook: string
+    instagram: string
+    linkedin: string
+  }
+  company: {
+    name: string
+    description: string
+    address: string
+  }
+}
+
+const defaultSettings: SiteSettings = {
+  logo: {
+    main: "/top-modern-logo-gold.png",
+    footer: "/top-modern-logo-gold.png",
+    admin: "/top-modern-logo-gold.png",
+  },
+  contact: {
+    phone1: "+20 123 456 7890",
+    phone2: "+971 50 123 4567",
+    email1: "info@topmodern.com",
+    email2: "sales@topmodern.com",
+    whatsapp: "+201234567890",
+  },
+  social: {
+    facebook: "https://facebook.com/topmodern",
+    instagram: "https://instagram.com/topmodern",
+    linkedin: "https://linkedin.com/company/topmodern",
+  },
+  company: {
+    name: "Top Modern",
+    description:
+      "Premium marble and granite solutions for luxury real estate, hotels, and restaurants across the MENA region.",
+    address: "MENA Region",
+  },
+}
+
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const [settings, setSettings] = useState<SiteSettings>(defaultSettings)
 
   useEffect(() => {
     const handleScroll = () => {
@@ -16,6 +68,29 @@ export function Header() {
     }
     window.addEventListener("scroll", handleScroll)
     return () => window.removeEventListener("scroll", handleScroll)
+  }, [])
+
+  useEffect(() => {
+    // Load settings from localStorage
+    const savedSettings = localStorage.getItem("siteSettings")
+    if (savedSettings) {
+      try {
+        setSettings(JSON.parse(savedSettings))
+      } catch (error) {
+        console.error("Error loading settings:", error)
+      }
+    }
+
+    // Listen for settings updates
+    const handleSettingsUpdate = (event: CustomEvent<SiteSettings>) => {
+      setSettings(event.detail)
+    }
+
+    window.addEventListener("settingsUpdated", handleSettingsUpdate as EventListener)
+
+    return () => {
+      window.removeEventListener("settingsUpdated", handleSettingsUpdate as EventListener)
+    }
   }, [])
 
   const navLinks = [
@@ -54,7 +129,7 @@ export function Header() {
           {/* Logo */}
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.2 }}>
             <Link href="/" className="flex items-center">
-              <img src="/top-modern-final-logo.png" alt="Top Modern" className="h-16 w-auto" />
+              <img src={settings.logo.main} alt="Top Modern" className="h-16 w-auto" />
             </Link>
           </motion.div>
 

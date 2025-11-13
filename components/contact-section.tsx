@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Phone, Mail, MapPin, Clock, CheckCircle, X } from "lucide-react"
 import { useContactTracking } from "@/components/contact-tracking"
+import { WhatsAppButton } from "@/components/ui/whatsapp-button"
 
 export function ContactSection() {
   const [formData, setFormData] = useState({
@@ -192,16 +193,16 @@ export function ContactSection() {
                       <h3 className="text-h4 text-card-foreground mb-2">{item.title}</h3>
                       <div className="space-y-1">
                         {item.lines.map((line, lineIndex) => (
-                          line.action ? (
+                          "action" in line ? (
                             <button
                               key={lineIndex}
                               onClick={line.action}
-                              className="text-muted-foreground hover:text-accent transition-colors block text-left w-full p-2 -ml-2 rounded-md hover:bg-accent/10"
+                              className={`text-muted-foreground hover:text-accent transition-colors block text-left w-full p-2 -ml-2 rounded-md hover:bg-accent/10 ${item.title === "Phone" ? "whitespace-nowrap" : ""}`}
                             >
                               {line.text}
                             </button>
                           ) : (
-                            <p key={lineIndex} className="text-muted-foreground p-2 -ml-2">
+                            <p key={lineIndex} className={`text-muted-foreground p-2 -ml-2 ${item.title === "Phone" ? "whitespace-nowrap" : ""}`}>
                               {line.text}
                             </p>
                           )
@@ -210,6 +211,8 @@ export function ContactSection() {
                     </div>
                   </div>
                 ))}
+
+
               </div>
             </CardContent>
           </Card>

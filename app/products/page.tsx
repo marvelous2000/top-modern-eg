@@ -1,8 +1,6 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-
-import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { Navigation } from "@/components/navigation"
 import { StoneCard } from "@/components/ui/stone-card"
@@ -10,6 +8,7 @@ import { PageTransition } from "@/components/ui/page-transition"
 import { AnimatedSection } from "@/components/ui/animated-section"
 import { StaggerContainer, itemVariants } from "@/components/ui/stagger-container"
 import { motion } from "framer-motion"
+import Link from "next/link"
 
 const products = [
   {
@@ -191,8 +190,8 @@ export default function ProductsPage() {
                     Our stone experts are here to guide you through the selection process
                   </p>
                   <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                    <Button size="lg" className="mt-8">
-                      Schedule Consultation
+                    <Button asChild size="lg" className="mt-8">
+                      <Link href="/contact">Get Started</Link>
                     </Button>
                   </motion.div>
                 </div>

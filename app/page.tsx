@@ -9,13 +9,69 @@ import { ParallaxHero } from "@/components/ui/parallax-hero"
 import { StaggerContainer, itemVariants } from "@/components/ui/stagger-container"
 import { StoneCard } from "@/components/ui/stone-card"
 import { PageTransition } from "@/components/ui/page-transition"
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
+import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel"
 import Autoplay from "embla-carousel-autoplay"
 import Link from "next/link"
 import { ArrowRight, CheckCircle2, Award, Users, Sparkles, ChevronDown } from "lucide-react"
 import { motion } from "framer-motion"
+import { useState, useCallback, useEffect } from "react"
 
 export default function HomePage() {
+  const [currentSlide, setCurrentSlide] = useState(0)
+  const projects = [
+    {
+      image: "/luxury-marble-kitchen.png",
+      title: "Luxury Kitchen Renovation",
+      description: "Premium Carrara marble countertops with gold fixtures",
+      location: "Dubai, UAE",
+      date: "2024",
+      client: "Al Maktoum Residence",
+    },
+    {
+      image: "/carrara-marble-bathroom-with-elegant-vanity.jpg",
+      title: "Elegant Bathroom Design",
+      description: "Carrara marble vanity and flooring installation",
+      location: "Abu Dhabi, UAE",
+      date: "2024",
+      client: "Emirates Palace Hotel",
+    },
+    {
+      image: "/luxury-hotel-lobby-marble-installation-four-season.jpg",
+      title: "Hotel Lobby Transformation",
+      description: "Large-scale marble flooring for luxury hotel",
+      location: "Sharjah, UAE",
+      date: "2023",
+      client: "Four Seasons Resort",
+    },
+    {
+      image: "/carrara-marble-flooring-in-luxury-hotel-lobby.jpg",
+      title: "Commercial Flooring",
+      description: "High-traffic marble flooring solution",
+      location: "Ras Al Khaimah, UAE",
+      date: "2023",
+      client: "Marina Mall Complex",
+    },
+    {
+      image: "/luxury-marble-workshop-with-craftsmen-working-on-p.jpg",
+      title: "Custom Workshop Installation",
+      description: "Bespoke marble work surfaces for artisans",
+      location: "Fujairah, UAE",
+      date: "2024",
+      client: "Artisan Stone Workshop",
+    },
+  ]
+
+  const goToSlide = useCallback((index: number) => {
+    setCurrentSlide(index)
+  }, [])
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % projects.length)
+    }, 5000)
+    return () => clearInterval(interval)
+  }, [projects.length])
+
   return (
     <PageTransition>
       <div className="flex flex-col">
@@ -84,111 +140,84 @@ export default function HomePage() {
                   <p className="mt-4 text-lg text-muted-foreground">Showcasing our latest marble and stone installations</p>
                 </div>
 
-                <Carousel
-                  opts={{
-                    align: "center",
-                    loop: true,
-                    skipSnaps: false,
-                    dragFree: false,
-                  }}
-                  plugins={[
-                    Autoplay({
-                      delay: 5000,
-                      stopOnInteraction: false,
-                      stopOnMouseEnter: false,
-                    }),
-                  ]}
-                  className="w-full"
-                >
-                  <CarouselContent className="ml-0">
-                    {[
-                      {
-                        image: "/luxury-marble-kitchen.png",
-                        title: "Luxury Kitchen Renovation",
-                        description: "Premium Carrara marble countertops with gold fixtures",
-                        location: "Dubai, UAE",
-                        date: "2024",
-                        client: "Al Maktoum Residence",
-                      },
-                      {
-                        image: "/carrara-marble-bathroom-with-elegant-vanity.jpg",
-                        title: "Elegant Bathroom Design",
-                        description: "Carrara marble vanity and flooring installation",
-                        location: "Abu Dhabi, UAE",
-                        date: "2024",
-                        client: "Emirates Palace Hotel",
-                      },
-                      {
-                        image: "/luxury-hotel-lobby-marble-installation-four-season.jpg",
-                        title: "Hotel Lobby Transformation",
-                        description: "Large-scale marble flooring for luxury hotel",
-                        location: "Sharjah, UAE",
-                        date: "2023",
-                        client: "Four Seasons Resort",
-                      },
-                      {
-                        image: "/carrara-marble-flooring-in-luxury-hotel-lobby.jpg",
-                        title: "Commercial Flooring",
-                        description: "High-traffic marble flooring solution",
-                        location: "Ras Al Khaimah, UAE",
-                        date: "2023",
-                        client: "Marina Mall Complex",
-                      },
-                      {
-                        image: "/luxury-marble-workshop-with-craftsmen-working-on-p.jpg",
-                        title: "Custom Workshop Installation",
-                        description: "Bespoke marble work surfaces for artisans",
-                        location: "Fujairah, UAE",
-                        date: "2024",
-                        client: "Artisan Stone Workshop",
-                      },
-                    ].map((project, index) => (
-                      <CarouselItem key={index} className="pl-0 basis-full">
-                        <Card className="overflow-hidden shadow-lg border-0 bg-card">
-                          <div className="relative aspect-[16/10] overflow-hidden">
-                            <motion.div
-                              className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-                              style={{ backgroundImage: `url(${project.image})` }}
-                              initial={{ scale: 1 }}
-                              animate={{ scale: 1.05 }}
-                              transition={{ duration: 8, ease: "easeInOut", repeat: Infinity, repeatType: "reverse" }}
-                              key={`zoom-${index}`}
-                            />
-                          </div>
-                          <CardContent className="p-6 md:p-8">
-                            <div className="space-y-4">
-                              <div>
-                                <h3 className="font-serif text-2xl md:text-3xl font-bold text-foreground mb-2">
-                                  {project.title}
-                                </h3>
-                                <p className="text-muted-foreground text-base md:text-lg leading-relaxed">
-                                  {project.description}
-                                </p>
-                              </div>
-
-                              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-border">
-                                <div className="space-y-1">
-                                  <p className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Date</p>
-                                  <p className="text-foreground font-semibold">{project.date}</p>
-                                </div>
-                                <div className="space-y-1">
-                                  <p className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Location</p>
-                                  <p className="text-foreground font-semibold">{project.location}</p>
-                                </div>
-                                <div className="space-y-1">
-                                  <p className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Client</p>
-                                  <p className="text-foreground font-semibold">{project.client}</p>
-                                </div>
-                              </div>
+                <div className="relative">
+                  <Carousel
+                    opts={{
+                      align: "center",
+                      loop: true,
+                      skipSnaps: false,
+                      dragFree: false,
+                    }}
+                    plugins={[
+                      Autoplay({
+                        delay: 5000,
+                        stopOnInteraction: false,
+                        stopOnMouseEnter: false,
+                      }),
+                    ]}
+                    className="w-full"
+                  >
+                    <CarouselContent className="ml-0">
+                      {projects.map((project, index) => (
+                        <CarouselItem key={index} className="pl-0 basis-full">
+                          <Card className="overflow-hidden shadow-lg border-0 bg-card">
+                            <div className="relative aspect-[16/10] overflow-hidden">
+                              <motion.div
+                                className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+                                style={{ backgroundImage: `url(${project.image})` }}
+                                initial={{ scale: 1 }}
+                                animate={{ scale: 1.05 }}
+                                transition={{ duration: 8, ease: "easeInOut", repeat: Infinity, repeatType: "reverse" }}
+                                key={`zoom-${index}`}
+                              />
                             </div>
-                          </CardContent>
-                        </Card>
-                      </CarouselItem>
+                            <CardContent className="p-6 md:p-8">
+                              <div className="space-y-4">
+                                <div>
+                                  <h3 className="font-serif text-2xl md:text-3xl font-bold text-foreground mb-2">
+                                    {project.title}
+                                  </h3>
+                                  <p className="text-muted-foreground text-base md:text-lg leading-relaxed">
+                                    {project.description}
+                                  </p>
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-border">
+                                  <div className="space-y-1">
+                                    <p className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Date</p>
+                                    <p className="text-foreground font-semibold">{project.date}</p>
+                                  </div>
+                                  <div className="space-y-1">
+                                    <p className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Location</p>
+                                    <p className="text-foreground font-semibold">{project.location}</p>
+                                  </div>
+                                  <div className="space-y-1">
+                                    <p className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Client</p>
+                                    <p className="text-foreground font-semibold">{project.client}</p>
+                                  </div>
+                                </div>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        </CarouselItem>
+                      ))}
+                    </CarouselContent>
+                  </Carousel>
+
+                  {/* Radio-style indicators */}
+                  <div className="flex justify-center mt-6 space-x-2">
+                    {projects.map((_, index) => (
+                      <button
+                        key={index}
+                        onClick={() => goToSlide(index)}
+                        className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                          index === currentSlide ? 'bg-accent scale-125' : 'bg-muted-foreground/30 hover:bg-muted-foreground/50'
+                        }`}
+                        aria-label={`Go to slide ${index + 1}`}
+                      />
                     ))}
-                  </CarouselContent>
-                  <CarouselPrevious className="left-4 top-1/2 -translate-y-1/2 bg-background/80 backdrop-blur-sm border-border text-foreground hover:bg-background h-10 w-10 shadow-lg" />
-                  <CarouselNext className="right-4 top-1/2 -translate-y-1/2 bg-background/80 backdrop-blur-sm border-border text-foreground hover:bg-background h-10 w-10 shadow-lg" />
-                </Carousel>
+                  </div>
+                </div>
               </div>
             </div>
           </section>
@@ -289,7 +318,7 @@ export default function HomePage() {
 
           {/* CTA Section */}
           <AnimatedSection>
-            <section className="bg-primary py-20 text-primary-foreground">
+            <section className="bg-black py-20 text-white">
               <div className="container mx-auto px-4">
                 <div className="mx-auto max-w-2xl text-center">
                   <h2 className="font-serif text-3xl font-bold tracking-tight md:text-4xl">

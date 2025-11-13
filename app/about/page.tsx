@@ -218,7 +218,7 @@ export default function AboutPage() {
 
           {/* CTA Section */}
           <AnimatedSection>
-            <section className="bg-primary py-16 text-primary-foreground">
+            <section className="bg-black py-16 text-white">
               <div className="container mx-auto px-4">
                 <div className="mx-auto max-w-2xl text-center">
                   <h2 className="font-serif text-3xl font-bold tracking-tight">Experience the Top Modern Difference</h2>
