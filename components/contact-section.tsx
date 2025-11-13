@@ -120,14 +120,14 @@ export function ContactSection() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <Input
                     placeholder="First Name"
-                    className="bg-background/50 border-border text-foreground placeholder:text-muted-foreground focus:bg-background focus:ring-2 focus:ring-accent/50 focus:border-accent"
+                    className="bg-background/50 border-border text-foreground placeholder:text-muted-foreground focus:bg-background focus:ring-2 focus:ring-accent/50 focus:border-accent px-4 py-3 h-12"
                     value={formData.firstName}
                     onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
                     required
                   />
                   <Input
                     placeholder="Last Name"
-                    className="bg-background/50 border-border text-foreground placeholder:text-muted-foreground focus:bg-background focus:ring-2 focus:ring-accent/50 focus:border-accent"
+                    className="bg-background/50 border-border text-foreground placeholder:text-muted-foreground focus:bg-background focus:ring-2 focus:ring-accent/50 focus:border-accent px-4 py-3 h-12"
                     value={formData.lastName}
                     onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
                     required
@@ -136,7 +136,7 @@ export function ContactSection() {
                 <Input
                   placeholder="Email Address"
                   type="email"
-                  className="bg-background/50 border-border text-foreground placeholder:text-muted-foreground focus:bg-background focus:ring-2 focus:ring-accent/50 focus:border-accent"
+                  className="bg-background/50 border-border text-foreground placeholder:text-muted-foreground focus:bg-background focus:ring-2 focus:ring-accent/50 focus:border-accent px-4 py-3 h-12"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   required
@@ -144,21 +144,21 @@ export function ContactSection() {
                 <Input
                   placeholder="Phone Number"
                   type="tel"
-                  className="bg-background/50 border-border text-foreground placeholder:text-muted-foreground focus:bg-background focus:ring-2 focus:ring-accent/50 focus:border-accent"
+                  className="bg-background/50 border-border text-foreground placeholder:text-muted-foreground focus:bg-background focus:ring-2 focus:ring-accent/50 focus:border-accent px-4 py-3 h-12"
                   value={formData.phone}
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                   required
                 />
                 <Input
                   placeholder="Company Name"
-                  className="bg-background/50 border-border text-foreground placeholder:text-muted-foreground focus:bg-background focus:ring-2 focus:ring-accent/50 focus:border-accent"
+                  className="bg-background/50 border-border text-foreground placeholder:text-muted-foreground focus:bg-background focus:ring-2 focus:ring-accent/50 focus:border-accent px-4 py-3 h-12"
                   value={formData.company}
                   onChange={(e) => setFormData({ ...formData, company: e.target.value })}
                 />
                 <Textarea
                   placeholder="Tell us about your project..."
-                  rows={4}
-                  className="bg-background/50 border-border text-foreground placeholder:text-muted-foreground focus:bg-background focus:ring-2 focus:ring-accent/50 focus:border-accent"
+                  rows={6}
+                  className="bg-background/50 border-border text-foreground placeholder:text-muted-foreground focus:bg-background focus:ring-2 focus:ring-accent/50 focus:border-accent px-4 py-3 resize-none"
                   value={formData.message}
                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                   required

@@ -141,10 +141,15 @@ export default function ProjectsPage() {
             <section className="border-t border-border bg-primary py-16 text-primary-foreground">
               <div className="container mx-auto px-4">
                 <div className="mx-auto max-w-2xl text-center">
-                  <h2 className="font-serif text-3xl font-bold tracking-tight">Start Your Project Today</h2>
+                  <h2 className="font-serif text-3xl font-bold tracking-tight">Ready to Transform Your Space?</h2>
                   <p className="mt-4 text-lg leading-relaxed opacity-90">
-                    Let us bring your vision to life with our expert craftsmanship
+                    Schedule a consultation with our stone experts today
                   </p>
+                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                    <Button asChild size="lg" variant="secondary" className="mt-8 w-full sm:w-auto">
+                      <Link href="/contact">Schedule Consultation</Link>
+                    </Button>
+                  </motion.div>
                 </div>
               </div>
             </section>
