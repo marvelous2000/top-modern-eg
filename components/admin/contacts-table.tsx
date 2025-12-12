@@ -196,182 +196,223 @@ export function ContactsTable() {
       </div>
 
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="max-w-2xl p-0 rounded-xl animate-fade-in-slide-down">
-          <DialogHeader className="p-6 bg-accent text-accent-foreground text-center relative rounded-t-xl">
-            <div className="flex items-center justify-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center text-xl font-bold">
-                    {getInitials(selectedContact?.name)}
+        <DialogContent className="bg-gradient-to-br from-card to-card/50 backdrop-blur-sm border-border/50 p-0 max-w-4xl w-full max-h-[90vh] shadow-2xl">
+          {selectedContact && (
+            <>
+              <DialogHeader className="p-6 pb-0">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center text-xl font-bold text-primary">
+                    {getInitials(selectedContact?.name || "")}
+                  </div>
+                  <div>
+                    <DialogTitle className="font-playfair text-2xl font-bold text-primary">
+                      {selectedContact?.name}
+                    </DialogTitle>
+                    <DialogDescription className="text-muted-foreground">
+                      {isEditing ? "Update the contact's information below." : "Viewing contact details and project information."}
+                    </DialogDescription>
+                  </div>
                 </div>
-                <div>
-                    <DialogTitle className="text-2xl font-bold">{selectedContact?.name}</DialogTitle>
-                    <DialogDescription className="text-accent-foreground/80">{isEditing ? "Update the contact's information below." : "Viewing contact details and project information."}</DialogDescription>
+              </DialogHeader>
+              <div className="p-6 max-h-[calc(90vh-200px)] overflow-y-auto space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <InfoField label="Full Name" value={selectedContact.name} isEditing={isEditing}>
+                    <Input className="bg-background border-border/50 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200 rounded-lg p-3" value={editedContact?.name || ""} onChange={(e) => handleInputChange("name", e.target.value)} />
+                  </InfoField>
+                  <InfoField label="Company" value={selectedContact.company} isEditing={isEditing}>
+                    <Input className="bg-background border-border/50 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200 rounded-lg p-3" value={editedContact?.company || ""} onChange={(e) => handleInputChange("company", e.target.value)} />
+                  </InfoField>
+                  <InfoField label="Email" value={selectedContact.email} isEditing={isEditing}>
+                    <Input className="bg-background border-border/50 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200 rounded-lg p-3" type="email" value={editedContact?.email || ""} onChange={(e) => handleInputChange("email", e.target.value)} />
+                  </InfoField>
+                  <InfoField label="Phone" value={selectedContact.phone} isEditing={isEditing}>
+                    <Input className="bg-background border-border/50 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200 rounded-lg p-3" value={editedContact?.phone || ""} onChange={(e) => handleInputChange("phone", e.target.value)} />
+                  </InfoField>
+                  <InfoField label="Project Type" value={selectedContact.projectType} isEditing={isEditing}>
+                    <Select value={editedContact?.projectType || ""} onValueChange={(v) => handleInputChange("projectType", v)}>
+                      <SelectTrigger className="bg-background border-border/50 text-foreground rounded-lg p-3 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Residential">Residential</SelectItem>
+                        <SelectItem value="Commercial">Commercial</SelectItem>
+                        <SelectItem value="Industrial">Industrial</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </InfoField>
+                  <InfoField label="Budget" value={editedContact?.budget || ""} isEditing={isEditing}>
+                    <Input className="bg-background border-border/50 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200 rounded-lg p-3" value={editedContact?.budget || ""} onChange={(e) => handleInputChange("budget", e.target.value)} />
+                  </InfoField>
+                  <InfoField label="Timeline" value={editedContact?.timeline || ""} isEditing={isEditing}>
+                    <Input className="bg-background border-border/50 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200 rounded-lg p-3" value={editedContact?.timeline || ""} onChange={(e) => handleInputChange("timeline", e.target.value)} />
+                  </InfoField>
+                  <InfoField label="Source" value={editedContact?.source || ""} isEditing={isEditing}>
+                    <Input className="bg-background border-border/50 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200 rounded-lg p-3" value={editedContact?.source || ""} onChange={(e) => handleInputChange("source", e.target.value)} />
+                  </InfoField>
+                  <InfoField label="Status" value={<Badge className={cn("capitalize text-xs rounded-md", statusConfig[selectedContact.status])}>{selectedContact.status}</Badge>} isEditing={isEditing}>
+                    <Select value={editedContact?.status || ""} onValueChange={(v) => handleInputChange("status", v)}>
+                      <SelectTrigger className="bg-background border-border/50 text-foreground rounded-lg p-3 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="New">New</SelectItem>
+                        <SelectItem value="Contacted">Contacted</SelectItem>
+                        <SelectItem value="Qualified">Qualified</SelectItem>
+                        <SelectItem value="Closed">Closed</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </InfoField>
                 </div>
-            </div>
-            <DialogClose className="absolute top-4 right-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
-              <X className="h-6 w-6" />
-              <span className="sr-only">Close</span>
-            </DialogClose>
-          </DialogHeader>
-          {selectedContact && <>
-            <div className="p-6 max-h-[70vh] overflow-y-auto space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <InfoField label="Full Name" value={selectedContact.name} isEditing={isEditing}><Input className="rounded-lg p-3" value={editedContact?.name || ""} onChange={(e) => handleInputChange("name", e.target.value)} /></InfoField>
-                <InfoField label="Company" value={selectedContact.company} isEditing={isEditing}><Input className="rounded-lg p-3" value={editedContact?.company || ""} onChange={(e) => handleInputChange("company", e.target.value)} /></InfoField>
-                <InfoField label="Email" value={selectedContact.email} isEditing={isEditing}><Input className="rounded-lg p-3" type="email" value={editedContact?.email || ""} onChange={(e) => handleInputChange("email", e.target.value)} /></InfoField>
-                <InfoField label="Phone" value={selectedContact.phone} isEditing={isEditing}><Input className="rounded-lg p-3" value={editedContact?.phone || ""} onChange={(e) => handleInputChange("phone", e.target.value)} /></InfoField>
-                <InfoField label="Project Type" value={selectedContact.projectType} isEditing={isEditing}><Select value={editedContact?.projectType || ""} onValueChange={(v) => handleInputChange("projectType", v)}><SelectTrigger className="rounded-lg p-3"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="Residential">Residential</SelectItem><SelectItem value="Commercial">Commercial</SelectItem><SelectItem value="Industrial">Industrial</SelectItem></SelectContent></Select></InfoField>
-                <InfoField label="Budget" value={editedContact?.budget || ""} isEditing={isEditing}><Input className="rounded-lg p-3" value={editedContact?.budget || ""} onChange={(e) => handleInputChange("budget", e.target.value)} /></InfoField>
-                <InfoField label="Timeline" value={editedContact?.timeline || ""} isEditing={isEditing}><Input className="rounded-lg p-3" value={editedContact?.timeline || ""} onChange={(e) => handleInputChange("timeline", e.target.value)} /></InfoField>
-                <InfoField label="Source" value={editedContact?.source || ""} isEditing={isEditing}><Input className="rounded-lg p-3" value={editedContact?.source || ""} onChange={(e) => handleInputChange("source", e.target.value)} /></InfoField>
-                <InfoField label="Status" value={<Badge className={cn("capitalize text-xs rounded-md", statusConfig[selectedContact.status])}>{selectedContact.status}</Badge>} isEditing={isEditing}><Select value={editedContact?.status || ""} onValueChange={(v) => handleInputChange("status", v)}><SelectTrigger className="rounded-lg p-3"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="New">New</SelectItem><SelectItem value="Contacted">Contacted</SelectItem><SelectItem value="Qualified">Qualified</SelectItem><SelectItem value="Closed">Closed</SelectItem></SelectContent></Select></InfoField>
+                <div className="space-y-2">
+                  <label className="block text-primary font-semibold mb-2">Notes</label>
+                  {isEditing
+                    ? <Textarea value={editedContact?.notes || ""} onChange={(e) => handleInputChange("notes", e.target.value)} className="min-h-[120px] bg-background border-border/50 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200 rounded-lg p-3" />
+                    : <div className="text-sm text-foreground bg-muted/20 p-4 rounded-lg border min-h-[120px] whitespace-pre-wrap">{selectedContact.notes || <span className="text-muted-foreground/70">No notes added.</span>}</div>
+                  }
+                </div>
+                <div className="mt-6 pt-4 border-t text-xs text-muted-foreground flex justify-between">
+                  <p>Created: {selectedContact.date}</p>
+                  <p>Last Updated: {selectedContact.lastUpdated} by {selectedContact.lastUpdatedBy}</p>
+                </div>
               </div>
-              <div className="space-y-2">
-                <Label className="font-semibold">Notes</Label>
-                {isEditing
-                  ? <Textarea value={editedContact?.notes || ""} onChange={(e) => handleInputChange("notes", e.target.value)} className="min-h-[120px] rounded-lg p-3" />
-                  : <div className="text-sm text-foreground bg-muted/20 p-4 rounded-lg border min-h-[120px] whitespace-pre-wrap">{selectedContact.notes || <span className="text-muted-foreground/70">No notes added.</span>}</div>
-                }
-              </div>
-              <div className="mt-6 pt-4 border-t text-xs text-muted-foreground flex justify-between">
-                <p>Created: {selectedContact.date}</p>
-                <p>Last Updated: {selectedContact.lastUpdated} by {selectedContact.lastUpdatedBy}</p>
-              </div>
-            </div>
-            <div className="flex justify-end space-x-3 p-4 bg-muted/30 border-t rounded-b-xl">
-              {!isEditing ? (
-                <Button onClick={handleEditContact} className="rounded-lg transition-transform duration-200 hover:-translate-y-0.5">
-                  <Edit className="h-4 w-4 mr-2" />
-                  Edit Contact
-                </Button>
-              ) : (
-                <>
-                  <Button onClick={handleCancelEdit} variant="outline" className="rounded-lg">Cancel</Button>
-                  <Button onClick={handleSaveContact} className="rounded-lg transition-transform duration-200 hover:-translate-y-0.5">
-                    <Save className="h-4 w-4 mr-2" />
-                    Save Changes
+              <div className="flex justify-end space-x-3 p-4 bg-muted/30 border-t rounded-b-lg">
+                {!isEditing ? (
+                  <Button onClick={handleEditContact} className="bg-accent text-accent-foreground hover:bg-accent/90 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl">
+                    <Edit className="h-4 w-4 mr-2" />
+                    Edit Contact
                   </Button>
-                </>
-              )}
-            </div>
-          </>}
+                ) : (
+                  <>
+                    <Button onClick={handleCancelEdit} variant="outline" className="hover:bg-muted transition-all duration-200">Cancel</Button>
+                    <Button onClick={handleSaveContact} className="bg-accent text-accent-foreground hover:bg-accent/90 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl">
+                      <Save className="h-4 w-4 mr-2" />
+                      Save Changes
+                    </Button>
+                  </>
+                )}
+              </div>
+            </>
+          )}
         </DialogContent>
       </Dialog>
 
       <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
-        <DialogContent className="max-w-2xl p-0 rounded-xl animate-fade-in-slide-down">
-          <DialogHeader className="p-6 bg-accent text-accent-foreground text-center relative rounded-t-xl">
-            <div className="flex items-center justify-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center text-xl font-bold">
-                    <UserPlus className="h-6 w-6" />
-                </div>
-                <div>
-                    <DialogTitle className="text-2xl font-bold">Add New Contact</DialogTitle>
-                    <DialogDescription className="text-accent-foreground/80">Enter the contact's information below.</DialogDescription>
-                </div>
+        <DialogContent className="bg-gradient-to-br from-card to-card/50 backdrop-blur-sm border-border/50 p-0 max-w-4xl w-full max-h-[90vh] shadow-2xl">
+          <DialogHeader className="p-6 pb-0">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center text-xl font-bold text-primary">
+                <UserPlus className="h-6 w-6" />
+              </div>
+              <div>
+                <DialogTitle className="font-playfair text-2xl font-bold text-primary">
+                  Add New Contact
+                </DialogTitle>
+                <DialogDescription className="text-muted-foreground">
+                  Enter the contact's information below.
+                </DialogDescription>
+              </div>
             </div>
-            <DialogClose className="absolute top-4 right-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
-              <X className="h-6 w-6" />
-              <span className="sr-only">Close</span>
-            </DialogClose>
           </DialogHeader>
-          <div className="p-6 max-h-[70vh] overflow-y-auto space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="p-6 max-h-[calc(90vh-160px)] overflow-y-auto space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="block text-primary font-semibold mb-2">Full Name *</label>
+                  <Input
+                    className="bg-background border-border/50 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200 rounded-lg p-3"
+                    value={newContact.name}
+                    onChange={(e) => handleNewContactInputChange("name", e.target.value)}
+                    placeholder="Enter full name"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="block text-primary font-semibold mb-2">Company</label>
+                  <Input
+                    className="bg-background border-border/50 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200 rounded-lg p-3"
+                    value={newContact.company}
+                    onChange={(e) => handleNewContactInputChange("company", e.target.value)}
+                    placeholder="Enter company name"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="block text-primary font-semibold mb-2">Email *</label>
+                  <Input
+                    className="bg-background border-border/50 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200 rounded-lg p-3"
+                    type="email"
+                    value={newContact.email}
+                    onChange={(e) => handleNewContactInputChange("email", e.target.value)}
+                    placeholder="Enter email address"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="block text-primary font-semibold mb-2">Phone</label>
+                  <Input
+                    className="bg-background border-border/50 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200 rounded-lg p-3"
+                    value={newContact.phone}
+                    onChange={(e) => handleNewContactInputChange("phone", e.target.value)}
+                    placeholder="Enter phone number"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="block text-primary font-semibold mb-2">Project Type</label>
+                  <Select value={newContact.projectType} onValueChange={(v) => handleNewContactInputChange("projectType", v)}>
+                    <SelectTrigger className="bg-background border-border/50 text-foreground rounded-lg p-3 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200">
+                      <SelectValue placeholder="Select project type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Residential">Residential</SelectItem>
+                      <SelectItem value="Commercial">Commercial</SelectItem>
+                      <SelectItem value="Industrial">Industrial</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <label className="block text-primary font-semibold mb-2">Budget</label>
+                  <Input
+                    className="bg-background border-border/50 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200 rounded-lg p-3"
+                    value={newContact.budget}
+                    onChange={(e) => handleNewContactInputChange("budget", e.target.value)}
+                    placeholder="Enter budget"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="block text-primary font-semibold mb-2">Timeline</label>
+                  <Input
+                    className="bg-background border-border/50 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200 rounded-lg p-3"
+                    value={newContact.timeline}
+                    onChange={(e) => handleNewContactInputChange("timeline", e.target.value)}
+                    placeholder="Enter timeline"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="block text-primary font-semibold mb-2">Source</label>
+                  <Input
+                    className="bg-background border-border/50 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200 rounded-lg p-3"
+                    value={newContact.source}
+                    onChange={(e) => handleNewContactInputChange("source", e.target.value)}
+                    placeholder="Enter source"
+                  />
+                </div>
+              </div>
               <div className="space-y-2">
-                <Label className="font-semibold">Full Name *</Label>
-                <Input
-                  className="rounded-lg p-3"
-                  value={newContact.name}
-                  onChange={(e) => handleNewContactInputChange("name", e.target.value)}
-                  placeholder="Enter full name"
+                <label className="block text-primary font-semibold mb-2">Notes</label>
+                <Textarea
+                  value={newContact.notes}
+                  onChange={(e) => handleNewContactInputChange("notes", e.target.value)}
+                  className="min-h-[120px] bg-background border-border/50 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200 rounded-lg p-3"
+                  placeholder="Enter any additional notes"
                 />
               </div>
-              <div className="space-y-2">
-                <Label className="font-semibold">Company</Label>
-                <Input
-                  className="rounded-lg p-3"
-                  value={newContact.company}
-                  onChange={(e) => handleNewContactInputChange("company", e.target.value)}
-                  placeholder="Enter company name"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label className="font-semibold">Email *</Label>
-                <Input
-                  className="rounded-lg p-3"
-                  type="email"
-                  value={newContact.email}
-                  onChange={(e) => handleNewContactInputChange("email", e.target.value)}
-                  placeholder="Enter email address"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label className="font-semibold">Phone</Label>
-                <Input
-                  className="rounded-lg p-3"
-                  value={newContact.phone}
-                  onChange={(e) => handleNewContactInputChange("phone", e.target.value)}
-                  placeholder="Enter phone number"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label className="font-semibold">Project Type</Label>
-                <Select value={newContact.projectType} onValueChange={(v) => handleNewContactInputChange("projectType", v)}>
-                  <SelectTrigger className="rounded-lg p-3">
-                    <SelectValue placeholder="Select project type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Residential">Residential</SelectItem>
-                    <SelectItem value="Commercial">Commercial</SelectItem>
-                    <SelectItem value="Industrial">Industrial</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label className="font-semibold">Budget</Label>
-                <Input
-                  className="rounded-lg p-3"
-                  value={newContact.budget}
-                  onChange={(e) => handleNewContactInputChange("budget", e.target.value)}
-                  placeholder="Enter budget"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label className="font-semibold">Timeline</Label>
-                <Input
-                  className="rounded-lg p-3"
-                  value={newContact.timeline}
-                  onChange={(e) => handleNewContactInputChange("timeline", e.target.value)}
-                  placeholder="Enter timeline"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label className="font-semibold">Source</Label>
-                <Input
-                  className="rounded-lg p-3"
-                  value={newContact.source}
-                  onChange={(e) => handleNewContactInputChange("source", e.target.value)}
-                  placeholder="Enter source"
-                />
-              </div>
-            </div>
-            <div className="space-y-2">
-              <Label className="font-semibold">Notes</Label>
-              <Textarea
-                value={newContact.notes}
-                onChange={(e) => handleNewContactInputChange("notes", e.target.value)}
-                className="min-h-[120px] rounded-lg p-3"
-                placeholder="Enter any additional notes"
-              />
-            </div>
           </div>
-          <div className="flex justify-end space-x-3 p-4 bg-muted/30 border-t rounded-b-xl">
-            <Button onClick={() => setIsCreateModalOpen(false)} variant="outline" className="rounded-lg">
-              Cancel
-            </Button>
+          <div className="flex justify-end space-x-3 p-4 bg-muted/30 border-t rounded-b-lg">
+            <DialogClose asChild>
+              <Button variant="outline" className="hover:bg-muted transition-all duration-200">
+                  Cancel
+              </Button>
+            </DialogClose>
             <Button
               onClick={handleCreateContact}
               disabled={isCreating || !newContact.name || !newContact.email}
-              className="rounded-lg transition-transform duration-200 hover:-translate-y-0.5"
+              className="bg-accent text-accent-foreground hover:bg-accent/90 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
             >
               {isCreating ? (
                 <>

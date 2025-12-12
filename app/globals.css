@@ -2,317 +2,110 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: 45 29% 94%;
-  --foreground: 0 0% 15%;
-  --card: 0 0% 100%;
-  --card-foreground: 0 0% 15%;
-  --popover: 0 0% 100%;
-  --popover-foreground: 0 0% 15%;
-  --primary: 0 0% 10%;
-  --primary-foreground: 45 29% 94%;
-  --secondary: 0 0% 40%;
-  --secondary-foreground: 45 29% 94%;
-  --muted: 0 0% 40%;
-  --muted-foreground: 0 0% 40%;
-  --accent: 45 75% 55%;
-  --accent-foreground: 0 0% 10%;
-  --destructive: 0 84% 60%;
-  --destructive-foreground: 45 29% 94%;
-  --success: 160 84% 39%;
-  --success-foreground: 45 29% 94%;
-  --warning: 38 92% 50%;
-  --warning-foreground: 0 0% 10%;
-  --border: 45 18% 85%;
-  --input: 45 18% 85%;
-  --ring: 45 65% 58%;
-  --radius: 0.25rem;
-  --chart-1: 220 70% 50%;
-  --chart-2: 142 76% 36%;
-  --chart-3: 48 96% 53%;
-  --chart-5: 0 84% 60%;
-  --sidebar: 0 0% 10%;
-  --sidebar-foreground: 45 29% 94%;
-  --sidebar-primary: 45 65% 58%;
-  --sidebar-primary-foreground: 0 0% 10%;
-  --sidebar-accent: 0 0% 40%;
-  --sidebar-accent-foreground: 45 29% 94%;
-  --sidebar-border: 45 18% 85%;
-  --sidebar-ring: 45 65% 58%;
-}
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 220.9 39.3% 11%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 240 10% 3.9%;
+    --radius: 0.5rem;
+  }
 
-.dark {
-  --background: 0 0% 10%;
-  --foreground: 0 0% 98%;
-  --card: 0 0% 10%;
-  --card-foreground: 0 0% 98%;
-  --popover: 0 0% 10%;
-  --popover-foreground: 0 0% 98%;
-  --primary: 45 29% 94%;
-  --primary-foreground: 0 0% 10%;
-  --secondary: 0 0% 10%;
-  --secondary-foreground: 0 0% 98%;
-  --muted: 0 0% 10%;
-  --muted-foreground: 0 0% 40%;
-  --accent: 45 75% 55%;
-  --accent-foreground: 0 0% 10%;
-  --destructive: 0 62% 30%;
-  --destructive-foreground: 0 0% 98%;
-  --success: 160 84% 39%;
-  --success-foreground: 0 0% 10%;
-  --warning: 38 92% 50%;
-  --warning-foreground: 0 0% 10%;
-  --border: 0 0% 23%;
-  --input: 0 0% 23%;
-  --ring: 45 65% 58%;
-  --chart-1: 220 70% 50%;
-  --chart-2: 142 76% 36%;
-  --chart-3: 48 96% 53%;
-  --chart-5: 0 84% 60%;
-  --sidebar: 0 0% 10%;
-  --sidebar-foreground: 0 0% 98%;
-  --sidebar-primary: 45 65% 58%;
-  --sidebar-primary-foreground: 0 0% 10%;
-  --sidebar-accent: 0 0% 10%;
-  --sidebar-accent-foreground: 0 0% 98%;
-  --sidebar-border: 0 0% 23%;
-  --sidebar-ring: 45 65% 58%;
+  .dark {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 240 5.9% 10%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 240 4.9% 83.9%;
+  }
 }
 
 @layer base {
   * {
     @apply border-border;
   }
-
   body {
-    @apply bg-background text-foreground font-sans;
-  }
-
-  h1 { @apply text-[3rem] font-bold leading-tight font-serif; }
-  h2 { @apply text-[2.25rem] font-bold leading-tight font-serif; }
-  h3 { @apply text-[1.875rem] font-semibold leading-tight font-serif; }
-  h4 { @apply text-[1.5rem] font-semibold leading-tight font-serif; }
-  h5 { @apply text-[1.25rem] font-medium leading-tight font-serif; }
-  h6 { @apply text-[1.125rem] font-medium leading-tight font-serif; }
-
-  .text-body-large { @apply text-[1.125rem] font-normal leading-[1.5]; }
-  .text-body { @apply text-base font-normal leading-[1.5]; }
-  .text-body-small { @apply text-[0.875rem] font-normal leading-[1.5]; }
-  .text-caption { @apply text-[0.75rem] font-light leading-[1.5]; }
-}
-
-/* Animation System */
-@layer utilities {
-  .animate-fade-in { animation: fadeIn 0.3s ease; }
-  .animate-slide-in { animation: slideIn 0.3s ease; }
-  .animate-scale-in { animation: scaleIn 0.3s ease; }
-
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-
-  @keyframes slideIn {
-    from { transform: translateY(-10px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
-  }
-
-  @keyframes scaleIn {
-    from { transform: scale(0.95); opacity: 0; }
-    to { transform: scale(1); opacity: 1; }
-  }
-
-  /* Transition classes */
-  .transition-theme { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
-  .transition-hover { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-  .transition-modal { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-
-  @keyframes slideDown {
-    from { transform: translateY(-20px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
-  }
-
-  @keyframes fadeInSlideDown {
-    from { opacity: 0; transform: translateY(-20px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .animate-fade-in-slide-down { animation: fadeInSlideDown 0.4s ease-out; }
-}
-
-/* Admin Panel Luxury Styling */
-.admin-panel {
-  background-attachment: fixed;
-}
-
-/* Luxury focus states for accessibility */
-.admin-focus:focus-visible {
-  outline: 2px solid var(--ring);
-  outline-offset: 2px;
-  box-shadow: 0 0 0 4px color-mix(in srgb, var(--ring) 20%, transparent);
-}
-
-/* Enhanced backdrop blur for luxury cards */
-.admin-card {
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid color-mix(in srgb, var(--border) 50%, transparent);
-  box-shadow:
-    0 8px 32px color-mix(in srgb, var(--foreground) 10%, transparent),
-    inset 0 1px 0 color-mix(in srgb, var(--background) 10%, transparent);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.admin-card:hover {
-  box-shadow:
-    0 12px 40px color-mix(in srgb, var(--foreground) 15%, transparent),
-    inset 0 1px 0 color-mix(in srgb, var(--background) 10%, transparent);
-}
-
-/* Marble texture overlay */
-.marble-texture {
-  background-image: url('/marble-texture.png');
-  background-size: cover;
-  background-position: center;
-  opacity: 0.03;
-  mix-blend-mode: overlay;
-}
-
-/* Responsive breakpoints for admin panel */
-@media (max-width: 640px) {
-  .admin-sidebar {
-    transform: translateX(-100%);
-    transition: transform 0.3s ease;
-  }
-  .admin-sidebar.open {
-    transform: translateX(0);
+    @apply bg-background text-foreground;
   }
 }
 
-@media (min-width: 641px) and (max-width: 1023px) {
-  .admin-sidebar {
-    width: 200px;
+@layer components {
+  .btn-luxury {
+    @apply bg-gradient-to-br from-primary/20 to-primary/10 backdrop-blur-md border border-primary/40 text-primary-foreground shadow-xl hover:shadow-primary/50 hover:bg-primary/25 hover:border-primary/60 font-bold;
   }
 }
 
-@media (min-width: 1024px) {
-  .admin-sidebar {
-    width: 280px;
-  }
+/* Golden hover effect for links */
+a:hover {
+  color: #D4AF37; /* Gold color */
 }
 
-/* Luxury button hover effects - faster and smoother */
-.admin-button-hover {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+/* Base button style */
+.btn {
+  @apply inline-block px-6 py-3 font-bold text-center text-white uppercase align-middle transition-all rounded-lg cursor-pointer bg-gradient-to-tl from-purple-700 to-pink-500 leading-normal text-xs ease-in tracking-tight shadow-md hover:scale-105 active:opacity-85;
 }
 
-.admin-button-hover:hover {
-  transform: translateX(4px);
+/* Primary button style (gold) */
+.btn-primary {
+    @apply text-white bg-gradient-to-br from-yellow-400 via-yellow-500 to-orange-500;
+    border: 1px solid #c9b36c;
+    box-shadow: 0 4px 15px 0 rgba(252, 185, 0, 0.75);
+    transition: all 0.3s ease-in-out;
 }
 
-.admin-button-hover:active {
-  transform: translateX(2px);
+.btn-primary:hover {
+    @apply bg-gradient-to-br from-yellow-500 via-yellow-600 to-orange-600;
+    box-shadow: 0 6px 20px 0 rgba(252, 185, 0, 0.9);
+    transform: translateY(-2px);
 }
 
-/* Enhanced form styling for luxury feel */
-.admin-form-input {
-  background: var(--card);
-  backdrop-filter: blur(8px);
-  border: 1px solid var(--input);
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  color: var(--card-foreground);
-  height: 3rem;
-  padding: 0.75rem 1rem;
-  border-radius: 0.25rem;
+
+/* Secondary button style */
+.btn-secondary {
+  @apply text-gray-800 bg-white;
+  border: 1px solid #d2d6dc;
 }
 
-.admin-form-input:focus {
-  border-color: var(--ring);
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--ring) 20%, transparent);
+.btn-secondary:hover {
+  background-color: #f8f9fa;
+  border-color: #b0b5ba;
 }
 
-.admin-form-label {
-  @apply text-[0.875rem] font-semibold text-muted-foreground mb-2;
+.card-container {
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
 }
 
-/* Modal system */
-.admin-modal-backdrop {
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  background: color-mix(in srgb, var(--background) 50%, transparent);
-}
-
-.admin-modal-container {
-  background: var(--card);
-  border-radius: 0.5rem;
-  padding: 2rem;
-  max-width: 600px;
-  border: 1px solid var(--border);
-  box-shadow: 0 20px 25px -5px color-mix(in srgb, var(--foreground) 10%, transparent);
-}
-
-.admin-modal-header {
-  @apply text-[1.5rem] font-semibold leading-tight font-serif mb-6 border-b border-gray-200 pb-4;
-}
-
-.admin-modal-actions {
-  @apply flex justify-end gap-4 mt-8;
-}
-
-/* Interaction states */
-.admin-hover {
-  transition: all 0.3s ease-in-out;
-}
-
-.admin-hover:hover {
-  background: color-mix(in srgb, var(--foreground) 5%, transparent);
-  transform: translateX(4px);
-}
-
-.admin-selected {
-  background: color-mix(in srgb, var(--accent) 15%, transparent);
-  border-left: 3px solid var(--accent);
-  font-weight: 600;
-  transform: translateX(4px);
-}
-
-.admin-active {
-  background: color-mix(in srgb, var(--accent) 20%, transparent);
-  transform: translateX(4px);
-}
-
-.admin-disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-/* Smooth scroll behavior */
-html {
-  scroll-behavior: smooth;
-}
-
-/* Gold Glare Effect for Card Headers */
-.gold-glare-header {
-  position: relative;
-  overflow: hidden;
-}
-
-.gold-glare-header::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -150%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-    110deg,
-    rgba(255, 255, 255, 0) 40%,
-    rgba(255, 255, 255, 0.25) 50%,
-    rgba(255, 255, 255, 0) 60%
-  );
-  transition: left 0.8s cubic-bezier(0.23, 1, 0.32, 1);
-}
-
-.card:hover .gold-glare-header::after {
-  left: 150%;
+.card-container:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(212, 175, 55, 0.3), 0 6px 6px rgba(212, 175, 55, 0.23);
+    border-color: #D4AF37;
 }

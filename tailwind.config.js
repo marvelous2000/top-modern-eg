@@ -7,8 +7,33 @@ export default {
   ],
   darkMode: 'class',
   theme: {
+    container: {
+      center: true,
+      padding: {
+        DEFAULT: '1rem', // px-4
+        sm: '1.5rem',    // sm:px-6
+        lg: '2rem',      // lg:px-8
+      },
+    },
     extend: {
       colors: {
+        cream: {
+          50: '#FFFEF9', // Card bg (Light)
+          100: '#FDFBF7', // Main bg (Light)
+          200: '#F5F5DC', // Borders
+        },
+        gold: {
+          400: '#E5C158',
+          500: '#D4AF37', // Primary Brand Color
+          600: '#B4942D', // Hover State
+          50: '#F9F5E6',  // Light tint
+        },
+        charcoal: {
+          800: '#2D3748', // Card bg (Dark)
+          900: '#1A202C', // Main bg (Dark)
+          950: '#171923', // Sidebar/Nav bg (Dark)
+        },
+        // Light Mode HSL values from UI_SPECIFICATIONS_TODO.md
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         card: 'hsl(var(--card))',
@@ -32,12 +57,8 @@ export default {
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
-        chart: {
-          '1': 'hsl(var(--chart-1))',
-          '2': 'hsl(var(--chart-2))',
-          '3': 'hsl(var(--chart-3))',
-          '5': 'hsl(var(--chart-5))',
-        },
+
+        // Admin Panel/Sidebar specific colors (assuming they follow the same dark/light mode pattern or are dark mode only)
         sidebar: 'hsl(var(--sidebar))',
         'sidebar-foreground': 'hsl(var(--sidebar-foreground))',
         'sidebar-primary': 'hsl(var(--sidebar-primary))',
@@ -46,16 +67,27 @@ export default {
         'sidebar-accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
         'sidebar-border': 'hsl(var(--sidebar-border))',
         'sidebar-ring': 'hsl(var(--sidebar-ring))',
+
+        chart: {
+          '1': '#3b82f6', // Keep as is for now, not in spec
+          '2': '#10b981',
+          '3': '#f59e0b',
+          '5': '#dc2626',
+        },
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
-        serif: ['Lora', 'Georgia', 'serif'],
+        sans: ['var(--font-sans)', 'system-ui', 'sans-serif'],
+        serif: ['var(--font-serif)', 'Georgia', 'serif'],
+        arabic: ['Noto Sans Arabic', 'Tajawal', 'Cairo', 'sans-serif'], // Keep arabic for now as it was present and not explicitly removed by spec
       },
       borderRadius: {
         sm: 'calc(var(--radius) - 4px)',
         md: 'calc(var(--radius) - 2px)',
         lg: 'var(--radius)',
         xl: 'calc(var(--radius) + 4px)',
+      },
+      transitionDuration: {
+        '400': '400ms',
       }
     },
   },

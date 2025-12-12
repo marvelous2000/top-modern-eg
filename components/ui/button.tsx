@@ -5,14 +5,14 @@ import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all duration-300 cubic-bezier(0.4, 0, 0.2, 1) disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive admin-button-hover",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg text-sm font-medium transition-all duration-300 cubic-bezier(0.4, 0, 0.2, 1) hover:translate-x-1 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus:ring-2 focus:ring-gold-500 focus:ring-offset-2 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive admin-button-hover",
   {
     variants: {
       variant: {
-        default: 'bg-accent text-accent-foreground hover:bg-accent/90 active:scale-95 shadow-sm hover:shadow-md',
-        primary: 'bg-accent text-accent-foreground border-0 hover:bg-accent/90 active:scale-95 shadow-sm hover:shadow-md',
-        secondary: 'bg-secondary text-secondary-foreground border-0 hover:bg-secondary/80 active:scale-95 shadow-sm hover:shadow-md',
-        outline: 'border border-border bg-transparent text-foreground hover:bg-accent hover:text-accent-foreground hover:border-accent active:scale-95 shadow-sm hover:shadow-md',
+        default: 'btn-primary shadow-sm hover:shadow-md',
+        primary: 'btn-primary shadow-sm hover:shadow-md',
+        secondary: 'btn-secondary',
+        outline: 'btn-outline',
         ghost: 'bg-transparent text-muted-foreground border-0 hover:bg-accent/10 hover:text-accent active:scale-95',
         destructive: 'bg-destructive text-destructive-foreground border-0 hover:bg-destructive/90 active:scale-95 shadow-sm hover:shadow-md',
         link: 'text-accent underline-offset-4 hover:underline hover:text-accent/80',
@@ -36,25 +36,25 @@ const buttonVariants = cva(
   },
 )
 
-function Button({
-  className,
-  variant,
-  size,
-  asChild = false,
-  ...props
-}: React.ComponentProps<'button'> &
-  VariantProps<typeof buttonVariants> & {
-    asChild?: boolean
-  }) {
-  const Comp = asChild ? Slot : 'button'
-
-  return (
-    <Comp
-      data-slot="button"
-      className={cn(buttonVariants({ variant, size, className }))}
-      {...props}
-    />
-  )
+export interface ButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+    VariantProps<typeof buttonVariants> {
+  asChild?: boolean
 }
+
+const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ className, variant, size, asChild = false, ...props }, ref) => {
+    const Comp = asChild ? Slot : 'button'
+    return (
+      <Comp
+        data-slot="button"
+        className={cn(buttonVariants({ variant, size, className }))}
+        ref={ref}
+        {...props}
+      />
+    )
+  },
+)
+Button.displayName = 'Button'
 
 export { Button, buttonVariants }

@@ -15,7 +15,7 @@
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "react-jsx",
+    "jsx": "preserve",
     "incremental": true,
     "plugins": [
       {
@@ -23,10 +23,16 @@
       }
     ],
     "paths": {
+      "react": ["./node_modules/@types/react"],
+      "react-dom": ["./node_modules/@types/react-dom"],
       "@/*": [
         "./*"
+      ],
+      "@/messages/*": [
+        "messages/*"
       ]
-    }
+    },
+    "types": ["react", "react-dom", "node"]
   },
   "include": [
     "next-env.d.ts",

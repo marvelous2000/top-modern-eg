@@ -1,61 +1,7 @@
-"use client"
-
-import { useSearchParams } from "next/navigation"
-
-// Import all the components that will be displayed on the admin pages
-import { AdminStats } from "@/components/admin/admin-stats"
-import { ContactsTable } from "@/components/admin/contacts-table"
-import { LegalPagesManager } from "@/components/admin/legal-pages-manager"
-import { ContactTrackingViewer } from "@/components/admin/contact-tracking-viewer"
-import { ProductsManager } from "@/components/admin/products-manager-updated"
-import { ProjectsManager } from "@/components/admin/projects-manager-updated"
-import { UsersManager } from "@/components/admin/users-manager-updated"
-import { PixelManager } from "@/components/admin/pixel-manager-updated"
-import { LeadsManager } from "@/components/admin/leads-manager-updated"
-import { SettingsManager } from "@/components/admin/settings-manager-updated"
-import { DatabaseSetupManager } from "@/components/admin/database-setup-manager"
-import { DashboardOverview } from "@/components/admin/dashboard-overview"
-
-// A simple component for the default dashboard view
-function DashboardView() {
-  return <DashboardOverview />
-}
+import AdminPageContentWrapper from "@/components/admin/AdminPageContentWrapper";
 
 export default function AdminPage() {
-  const searchParams = useSearchParams()
-  const page = searchParams.get("page")
-
-  // This function determines which component to render based on the 'page' URL query parameter
-  const renderContent = () => {
-    switch (page) {
-      case "leads":
-        return <LeadsManager />
-      case "users":
-        return <UsersManager />
-      case "analytics":
-        return <ContactTrackingViewer />
-      case "contacts":
-        return <ContactsTable />
-      case "products":
-        return <ProductsManager />
-      case "projects":
-        return <ProjectsManager />
-      case "legal":
-        return <LegalPagesManager />
-      case "pixels":
-        return <PixelManager />
-      case "settings":
-        return <SettingsManager />
-      case "setup":
-        return <DatabaseSetupManager />
-      // The default case renders the main dashboard overview
-      default:
-        return <DashboardView />
-    }
-  }
-
-  return <>{renderContent()}</>
+  return <AdminPageContentWrapper />;
 }
 
-// Force dynamic rendering to avoid prerendering issues
 export const dynamic = 'force-dynamic'

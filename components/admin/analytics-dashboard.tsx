@@ -72,8 +72,11 @@ export function AnalyticsDashboard() {
 
     // Header information
     csvContent += `Top Modern Analytics Dashboard Report\n`
-    csvContent += `Report Date,${new Date().toLocaleDateString()}\n`
-    csvContent += `Period,${selectedMonth === "all" ? "All Time" : monthName}\n\n`
+    csvContent += `Report Date,${new Date().toLocaleDateString()}
+`
+    csvContent += `Period,${selectedMonth === "all" ? "All Time" : monthName}
+
+`
 
     // Summary statistics
     csvContent += `SUMMARY STATISTICS\n`

@@ -7,7 +7,12 @@ function Card({ className, ...props }: React.ComponentProps<'div'>) {
     <div
       data-slot="card"
       className={cn(
-        'bg-card text-card-foreground flex flex-col gap-6 rounded-xl border border-border py-6 shadow-sm transition-all duration-300 cubic-bezier(0.4, 0, 0.2, 1) hover:shadow-lg',
+        'flex flex-col gap-6 rounded-xl py-6 shadow-sm transition-all duration-300 cubic-bezier(0.4, 0, 0.2, 1) hover:shadow-lg',
+        // Default styles
+        'bg-white ring-1 ring-gray-900/5', // Light Mode
+        'dark:bg-charcoal-800 dark:ring-1 dark:ring-white/10', // Dark Mode
+        // Admin panel LuxAdmin styles
+        'admin-panel:bg-card admin-panel:ring-1 admin-panel:ring-border/20 admin-panel:shadow-lg admin-panel:hover:shadow-xl admin-panel:backdrop-blur-[12px]',
         className,
       )}
       {...props}
@@ -20,7 +25,7 @@ function CardHeader({ className, ...props }: React.ComponentProps<'div'>) {
     <div
       data-slot="card-header"
       className={cn(
-        '@container/card-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-2 px-6 has-data-[slot=card-action]:grid-cols-[1fr_auto] [.border-b]:pb-6',
+        '@container/card-header grid auto-rows-min grid-rows-[auto_auto] items-start gap-2 px-6 has-data-[slot=card-action]:grid-cols-[1fr_auto] [.border-b]:pb-6 animate-gold-glare',
         className,
       )}
       {...props}

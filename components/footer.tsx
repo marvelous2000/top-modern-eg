@@ -3,119 +3,89 @@
 import Link from "next/link"
 import { useState, useEffect } from "react"
 import { Mail, Phone, MapPin, Facebook, Instagram, MessageCircle } from "lucide-react"
+import { useTranslations } from 'next-intl';
+import { useParams } from 'next/navigation'; // Added import
+import { getSafeLocale } from '@/lib/locale-utils'; // Added import
 
-interface SiteSettings {
-  logo: {
-    main: string
-    footer: string
-    admin: string
-  }
-  contact: {
-    phone1: string
-    phone2: string
-    email1: string
-    email2: string
-    whatsapp: string
-  }
-  social: {
-    facebook: string
-    instagram: string
-    linkedin: string
-  }
-  company: {
-    name: string
-    description: string
-    address: string
-  }
-}
+import { SiteSettings, defaultSettings } from "@/lib/types"
 
-const defaultSettings: SiteSettings = {
-  logo: {
-    main: "/top-modern-logo-gold.png",
-    footer: "/top-modern-logo-gold.png",
-    admin: "/top-modern-logo-gold.png",
-  },
-  contact: {
-    phone1: "+20 123 456 7890",
-    phone2: "+971 50 123 4567",
-    email1: "info@topmodern.com",
-    email2: "sales@topmodern.com",
-    whatsapp: "+201234567890",
-  },
-  social: {
-    facebook: "https://facebook.com/topmodern",
-    instagram: "https://instagram.com/topmodern",
-    linkedin: "https://linkedin.com/company/topmodern",
-  },
-  company: {
-    name: "Top Modern",
-    description:
-      "Premium marble and granite solutions for luxury real estate, hotels, and restaurants across the MENA region.",
-    address: "MENA Region",
-  },
-}
+export default function Footer() { // Removed isAdmin prop
+  const params = useParams(); // Added
+  const locale = getSafeLocale(params.locale); // Added
 
-export function Footer() {
+  const t = useTranslations('footer');
+
+  const safeT = (key: string, fallback = key) => {
+    try {
+      return t(key);
+    } catch (e) {
+      console.warn(`[Footer] Missing translation: footer.${key}`, e);
+      return fallback;
+    }
+  };
+
   const [settings, setSettings] = useState<SiteSettings>(defaultSettings)
   const currentYear = new Date().getFullYear()
 
   useEffect(() => {
-    // Load settings from localStorage
-    const savedSettings = localStorage.getItem("siteSettings")
-    if (savedSettings) {
-      try {
-        setSettings(JSON.parse(savedSettings))
-      } catch (error) {
-        console.error("Error loading settings:", error)
+    if (typeof window !== 'undefined') {
+      // Load settings from localStorage
+      const savedSettings = localStorage.getItem("siteSettings")
+      if (savedSettings) {
+        try {
+          setSettings(JSON.parse(savedSettings))
+        } catch (error) {
+          console.error("Error loading settings:", error)
+        }
       }
-    }
 
-    // Listen for settings updates
-    const handleSettingsUpdate = (event: CustomEvent<SiteSettings>) => {
-      setSettings(event.detail)
-    }
+      // Listen for settings updates
+      const handleSettingsUpdate = (event: CustomEvent<SiteSettings>) => {
+        setSettings(event.detail)
+      }
 
-    window.addEventListener("settingsUpdated", handleSettingsUpdate as EventListener)
+      window.addEventListener("settingsUpdated", handleSettingsUpdate as EventListener)
 
-    return () => {
-      window.removeEventListener("settingsUpdated", handleSettingsUpdate as EventListener)
+      return () => {
+        window.removeEventListener("settingsUpdated", handleSettingsUpdate as EventListener)
+      }
     }
   }, [])
 
   return (
-    <footer className="border-t border-border/20 bg-black">
-      <div className="container mx-auto px-4 py-12">
+    <footer className="bg-black py-12">
+      <div className="container mx-auto px-4">
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
           {/* Company Info */}
           <div className="space-y-4">
             <img src={settings.logo.main} alt="Top Modern" className="h-16 w-auto" />
             <p className="text-sm leading-relaxed text-white/70">
-              {settings.company.description}
+              {safeT('company_description', settings.company.description)}
             </p>
           </div>
 
           {/* Quick Links */}
           <div className="space-y-4">
-            <h4 className="font-medium text-white">Quick Links</h4>
+            <h4 className="font-medium text-white">{safeT('quick_links')}</h4>
             <nav className="flex flex-col gap-2">
-              <Link href="/" className="text-sm text-white/70 transition-colors hover:text-accent">
-                Home
+              <Link href={`/${locale}`} className="text-sm text-white/70 transition-colors hover:text-accent">
+                {safeT('home')}
               </Link>
-              <Link href="/products" className="text-sm text-white/70 transition-colors hover:text-accent">
-                Products
+              <Link href={`/${locale}/products`} className="text-sm text-white/70 transition-colors hover:text-accent">
+                {safeT('products')}
               </Link>
-              <Link href="/projects" className="text-sm text-white/70 transition-colors hover:text-accent">
-                Projects
+              <Link href={`/${locale}/projects`} className="text-sm text-white/70 transition-colors hover:text-accent">
+                {safeT('projects')}
               </Link>
-              <Link href="/about" className="text-sm text-white/70 transition-colors hover:text-accent">
-                About
+              <Link href={`/${locale}/about`} className="text-sm text-white/70 transition-colors hover:text-accent">
+                {safeT('about')}
               </Link>
             </nav>
           </div>
 
           {/* Contact Info */}
           <div className="space-y-4">
-            <h4 className="font-medium text-white">Contact</h4>
+            <h4 className="font-medium text-white">{safeT('contact')}</h4>
             <div className="flex flex-col gap-3">
               <a
                 href={`tel:${settings.contact.phone1}`}
@@ -140,11 +110,11 @@ export function Footer() {
 
           {/* Business Hours */}
           <div className="space-y-4">
-            <h4 className="font-medium text-white">Business Hours</h4>
+            <h4 className="font-medium text-white">{safeT('business_hours')}</h4>
             <div className="space-y-2 text-sm text-white/70">
-              <p>Monday - Friday: 8:00 AM - 6:00 PM</p>
-              <p>Saturday: 9:00 AM - 4:00 PM</p>
-              <p>Sunday: Closed</p>
+              <p>{safeT('monday_friday')}</p>
+              <p>{safeT('saturday')}</p>
+              <p>{safeT('sunday')}</p>
             </div>
           </div>
         </div>
@@ -181,21 +151,21 @@ export function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-2 text-white/70 hover:text-accent transition-colors"
-                  aria-label="Connect through WhatsApp"
+                  aria-label={safeT('connect_whatsapp_aria', 'Connect on WhatsApp')}
                 >
                   <MessageCircle className="h-5 w-5" />
-                  <span className="text-sm">Connect through WhatsApp</span>
+                  <span className="text-sm">{safeT('connect_whatsapp', 'Connect on WhatsApp')}</span>
                 </a>
               )}
             </div>
             <div className="flex flex-col items-center gap-4 md:flex-row md:gap-6">
-              <p className="text-sm text-white/70">© {currentYear} {settings.company.name}. All rights reserved.</p>
+              <p className="text-sm text-white/70">© {currentYear} {settings.company.name}. {safeT('all_rights_reserved', 'All rights reserved.')}</p>
               <div className="flex gap-6">
-                <Link href="/privacy-policy" className="text-sm text-white/70 transition-colors hover:text-accent">
-                  Privacy Policy
+                <Link href={`/${locale}/privacy-policy`} className="text-sm text-white/70 transition-colors hover:text-accent">
+                  {safeT('privacy_policy')}
                 </Link>
-                <Link href="/terms" className="text-sm text-white/70 transition-colors hover:text-accent">
-                  Terms of Service
+                <Link href={`/${locale}/terms`} className="text-sm text-white/70 transition-colors hover:text-accent">
+                  {safeT('terms_of_service')}
                 </Link>
               </div>
             </div>

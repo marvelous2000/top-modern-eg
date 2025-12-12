@@ -7,15 +7,21 @@ import { revalidatePath } from "next/cache"
 export interface Product {
   id: string
   name: string
+  name_ar?: string
   category: "marble" | "granite"
   slug: string
   description: string
+  description_ar?: string
   origin: string
+  origin_ar?: string
   finish: string
+  finish_ar?: string
   thickness: string
   applications: string[]
+  applications_ar?: string[]
   images: string[]
   specifications: Record<string, string>
+  specifications_ar?: Record<string, string>
   status: "active" | "draft" | "archived"
   created_at: string
   updated_at: string

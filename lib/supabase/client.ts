@@ -1,16 +1,15 @@
-import { createBrowserClient as createSupabaseBrowserClient } from "@supabase/ssr"
+import { createBrowserClient as createSupabaseClientFromSsr } from "@supabase/ssr"
 
-export function createBrowserClient() {
+export function createSupabaseBrowserClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
   const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-  // During build time, environment variables might not be available
-  // Return a mock client that will be replaced at runtime
-  if (!url || !anonKey) {
-    return createSupabaseBrowserClient("https://placeholder.supabase.co", "placeholder-key")
+  if (typeof window === 'undefined' || !url || !anonKey) {
+    // Return a mock client during SSR or if env vars are missing
+    return createSupabaseClientFromSsr("https://placeholder.supabase.co", "placeholder-key")
   }
 
-  return createSupabaseBrowserClient(url, anonKey)
+  return createSupabaseClientFromSsr(url, anonKey)
 }
 
 export async function signInWithPassword(email: string, password: string) {

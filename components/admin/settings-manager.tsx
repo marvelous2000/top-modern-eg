@@ -8,56 +8,7 @@ import { Label } from "@/components/ui/label"
 import { Upload, Save, RotateCcw, Facebook, Instagram, Linkedin, Phone } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 
-interface SiteSettings {
-  logo: {
-    main: string
-    footer: string
-    admin: string
-  }
-  contact: {
-    phone1: string
-    phone2: string
-    email1: string
-    email2: string
-    whatsapp: string
-  }
-  social: {
-    facebook: string
-    instagram: string
-    linkedin: string
-  }
-  company: {
-    name: string
-    description: string
-    address: string
-  }
-}
-
-const defaultSettings: SiteSettings = {
-  logo: {
-    main: "/top-modern-logo-gold.png",
-    footer: "/top-modern-logo-gold.png",
-    admin: "/top-modern-logo-gold.png",
-  },
-  contact: {
-    phone1: "+20 123 456 7890",
-    phone2: "+971 50 123 4567",
-    email1: "info@topmodern.com",
-    email2: "sales@topmodern.com",
-    whatsapp: "+201234567890",
-  },
-  social: {
-    facebook: "https://facebook.com/topmodern",
-    instagram: "https://instagram.com/topmodern",
-    linkedin: "https://linkedin.com/company/topmodern",
-  },
-  company: {
-    name: "Top Modern",
-    description:
-      "Premium marble and granite solutions for luxury real estate, hotels, and restaurants across the MENA region.",
-    address: "MENA Region",
-  },
-}
+import { SiteSettings, defaultSettings } from "@/lib/types"
 
 export function SettingsManager() {
   const [settings, setSettings] = useState<SiteSettings>(defaultSettings)
@@ -234,7 +185,7 @@ export function SettingsManager() {
                 value={settings.contact.phone1}
                 onChange={(e) => updateSetting("contact", "phone1", e.target.value)}
                 placeholder="+20 123 456 7890"
-                isAdmin={true}
+                
               />
             </div>
             <div className="space-y-2">
@@ -244,7 +195,7 @@ export function SettingsManager() {
                 value={settings.contact.phone2}
                 onChange={(e) => updateSetting("contact", "phone2", e.target.value)}
                 placeholder="+971 50 123 4567"
-                isAdmin={true}
+                
               />
             </div>
             <div className="space-y-2">
@@ -255,7 +206,7 @@ export function SettingsManager() {
                 value={settings.contact.email1}
                 onChange={(e) => updateSetting("contact", "email1", e.target.value)}
                 placeholder="info@topmodern.com"
-                isAdmin={true}
+                
               />
             </div>
             <div className="space-y-2">
@@ -266,7 +217,7 @@ export function SettingsManager() {
                 value={settings.contact.email2}
                 onChange={(e) => updateSetting("contact", "email2", e.target.value)}
                 placeholder="sales@topmodern.com"
-                isAdmin={true}
+                
               />
             </div>
             <div className="space-y-2">
@@ -276,7 +227,7 @@ export function SettingsManager() {
                 value={settings.contact.whatsapp}
                 onChange={(e) => updateSetting("contact", "whatsapp", e.target.value)}
                 placeholder="+201234567890"
-                isAdmin={true}
+                
               />
             </div>
           </div>
@@ -302,7 +253,7 @@ export function SettingsManager() {
                   value={settings.social.facebook}
                   onChange={(e) => updateSetting("social", "facebook", e.target.value)}
                   placeholder="https://facebook.com/topmodern"
-                  isAdmin={true}
+                  
                 />
               </div>
             </div>
@@ -315,7 +266,7 @@ export function SettingsManager() {
                   value={settings.social.instagram}
                   onChange={(e) => updateSetting("social", "instagram", e.target.value)}
                   placeholder="https://instagram.com/topmodern"
-                  isAdmin={true}
+                  
                 />
               </div>
             </div>
@@ -328,7 +279,7 @@ export function SettingsManager() {
                   value={settings.social.linkedin}
                   onChange={(e) => updateSetting("social", "linkedin", e.target.value)}
                   placeholder="https://linkedin.com/company/topmodern"
-                  isAdmin={true}
+                  
                 />
               </div>
             </div>
@@ -349,7 +300,7 @@ export function SettingsManager() {
               value={settings.company.name}
               onChange={(e) => updateSetting("company", "name", e.target.value)}
               placeholder="Top Modern"
-              isAdmin={true}
+              
             />
           </div>
           <div className="space-y-2">
@@ -369,7 +320,7 @@ export function SettingsManager() {
               value={settings.company.address}
               onChange={(e) => updateSetting("company", "address", e.target.value)}
               placeholder="MENA Region"
-              isAdmin={true}
+              
             />
           </div>
         </CardContent>

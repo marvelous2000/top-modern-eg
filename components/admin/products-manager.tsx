@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from "@/components/ui/dialog"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { getProducts, createProduct, updateProduct, deleteProduct, type Product } from "@/lib/actions/products"
 import { Plus, Edit, Trash2, X, Save, Search, Loader2, Package } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -22,6 +23,7 @@ export function ProductsManager() {
   const [searchTerm, setSearchTerm] = useState("")
   const [filterCategory, setFilterCategory] = useState("all")
   const [filterStatus, setFilterStatus] = useState("all")
+  const [activeTab, setActiveTab] = useState("en")
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -47,7 +49,10 @@ export function ProductsManager() {
     return products.filter((p) =>
       (filterCategory === "all" || p.category === filterCategory) &&
       (filterStatus === "all" || p.status === filterStatus) &&
-      (p.name.toLowerCase().includes(searchTerm.toLowerCase()) || (p.description && p.description.toLowerCase().includes(searchTerm.toLowerCase())))
+      (p.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+       (p.description && p.description.toLowerCase().includes(searchTerm.toLowerCase())) ||
+       (p.name_ar && p.name_ar.toLowerCase().includes(searchTerm.toLowerCase())) ||
+       (p.description_ar && p.description_ar.toLowerCase().includes(searchTerm.toLowerCase())))
     )
   }, [products, searchTerm, filterCategory, filterStatus])
 
@@ -56,9 +61,10 @@ export function ProductsManager() {
       setEditingProduct(product)
     } else {
       setEditingProduct({
-        name: "", category: "marble", slug: "", description: "", origin: "", finish: "Polished", thickness: "20mm", applications: [], images: [], specifications: {}, status: "draft",
+        name: "", name_ar: "", category: "marble", slug: "", description: "", description_ar: "", origin: "", origin_ar: "", finish: "Polished", finish_ar: "", thickness: "20mm", applications: [], applications_ar: [], images: [], specifications: {}, specifications_ar: {}, status: "draft",
       })
     }
+    setActiveTab("en")
     setIsFormOpen(true)
   }
 
@@ -141,7 +147,7 @@ export function ProductsManager() {
       </div>}
 
       <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
-        <DialogContent className="max-w-2xl p-0 rounded-xl animate-fade-in-slide-down">
+        <DialogContent className="max-w-lg p-0 rounded-xl animate-fade-in-slide-down">
           <DialogHeader className="p-6 bg-accent text-accent-foreground text-center relative rounded-t-xl">
             <div className="flex items-center justify-center gap-4">
                 <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center">
@@ -158,16 +164,33 @@ export function ProductsManager() {
             </DialogClose>
           </DialogHeader>
           {editingProduct && <>
-            <div className="p-6 max-h-[70vh] overflow-y-auto grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-4">
-                <div className="space-y-2"><Label className="font-semibold">Product Name</Label><Input className="rounded-lg p-3" value={editingProduct.name} onChange={(e) => setEditingProduct({ ...editingProduct, name: e.target.value, slug: e.target.value.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "") })} /></div>
-                <div className="space-y-2"><Label className="font-semibold">Description</Label><Textarea value={editingProduct.description} onChange={(e) => setEditingProduct({ ...editingProduct, description: e.target.value })} className="min-h-[120px] rounded-lg p-3" /></div>
-              </div>
-              <div className="space-y-4">
-                <div className="space-y-2"><Label className="font-semibold">Category</Label><Select value={editingProduct.category} onValueChange={(v) => setEditingProduct({ ...editingProduct, category: v as any })}><SelectTrigger className="rounded-lg p-3"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="marble">Marble</SelectItem><SelectItem value="granite">Granite</SelectItem></SelectContent></Select></div>
-                <div className="space-y-2"><Label className="font-semibold">Status</Label><Select value={editingProduct.status} onValueChange={(v) => setEditingProduct({ ...editingProduct, status: v as any })}><SelectTrigger className="rounded-lg p-3"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="draft">Draft</SelectItem><SelectItem value="active">Active</SelectItem><SelectItem value="archived">Archived</SelectItem></SelectContent></Select></div>
-                <div className="space-y-2"><Label className="font-semibold">Origin</Label><Input className="rounded-lg p-3" value={editingProduct.origin} onChange={(e) => setEditingProduct({ ...editingProduct, origin: e.target.value })} /></div>
-              </div>
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="p-6 pt-0">
+              <TabsList className="grid w-full grid-cols-2 mb-6">
+                <TabsTrigger value="en">English</TabsTrigger>
+                <TabsTrigger value="ar">Arabic</TabsTrigger>
+              </TabsList>
+              <TabsContent value="en">
+                <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
+                  <div className="space-y-2"><Label className="font-semibold">Product Name (English)</Label><Input className="rounded-lg p-3" value={editingProduct.name || ""} onChange={(e) => setEditingProduct({ ...editingProduct, name: e.target.value, slug: e.target.value.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "") })} /></div>
+                  <div className="space-y-2"><Label className="font-semibold">Description (English)</Label><Textarea value={editingProduct.description || ""} onChange={(e) => setEditingProduct({ ...editingProduct, description: e.target.value })} className="min-h-[120px] rounded-lg p-3" /></div>
+                  <div className="space-y-2"><Label className="font-semibold">Origin (English)</Label><Input className="rounded-lg p-3" value={editingProduct.origin || ""} onChange={(e) => setEditingProduct({ ...editingProduct, origin: e.target.value })} /></div>
+                  <div className="space-y-2"><Label className="font-semibold">Finish (English)</Label><Input className="rounded-lg p-3" value={editingProduct.finish || ""} onChange={(e) => setEditingProduct({ ...editingProduct, finish: e.target.value })} /></div>
+                  <div className="space-y-2"><Label className="font-semibold">Thickness (English)</Label><Input className="rounded-lg p-3" value={editingProduct.thickness || ""} onChange={(e) => setEditingProduct({ ...editingProduct, thickness: e.target.value })} /></div>
+                </div>
+              </TabsContent>
+              <TabsContent value="ar">
+                <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2" dir="rtl">
+                  <div className="space-y-2"><Label className="font-semibold">اسم المنتج (العربية)</Label><Input className="rounded-lg p-3 text-right" value={editingProduct.name_ar || ""} onChange={(e) => setEditingProduct({ ...editingProduct, name_ar: e.target.value })} /></div>
+                  <div className="space-y-2"><Label className="font-semibold">الوصف (العربية)</Label><Textarea value={editingProduct.description_ar || ""} onChange={(e) => setEditingProduct({ ...editingProduct, description_ar: e.target.value })} className="min-h-[120px] rounded-lg p-3 text-right" /></div>
+                  <div className="space-y-2"><Label className="font-semibold">الأصل (العربية)</Label><Input className="rounded-lg p-3 text-right" value={editingProduct.origin_ar || ""} onChange={(e) => setEditingProduct({ ...editingProduct, origin_ar: e.target.value })} /></div>
+                  <div className="space-y-2"><Label className="font-semibold">اللمسة النهائية (العربية)</Label><Input className="rounded-lg p-3 text-right" value={editingProduct.finish_ar || ""} onChange={(e) => setEditingProduct({ ...editingProduct, finish_ar: e.target.value })} /></div>
+                  <div className="space-y-2"><Label className="font-semibold">السمك (العربية)</Label><Input className="rounded-lg p-3 text-right" value={editingProduct.thickness || ""} onChange={(e) => setEditingProduct({ ...editingProduct, thickness: e.target.value })} /></div>
+                </div>
+              </TabsContent>
+            </Tabs>
+            <div className="p-6 pt-0 grid grid-cols-1 md:grid-cols-2 gap-6 border-t">
+              <div className="space-y-2"><Label className="font-semibold">Category</Label><Select value={editingProduct.category} onValueChange={(v) => setEditingProduct({ ...editingProduct, category: v as any })}><SelectTrigger className="rounded-lg p-3"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="marble">Marble</SelectItem><SelectItem value="granite">Granite</SelectItem></SelectContent></Select></div>
+              <div className="space-y-2"><Label className="font-semibold">Status</Label><Select value={editingProduct.status} onValueChange={(v) => setEditingProduct({ ...editingProduct, status: v as any })}><SelectTrigger className="rounded-lg p-3"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="draft">Draft</SelectItem><SelectItem value="active">Active</SelectItem><SelectItem value="archived">Architem"></SelectItem></SelectContent></Select></div>
             </div>
             <DialogFooter className="flex justify-end space-x-3 p-4 bg-muted/30 border-t rounded-b-xl">
                 <Button variant="outline" className="rounded-lg" onClick={() => setIsFormOpen(false)}>Cancel</Button>

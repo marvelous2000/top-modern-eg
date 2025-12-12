@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts"
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts"
 import { Calendar, FileText, MessageSquare, Users, Eye, TrendingUp, Package, Briefcase, Clock, RefreshCw } from "lucide-react"
 import { getProducts } from "@/lib/actions/products"
 import { getProjects } from "@/lib/actions/projects"
@@ -20,28 +20,30 @@ interface ActivityItem {
   color: string
 }
 
+// TODO: For a production environment, this data should be fetched from a database
+// that stores historical traffic metrics (e.g., daily/monthly visitors and contacts).
+// This `generateTrafficData` function currently produces enhanced mock data.
+// A full implementation would involve:
+// 1. A new database table (e.g., `traffic_logs`) with `date`, `visitors`, `contacts` columns.
+// 2. An API endpoint or server action to query this table for the specified timeframe.
 const generateTrafficData = (timeframe: string) => {
-  const baseData = [
-    { month: "Jan", visitors: 1200, contacts: 45 },
-    { month: "Feb", visitors: 1400, contacts: 52 },
-    { month: "Mar", visitors: 1600, contacts: 61 },
-    { month: "Apr", visitors: 1800, contacts: 68 },
-    { month: "May", visitors: 2000, contacts: 75 },
-    { month: "Jun", visitors: 2200, contacts: 82 },
-    { month: "Jul", visitors: 2400, contacts: 89 },
-    { month: "Aug", visitors: 2600, contacts: 96 },
-    { month: "Sep", visitors: 2800, contacts: 103 },
-    { month: "Oct", visitors: 3000, contacts: 110 },
-    { month: "Nov", visitors: 3200, contacts: 117 },
-    { month: "Dec", visitors: 3400, contacts: 124 },
-  ]
+  const now = new Date()
+  const data = []
 
-  if (timeframe === "all") return baseData
-  if (timeframe === "6months") return baseData.slice(-6)
-  if (timeframe === "3months") return baseData.slice(-3)
-  if (timeframe === "1month") return baseData.slice(-1)
+  for (let i = 11; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1)
+    const month = d.toLocaleString('en-us', { month: 'short' })
+    const visitors = 1000 + Math.floor(Math.random() * 2500) + i * 150
+    const contacts = 30 + Math.floor(Math.random() * 100) + i * 5
+    data.push({ month, visitors, contacts })
+  }
 
-  return baseData
+  if (timeframe === "all") return data
+  if (timeframe === "6months") return data.slice(-6)
+  if (timeframe === "3months") return data.slice(-3)
+  if (timeframe === "1month") return data.slice(-1)
+
+  return data
 }
 
 export function DashboardOverview() {
@@ -200,7 +202,7 @@ export function DashboardOverview() {
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={trafficData}>
+              <AreaChart data={trafficData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                 <XAxis dataKey="month" fontSize={12} tickLine={false} axisLine={false} />
                 <YAxis fontSize={12} tickLine={false} axisLine={false} />
@@ -212,9 +214,9 @@ export function DashboardOverview() {
                     borderRadius: "var(--radius)"
                   }}
                 />
-                <Bar dataKey="visitors" fill="hsl(var(--chart-1))" name="Visitors" radius={[4, 4, 0, 0]} />
-                <Bar dataKey="contacts" fill="hsl(var(--chart-2))" name="Contacts" radius={[4, 4, 0, 0]} />
-              </BarChart>
+                <Area type="monotone" dataKey="visitors" stroke="hsl(var(--chart-1))" fill="hsl(var(--chart-1))" name="Visitors" fillOpacity={0.3} />
+                <Area type="monotone" dataKey="contacts" stroke="hsl(var(--chart-2))" fill="hsl(var(--chart-2))" name="Contacts" fillOpacity={0.3} />
+              </AreaChart>
             </ResponsiveContainer>
           </CardContent>
         </Card>

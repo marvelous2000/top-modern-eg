@@ -23,12 +23,13 @@ export function UsersManager() {
   const [roleFilter, setRoleFilter] = useState<string>("all")
 
   useEffect(() => {
-    if (!supabase) {
-      setLoading(false)
-      return
-    }
     let isMounted = true
     async function fetchUsers() {
+      if (!supabase) {
+        console.error("Supabase client is unexpectedly null inside fetchUsers.");
+        setLoading(false);
+        return;
+      }
       setLoading(true)
       try {
         const { data, error } = await supabase.from("profiles").select("id, username, first_name, last_name, role, created_at").order("created_at", { ascending: false })
@@ -43,7 +44,13 @@ export function UsersManager() {
         if (isMounted) setLoading(false)
       }
     }
-    fetchUsers()
+
+    if (supabase) {
+      fetchUsers()
+    } else {
+      setLoading(false)
+    }
+
     return () => { isMounted = false }
   }, [supabase])
 
@@ -84,88 +91,82 @@ export function UsersManager() {
     suspended: { color: "bg-destructive/20 text-destructive" },
   }
 
-  return (
-    <div className="space-y-6">
-      <Card className="shadow-sm">
-        <CardHeader className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <div>
-            <CardTitle className="text-2xl font-serif text-foreground">Team Management</CardTitle>
-            <p className="text-sm text-muted-foreground">Invite and manage team member roles and permissions.</p>
-          </div>
-          <div className="flex flex-col sm:flex-row items-center gap-2 w-full sm:w-auto">
-            <div className="relative w-full sm:w-64">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <Input value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} placeholder="Search by name or email" className="pl-10 bg-muted/50 w-full" />
-            </div>
-            <Select value={roleFilter} onValueChange={setRoleFilter}>
-              <SelectTrigger className="w-full sm:w-40"><SelectValue placeholder="All roles" /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Roles</SelectItem>
-                {Object.keys(roleConfig).map(role => <SelectItem key={role} value={role}><span className="capitalize">{role}</span></SelectItem>)}
-              </SelectContent>
-            </Select>
-            <Button className="w-full sm:w-auto" disabled={!supabase}><UserPlus className="mr-2 h-4 w-4" /> Invite User</Button>
-          </div>
-        </CardHeader>
-      </Card>
-
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
-        {filteredUsers.map((user) => {
-          const RoleIcon = roleConfig[user.role]?.icon || ShieldCheck
-          const roleVarName = roleConfig[user.role]?.varName || "--primary"
-          const userStatusConfig = statusConfig[user.status] || {}
-          const userInitials = user.name.split(" ").map((n) => n[0]).join("").substring(0, 2)
-
-          return (
-            <Card key={user.id} className="shadow-sm hover:shadow-md transition-shadow flex flex-col">
-              <CardHeader className="flex flex-row items-start gap-4 space-y-0">
-                <Avatar className="w-10 h-10 border">
-                  <AvatarFallback>{userInitials}</AvatarFallback>
-                </Avatar>
-                <div className="flex-1">
-                  <CardTitle className="text-lg truncate">{user.name}</CardTitle>
-                  <p className="text-sm text-muted-foreground truncate">{user.email}</p>
-                </div>
-                <Badge className={cn("capitalize", userStatusConfig.color)}>{user.status}</Badge>
-              </CardHeader>
-              <CardContent className="flex-grow space-y-2">
-                <div className="text-xs text-muted-foreground space-y-1 pt-4 border-t">
-                  <p><span className="font-semibold text-foreground">Last Active:</span> {new Date(user.lastActive).toLocaleString()}</p>
-                  <p><span className="font-semibold text-foreground">Member Since:</span> {new Date(user.createdAt).toLocaleDateString()}</p>
-                </div>
-              </CardContent>
-              <div className="p-4 bg-muted/10 border-t flex items-center justify-between">
-                <div className="w-48">
-                  <Select value={user.role} onValueChange={(value) => handleRoleChange(user.id, value as AdminUser["role"])}>
-                    <SelectTrigger className="bg-background h-9">
-                      <div className="flex items-center gap-2">
-                        <RoleIcon className="h-4 w-4" style={{ color: `hsl(var(${roleVarName}))` }} />
-                        <SelectValue />
-                      </div>
-                    </SelectTrigger>
-                    <SelectContent>
-                      {Object.keys(roleConfig).map((role) => <SelectItem key={role} value={role}><span className="capitalize">{role}</span></SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild><Button variant="ghost" size="icon" className="h-8 w-8"><MoreVertical className="h-4 w-4" /></Button></DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem>Suspend User</DropdownMenuItem>
-                    <DropdownMenuItem className="text-destructive focus:bg-destructive/10 focus:text-destructive">Delete User</DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+    return (
+      <div className="space-y-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Users Manager</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex gap-4">
+              <div className="flex-1 relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search users by name or email..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10"
+                />
               </div>
-            </Card>
-          )
-        })}
+              <Select value={roleFilter} onValueChange={setRoleFilter}>
+                <SelectTrigger className="w-40">
+                  <SelectValue placeholder="Filter by role" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Roles</SelectItem>
+                  <SelectItem value="admin">Admin</SelectItem>
+                  <SelectItem value="editor">Editor</SelectItem>
+                  <SelectItem value="advertiser">Advertiser</SelectItem>
+                  <SelectItem value="viewer">Viewer</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+  
+            {loading ? (
+              <div className="flex justify-center py-8">
+                <Loader2 className="h-6 w-6 animate-spin" />
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {filteredUsers.map((user) => (
+                  <div key={user.id} className="flex items-center justify-between p-4 border rounded-lg">
+                    <div className="flex items-center gap-3">
+                      <Avatar>
+                        <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <p className="font-medium">{user.name}</p>
+                        <p className="text-sm text-muted-foreground">{user.email}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Badge className={statusConfig[user.status]?.color}>
+                        {user.status}
+                      </Badge>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="sm">
+                            <MoreVertical className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          {Object.keys(roleConfig).map((role) => (
+                            <DropdownMenuItem
+                              key={role}
+                              onClick={() => handleRoleChange(user.id, role as AdminUser["role"])}
+                            >
+                              {role.charAt(0).toUpperCase() + role.slice(1)}
+                            </DropdownMenuItem>
+                          ))}
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
-
-      {!filteredUsers.length && (
-        <div className="w-full h-48 flex items-center justify-center text-muted-foreground bg-card rounded-lg border border-dashed">
-          {loading ? <span className="inline-flex items-center justify-center gap-2"><Loader2 className="h-5 w-5 animate-spin" /> Loading...</span> : "No team members found."}
-        </div>
-      )}
-    </div>
-  )
-}
+    );
+  }

@@ -1,2 +1,2 @@
-export { createBrowserClient as createSupabaseBrowserClient } from "./client"
+export { createSupabaseBrowserClient } from "./client"
 export { createSupabaseServiceClient } from "./service"

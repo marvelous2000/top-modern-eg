@@ -51,8 +51,8 @@ const NavLink = ({ page, label, icon: Icon }: { page: string | null; label: stri
       href={href}
       className={cn(
         "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
-        "text-sidebar-accent-foreground hover:bg-sidebar-accent/80",
-        isActive && "bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90",
+        "text-charcoal-800 dark:text-cream-100 hover:bg-cream-100 dark:hover:bg-charcoal-800",
+        isActive && "bg-gold-50 text-gold-600 dark:bg-gold-500/10 dark:text-gold-400",
       )}
     >
       <Icon className="h-4 w-4" />
@@ -63,11 +63,11 @@ const NavLink = ({ page, label, icon: Icon }: { page: string | null; label: stri
 
 export function AdminSidebar({ className }: { className?: string }) {
   return (
-    <aside className={cn("flex flex-col bg-sidebar text-sidebar-foreground border-r border-sidebar-border", className)}>
-      <div className="flex h-16 items-center justify-center border-b border-sidebar-border px-4">
+    <aside className={cn("flex flex-col bg-cream-50 dark:bg-charcoal-950 border-r border-cream-200 dark:border-charcoal-800", className)}>
+      <div className="flex h-16 items-center justify-center border-b border-gold-500 px-4">
         <Link href="/admin" className="flex items-center gap-3 font-bold text-lg">
           <img src="/top-modern-logo-gold.png" alt="Top Modern" className="h-8 w-auto" />
-          <span className="font-serif">Admin</span>
+          <span className="font-serif text-gold-500">Admin</span>
         </Link>
       </div>
       <nav className="flex-1 space-y-4 p-4">

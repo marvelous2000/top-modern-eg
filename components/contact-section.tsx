@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-
+import { useTranslations } from 'next-intl';
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -10,8 +10,10 @@ import { Textarea } from "@/components/ui/textarea"
 import { Phone, Mail, MapPin, Clock, CheckCircle, X } from "lucide-react"
 import { useContactTracking } from "@/components/contact-tracking"
 import { WhatsAppButton } from "@/components/ui/whatsapp-button"
+import { incrementTotalContacts } from '@/lib/actions/dashboard_metrics'; // Import the function
 
 export function ContactSection() {
+  const t = useTranslations('contact');
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -32,6 +34,9 @@ export function ContactSection() {
       await trackForm("contact_form", formData)
       // Simulate form submission
       await new Promise((resolve) => setTimeout(resolve, 1000))
+
+      // Increment total contacts after successful submission
+      await incrementTotalContacts();
 
       setShowSuccessModal(true)
       setFormData({
@@ -68,34 +73,34 @@ export function ContactSection() {
   const contactDetails = [
     {
       icon: Phone,
-      title: "Phone",
+      title: t('info.phone'),
       lines: [
-        { text: "+20 123 456 7890", action: () => handlePhoneClick("+20 123 456 7890") },
-        { text: "+971 50 123 4567", action: () => handlePhoneClick("+971 50 123 4567") },
+        { text: t('info.phone1'), action: () => handlePhoneClick("+20 123 456 7890") },
+        { text: t('info.phone2'), action: () => handlePhoneClick("+971 50 123 4567") },
       ],
     },
     {
       icon: Mail,
-      title: "Email",
+      title: t('info.email'),
       lines: [
-        { text: "info@topmodern.com", action: () => handleEmailClick("info@topmodern.com") },
-        { text: "sales@topmodern.com", action: () => handleEmailClick("sales@topmodern.com") },
+        { text: t('info.email1'), action: () => handleEmailClick("info@topmodern.com") },
+        { text: t('info.email2'), action: () => handleEmailClick("sales@topmodern.com") },
       ],
     },
     {
       icon: MapPin,
-      title: "Location",
+      title: t('info.address'),
       lines: [
-        { text: "Cairo, Egypt" },
-        { text: "Dubai, UAE" },
+        { text: t('info.address1') },
+        { text: t('info.address2') },
       ],
     },
     {
       icon: Clock,
-      title: "Business Hours",
+      title: t('info.hours'),
       lines: [
-        { text: "Sunday - Thursday: 9:00 AM - 6:00 PM" },
-        { text: "Friday - Saturday: 10:00 AM - 4:00 PM" },
+        { text: t('info.hours1') },
+        { text: t('info.hours2') },
       ],
     },
   ];
@@ -105,10 +110,10 @@ export function ContactSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <h2 className="text-h2 text-foreground mb-6">
-            Get In <span className="text-primary gold-glow">Touch</span>
+            {t('formTitle')}
           </h2>
           <p className="text-body text-muted-foreground max-w-3xl mx-auto">
-            Ready to transform your space with premium marble and granite? Contact our experts today
+            {t('formSubtitle')}
           </p>
         </div>
 
@@ -116,18 +121,18 @@ export function ContactSection() {
           {/* Contact Form */}
           <Card className="bg-card border-accent/30 shadow-lg">
             <CardContent className="p-8">
-              <h3 className="text-h3 text-card-foreground mb-6">Send us a message</h3>
+              <h3 className="text-h3 text-card-foreground mb-6">{t('form.title')}</h3>
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <Input
-                    placeholder="First Name"
+                    placeholder={t('form.firstName')}
                     className="bg-background/50 border-border text-foreground placeholder:text-muted-foreground focus:bg-background focus:ring-2 focus:ring-accent/50 focus:border-accent px-4 py-3 h-12"
                     value={formData.firstName}
                     onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
                     required
                   />
                   <Input
-                    placeholder="Last Name"
+                    placeholder={t('form.lastName')}
                     className="bg-background/50 border-border text-foreground placeholder:text-muted-foreground focus:bg-background focus:ring-2 focus:ring-accent/50 focus:border-accent px-4 py-3 h-12"
                     value={formData.lastName}
                     onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
@@ -135,7 +140,7 @@ export function ContactSection() {
                   />
                 </div>
                 <Input
-                  placeholder="Email Address"
+                  placeholder={t('form.email')}
                   type="email"
                   className="bg-background/50 border-border text-foreground placeholder:text-muted-foreground focus:bg-background focus:ring-2 focus:ring-accent/50 focus:border-accent px-4 py-3 h-12"
                   value={formData.email}
@@ -143,7 +148,7 @@ export function ContactSection() {
                   required
                 />
                 <Input
-                  placeholder="Phone Number"
+                  placeholder={t('form.phone')}
                   type="tel"
                   className="bg-background/50 border-border text-foreground placeholder:text-muted-foreground focus:bg-background focus:ring-2 focus:ring-accent/50 focus:border-accent px-4 py-3 h-12"
                   value={formData.phone}
@@ -151,13 +156,13 @@ export function ContactSection() {
                   required
                 />
                 <Input
-                  placeholder="Company Name"
+                  placeholder={t('form.company')}
                   className="bg-background/50 border-border text-foreground placeholder:text-muted-foreground focus:bg-background focus:ring-2 focus:ring-accent/50 focus:border-accent px-4 py-3 h-12"
                   value={formData.company}
                   onChange={(e) => setFormData({ ...formData, company: e.target.value })}
                 />
                 <Textarea
-                  placeholder="Tell us about your project..."
+                  placeholder={t('form.message')}
                   rows={6}
                   className="bg-background/50 border-border text-foreground placeholder:text-muted-foreground focus:bg-background focus:ring-2 focus:ring-accent/50 focus:border-accent px-4 py-3 resize-none"
                   value={formData.message}
@@ -172,10 +177,10 @@ export function ContactSection() {
                   {isSubmitting ? (
                     <div className="flex items-center justify-center">
                       <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-accent-foreground mr-2"></div>
-                      Sending...
+                      {t('form.sending')}
                     </div>
                   ) : (
-                    "Send Message"
+                    t('form.sendMessage')
                   )}
                 </Button>
               </form>
@@ -227,16 +232,16 @@ export function ContactSection() {
               <CheckCircle className="h-10 w-10 text-accent" />
             </div>
             <h3 className="text-base font-semibold text-card-foreground mb-2">
-              Message Sent Successfully!
+              {t('success.title')}
             </h3>
             <p className="text-muted-foreground mb-3 text-xs">
-              Thank you for your message! We will contact you soon.
+              {t('success.message')}
             </p>
             <Button
               onClick={() => setShowSuccessModal(false)}
               className="bg-accent text-accent-foreground hover:bg-accent/90 text-sm px-4 py-2"
             >
-              Close
+              {t('success.close')}
             </Button>
           </div>
         </div>

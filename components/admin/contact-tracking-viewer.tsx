@@ -185,7 +185,7 @@ export function ContactTrackingViewer() {
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
-                <Pie data={chartData.pieChartData} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={60} outerRadius={80} paddingAngle={5} labelLine={false} label={({ percent }) => `${(percent * 100).toFixed(0)}%`}>
+                <Pie data={chartData.pieChartData} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={60} outerRadius={80} paddingAngle={5} labelLine={false} label={({ percent }) => `${((percent ?? 0) * 100).toFixed(0)}%`}>
                   {chartData.pieChartData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={`hsl(var(${entry.varName}))`} />
                   ))}

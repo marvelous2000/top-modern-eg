@@ -5,9 +5,11 @@ import { ArrowRight, Star, Award, Users, Phone, Mail } from "lucide-react"
 import { useContactTracking } from "@/components/contact-tracking"
 import { motion } from "framer-motion"
 import Prism from './Prism';
+import { useTranslations } from "@/components/providers/TranslationsProvider"
 
 export function HeroSection() {
   const { trackContact } = useContactTracking()
+  const { t } = useTranslations()
 
   const handleExploreClick = () => {
     trackContact("cta_click", {
@@ -71,8 +73,8 @@ export function HeroSection() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2, ease: "easeInOut" }}
         >
-          <p className="text-body-lg text-gray-200 mb-8 max-w-3xl mx-auto text-pretty font-inter">
-            Premium natural stone solutions for luxury real estate, hotels, and restaurants across the MENA region
+          <p className="text-body-lg text-muted-foreground mb-8 max-w-3xl mx-auto text-pretty font-inter">
+            {t('hero.subtitle')}
           </p>
         </motion.div>
 
@@ -83,21 +85,19 @@ export function HeroSection() {
           className="flex flex-col sm:flex-row gap-4 justify-center mb-16"
         >
           <Button
-            variant="cta"
             size="lg"
             onClick={handleExploreClick}
-            className="bg-gradient-to-br from-primary/20 to-primary/10 backdrop-blur-md border border-primary/40 text-primary-foreground shadow-xl hover:shadow-primary/50 hover:bg-primary/25 hover:border-primary/60 font-bold"
+            className="btn btn-primary"
           >
-            Explore Our Collection
+            {t('hero.exploreProducts')}
             <ArrowRight className="ml-2 h-5 w-5" />
           </Button>
           <Button
-            variant="outline"
             size="lg"
             onClick={handleConsultationClick}
-            className="border border-primary/30 bg-background/50 backdrop-blur-md shadow-xs hover:bg-primary/10 hover:text-primary-foreground hover:border-primary/50"
+            className="btn btn-secondary"
           >
-            Schedule Consultation
+            {t('contactUs')}
           </Button>
         </motion.div>
 

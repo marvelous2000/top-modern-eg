@@ -1,45 +1,35 @@
-import type React from "react"
-import type { Metadata } from "next"
-import { Lora, Inter } from "next/font/google"
-import { Analytics } from "@vercel/analytics/next"
-import { ThemeProvider } from "@/components/theme-provider"
-import "./globals.css"
-
-const lora = Lora({
-  subsets: ["latin"],
-  variable: "--font-serif",
-  display: "swap",
-})
+import type { Metadata } from "next";
+import { Inter, Lora } from "next/font/google";
+import { Suspense } from "react";
+import "@/app/globals.css"; // Global CSS for all layouts
 
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-sans",
   display: "swap",
-})
+});
+
+const lora = Lora({
+  subsets: ["latin"],
+  variable: "--font-serif",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
-  title: "Top Modern - Luxury Granite & Marble",
-  description:
-    "Premium natural stone solutions for discerning clients. Explore our curated collection of granite, marble, and quartz.",
-  generator: "v0.app",
-  icons: {
-    icon: "/favicon.ico",
-  },
-}
+  title: "Top Modern",
+  description: "Luxury marble and granite solutions",
+};
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode
+  children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`font-sans antialiased min-h-screen`}>
-        <ThemeProvider>
-          {children}
-        </ThemeProvider>
-        <Analytics />
+    <html lang="en" className={`${inter.variable} ${lora.variable} h-full`}>
+      <body className="flex flex-col font-sans antialiased h-full">
+        <Suspense>{children}</Suspense>
       </body>
     </html>
-  )
+  );
 }

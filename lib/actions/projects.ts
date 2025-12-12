@@ -7,21 +7,35 @@ import { revalidatePath } from "next/cache"
 export interface Project {
   id: string
   title: string
+  title_ar?: string
   category: string
+  category_ar?: string
   location: string
+  location_ar?: string
   year: string
   client: string
+  client_ar?: string
   slug: string
   description: string
+  description_ar?: string
   challenge: string
+  challenge_ar?: string
   solution: string
+  solution_ar?: string
   results: string[]
+  results_ar?: string[]
   materials: string[]
+  materials_ar?: string[]
   images: string[]
-  testimonial: {
-    quote: string
-    author: string
-    position: string
+  testimonial?: {
+    quote?: string
+    author?: string
+    position?: string
+  }
+  testimonial_ar?: {
+    quote?: string
+    author?: string
+    position?: string
   }
   status: "active" | "draft" | "archived"
   featured: boolean

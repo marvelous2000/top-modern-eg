@@ -250,148 +250,140 @@ export function UsersManager() {
         </div>
       )}
 
-      <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
-        <DialogContent className="max-w-2xl p-0 overflow-hidden bg-gradient-to-br from-card to-card/50 backdrop-blur-sm border-0 shadow-2xl animate-scale-in">
-          <DialogHeader className="p-6 border-b border-border/50 text-center bg-gradient-to-r from-accent/10 to-accent/5">
-            <DialogTitle className="text-2xl font-serif">
-              {editingUser?.id ? (
-                <span className="bg-accent text-accent-foreground px-3 py-1 rounded-full shadow-sm">
-                  Edit User
-                </span>
-              ) : (
-                <span className="bg-accent text-accent-foreground px-3 py-1 rounded-full shadow-sm">
-                  Create New User
-                </span>
-              )}
-            </DialogTitle>
-            <DialogDescription className="text-muted-foreground mt-2">
-              Fill in the user details below.
-            </DialogDescription>
-          </DialogHeader>
-          {editingUser && (
-            <>
-              <div className="p-6 max-h-[70vh] overflow-y-auto grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <Label className="text-sm font-semibold text-foreground">Full Name *</Label>
-                    <Input
-                      value={editingUser.name}
-                      onChange={(e) => setEditingUser({ ...editingUser, name: e.target.value })}
-                      className="bg-background border-border/50 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200"
-                      placeholder="Enter full name"
-                    />
+      {isFormOpen && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 animate-fade-in">
+          <div className="bg-gradient-to-br from-card to-card/50 backdrop-blur-sm border border-border/50 rounded-lg p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto shadow-2xl animate-scale-in">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="font-playfair text-2xl font-bold text-primary">
+                {editingUser?.id ? "Edit User" : "Create User"}
+              </h3>
+              <Button
+                variant="outline"
+                onClick={() => setIsFormOpen(false)}
+                className="hover:bg-muted transition-all duration-200"
+              >
+                <X className="h-4 w-4 mr-2" />
+                Cancel
+              </Button>
+            </div>
+            {editingUser && (
+              <>
+                <div className="p-6 max-h-[70vh] overflow-y-auto grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-primary font-semibold mb-2">Full Name *</label>
+                      <Input
+                        value={editingUser.name}
+                        onChange={(e) => setEditingUser({ ...editingUser, name: e.target.value })}
+                        className="bg-background border-border/50 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200"
+                        placeholder="Enter full name"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-primary font-semibold mb-2">Email *</label>
+                      <Input
+                        type="email"
+                        value={editingUser.email}
+                        onChange={(e) => setEditingUser({ ...editingUser, email: e.target.value })}
+                        className="bg-background border-border/50 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200"
+                        placeholder="Enter email address"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-primary font-semibold mb-2">Phone</label>
+                      <Input
+                        value={editingUser.phone}
+                        onChange={(e) => setEditingUser({ ...editingUser, phone: e.target.value })}
+                        className="bg-background border-border/50 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200"
+                        placeholder="Enter phone number"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-primary font-semibold mb-2">Location</label>
+                      <Input
+                        value={editingUser.location}
+                        onChange={(e) => setEditingUser({ ...editingUser, location: e.target.value })}
+                        className="bg-background border-border/50 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200"
+                        placeholder="City, Country"
+                      />
+                    </div>
                   </div>
-                  <div className="space-y-2">
-                    <Label className="text-sm font-semibold text-foreground">Email *</Label>
-                    <Input
-                      type="email"
-                      value={editingUser.email}
-                      onChange={(e) => setEditingUser({ ...editingUser, email: e.target.value })}
-                      className="bg-background border-border/50 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200"
-                      placeholder="Enter email address"
-                    />
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-primary font-semibold mb-2">Role *</label>
+                      <Select
+                        value={editingUser.role}
+                        onValueChange={(v) => setEditingUser({ ...editingUser, role: v as any })}
+                      >
+                        <SelectTrigger className="bg-background border-border/50 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="user">User</SelectItem>
+                          <SelectItem value="moderator">Moderator</SelectItem>
+                          <SelectItem value="admin">Admin</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <label className="block text-primary font-semibold mb-2">Status *</label>
+                      <Select
+                        value={editingUser.status}
+                        onValueChange={(v) => setEditingUser({ ...editingUser, status: v as any })}
+                      >
+                        <SelectTrigger className="bg-background border-border/50 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="active">Active</SelectItem>
+                          <SelectItem value="inactive">Inactive</SelectItem>
+                          <SelectItem value="suspended">Suspended</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div>
+                      <label className="block text-primary font-semibold mb-2">Website</label>
+                      <Input
+                        value={editingUser.website}
+                        onChange={(e) => setEditingUser({ ...editingUser, website: e.target.value })}
+                        className="bg-background border-border/50 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200"
+                        placeholder="https://example.com"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-primary font-semibold mb-2">Avatar URL</label>
+                      <Input
+                        value={editingUser.avatar}
+                        onChange={(e) => setEditingUser({ ...editingUser, avatar: e.target.value })}
+                        className="bg-background border-border/50 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200"
+                        placeholder="https://example.com/avatar.jpg"
+                      />
+                    </div>
                   </div>
-                  <div className="space-y-2">
-                    <Label className="text-sm font-semibold text-foreground">Phone</Label>
-                    <Input
-                      value={editingUser.phone}
-                      onChange={(e) => setEditingUser({ ...editingUser, phone: e.target.value })}
-                      className="bg-background border-border/50 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200"
-                      placeholder="Enter phone number"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="text-sm font-semibold text-foreground">Location</Label>
-                    <Input
-                      value={editingUser.location}
-                      onChange={(e) => setEditingUser({ ...editingUser, location: e.target.value })}
-                      className="bg-background border-border/50 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200"
-                      placeholder="City, Country"
+                  <div className="md:col-span-2 space-y-2">
+                    <label className="block text-primary font-semibold mb-2">Bio</label>
+                    <textarea
+                      value={editingUser.bio}
+                      onChange={(e) => setEditingUser({ ...editingUser, bio: e.target.value })}
+                      className="w-full min-h-[80px] bg-background border border-border/50 text-foreground rounded-md px-3 py-2 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200 resize-none"
+                      placeholder="Tell us about yourself..."
                     />
                   </div>
                 </div>
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <Label className="text-sm font-semibold text-foreground">Role *</Label>
-                    <Select
-                      value={editingUser.role}
-                      onValueChange={(v) => setEditingUser({ ...editingUser, role: v as any })}
-                    >
-                      <SelectTrigger className="bg-background border-border/50 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="user">User</SelectItem>
-                        <SelectItem value="moderator">Moderator</SelectItem>
-                        <SelectItem value="admin">Admin</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="text-sm font-semibold text-foreground">Status *</Label>
-                    <Select
-                      value={editingUser.status}
-                      onValueChange={(v) => setEditingUser({ ...editingUser, status: v as any })}
-                    >
-                      <SelectTrigger className="bg-background border-border/50 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="active">Active</SelectItem>
-                        <SelectItem value="inactive">Inactive</SelectItem>
-                        <SelectItem value="suspended">Suspended</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="text-sm font-semibold text-foreground">Website</Label>
-                    <Input
-                      value={editingUser.website}
-                      onChange={(e) => setEditingUser({ ...editingUser, website: e.target.value })}
-                      className="bg-background border-border/50 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200"
-                      placeholder="https://example.com"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="text-sm font-semibold text-foreground">Avatar URL</Label>
-                    <Input
-                      value={editingUser.avatar}
-                      onChange={(e) => setEditingUser({ ...editingUser, avatar: e.target.value })}
-                      className="bg-background border-border/50 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200"
-                      placeholder="https://example.com/avatar.jpg"
-                    />
-                  </div>
+                <div className="flex justify-end gap-4 mt-6">
+                  <Button
+                    onClick={handleSaveUser}
+                    className="bg-accent text-accent-foreground hover:bg-accent/90 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
+                  >
+                    <Save className="h-4 w-4 mr-2" />
+                    Save User
+                  </Button>
                 </div>
-                <div className="md:col-span-2 space-y-2">
-                  <Label className="text-sm font-semibold text-foreground">Bio</Label>
-                  <textarea
-                    value={editingUser.bio}
-                    onChange={(e) => setEditingUser({ ...editingUser, bio: e.target.value })}
-                    className="w-full min-h-[80px] bg-background border border-border/50 text-foreground rounded-md px-3 py-2 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200 resize-none"
-                    placeholder="Tell us about yourself..."
-                  />
-                </div>
-              </div>
-              <DialogFooter className="p-4 border-t border-border/50 bg-muted/20">
-                <Button
-                  variant="outline"
-                  onClick={() => setIsFormOpen(false)}
-                  className="hover:bg-muted transition-all duration-200"
-                >
-                  Cancel
-                </Button>
-                <Button
-                  onClick={handleSaveUser}
-                  className="bg-accent text-accent-foreground hover:bg-accent/90 hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl"
-                >
-                  <Save className="h-4 w-4 mr-2" />
-                  Save User
-                </Button>
-              </DialogFooter>
-            </>
-          )}
-        </DialogContent>
-      </Dialog>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

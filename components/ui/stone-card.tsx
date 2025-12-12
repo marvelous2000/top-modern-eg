@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { ArrowRight } from "lucide-react"
+import { useTranslations } from "next-intl";
 
 interface StoneCardProps {
   image: string
@@ -56,6 +57,8 @@ const overlayVariants = {
 }
 
 export function StoneCard({ image, title, description, href, badge }: StoneCardProps) {
+  const t = useTranslations('stoneCard');
+
   return (
     <motion.div initial="rest" whileHover="hover" animate="rest" variants={cardVariants}>
       <Card className="group overflow-hidden border-border bg-card transition-shadow hover:shadow-xl hover:shadow-accent/20">
@@ -77,12 +80,12 @@ export function StoneCard({ image, title, description, href, badge }: StoneCardP
           >
             {href ? (
               <Link href={href} className="text-center text-primary-foreground hover:text-primary-foreground/80 transition-colors">
-                <p className="text-sm font-medium">View Details</p>
+                <p className="text-sm font-medium">{t('view_details')}</p>
                 <ArrowRight className="mx-auto mt-2 h-5 w-5" />
               </Link>
             ) : (
               <div className="text-center text-primary-foreground">
-                <p className="text-sm font-medium">View Details</p>
+                <p className="text-sm font-medium">{t('view_details')}</p>
                 <ArrowRight className="mx-auto mt-2 h-5 w-5" />
               </div>
             )}
@@ -95,7 +98,7 @@ export function StoneCard({ image, title, description, href, badge }: StoneCardP
             <div className="mt-4 flex justify-center">
               <Button asChild variant="link" className="p-0 text-accent hover:text-accent/80">
                 <Link href={href}>
-                  Learn More
+                  {t('learn_more')}
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
