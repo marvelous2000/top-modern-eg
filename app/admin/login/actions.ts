@@ -5,7 +5,7 @@ import createSupabaseServerClient from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 
-export async function login(prevState: any, formData: FormData) {
+export async function login(formData: FormData) {
   const supabase = await createSupabaseServerClient();
 
   const email = formData.get('email') as string;
@@ -45,25 +45,17 @@ export async function login(prevState: any, formData: FormData) {
     }
   }
 
-  revalidatePath('/', 'layout');
+  // Revalidate the admin route and root to ensure fresh server-side rendering
+  try {
+    revalidatePath('/');
+    revalidatePath('/admin');
+  } catch (err) {
+    // If revalidation fails (edge cases), log the error but proceed with redirect
+    console.error('Failed to revalidate:', err);
+  }
   redirect('/admin');
 }
 
-export async function googleLogin() {
-  const supabase = await createSupabaseServerClient();
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: 'google',
-    options: {
-      redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
-    },
-  });
-
-  if (error) {
-    return redirect('/admin/login?error=Could not authenticate with Google');
-  }
-
-  return redirect(data.url);
-}
 
 export async function logout() {
   const supabase = await createSupabaseServerClient();

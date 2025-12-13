@@ -16,6 +16,10 @@ export function Header() {
   const [settings, setSettings] = useState<SiteSettings>(defaultSettings)
   const { t } = useTranslations()
   const { theme, setTheme } = useTheme() // Use the useTheme hook
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   // Variants for desktop navigation (container)
   const navVariants = {
@@ -94,7 +98,8 @@ export function Header() {
                 className="text-white hover:bg-white/10 hover:text-accent"
                 aria-label="Toggle theme"
               >
-                {theme === 'dark' ? <Sun className="h-6 w-6" /> : <Moon className="h-6 w-6" />}
+                {/* Avoid rendering theme-specific icons during SSR to prevent hydration mismatch */}
+                {mounted ? (theme === 'dark' ? <Sun className="h-6 w-6" /> : <Moon className="h-6 w-6" />) : <Sun className="h-6 w-6" />}
               </Button>
             </motion.div>
           </motion.nav>
@@ -109,7 +114,7 @@ export function Header() {
               className="text-white hover:bg-white/10 hover:text-accent"
               aria-label="Toggle theme"
             >
-              {theme === 'dark' ? <Sun className="h-6 w-6" /> : <Moon className="h-6 w-6" />}
+              {mounted ? (theme === 'dark' ? <Sun className="h-6 w-6" /> : <Moon className="h-6 w-6" />) : <Sun className="h-6 w-6" />}
             </Button>
             <Button
               variant="ghost"
@@ -161,7 +166,7 @@ export function Header() {
                     }}
                     aria-label="Toggle theme"
                   >
-                    {theme === 'dark' ? (
+                    {mounted && theme === 'dark' ? (
                       <>
                         <Sun className="h-5 w-5 mr-2" /> {t('theme.light')}
                       </>

@@ -4,7 +4,7 @@ import type React from "react"
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { createBrowserClient } from "@/lib/supabase/client"
+import { createSupabaseBrowserClient } from "@/lib/supabase/client"
 import { Loader2 } from "lucide-react"
 
 interface AuthGuardProps {
@@ -15,7 +15,7 @@ export function AuthGuard({ children }: AuthGuardProps) {
   const [loading, setLoading] = useState(true)
   const [authorized, setAuthorized] = useState(false)
   const router = useRouter()
-  const supabase = createBrowserClient()
+  const supabase = createSupabaseBrowserClient()
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -48,7 +48,7 @@ export function AuthGuard({ children }: AuthGuardProps) {
           return
         }
 
-        if (!["super_admin", "admin", "editor", "viewer"].includes(userData.role)) {
+        if (!["super_admin", "admin"].includes(userData.role)) {
           await supabase.auth.signOut()
           router.push("/admin/login")
           return
@@ -75,7 +75,11 @@ export function AuthGuard({ children }: AuthGuardProps) {
     })
 
     return () => {
-      subscription.unsubscribe()
+      try {
+        subscription?.unsubscribe?.()
+      } catch (err) {
+        console.warn('Failed to unsubscribe from auth changes:', err)
+      }
     }
   }, [router, supabase])
 

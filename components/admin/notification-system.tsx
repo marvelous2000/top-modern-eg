@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
-import { createBrowserClient } from "@/lib/supabase/client"
+import { createSupabaseBrowserClient } from "@/lib/supabase/client"
 import { useToast } from "@/hooks/use-toast"
 
 interface Notification {
@@ -29,7 +29,7 @@ export function NotificationSystem({ className }: NotificationSystemProps) {
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [isOpen, setIsOpen] = useState(false)
   const [loading, setLoading] = useState(false)
-  const supabase = createBrowserClient()
+  const supabase = createSupabaseBrowserClient()
   const { toast } = useToast()
 
   const loadNotifications = async () => {

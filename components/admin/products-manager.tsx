@@ -190,7 +190,7 @@ export function ProductsManager() {
             </Tabs>
             <div className="p-6 pt-0 grid grid-cols-1 md:grid-cols-2 gap-6 border-t">
               <div className="space-y-2"><Label className="font-semibold">Category</Label><Select value={editingProduct.category} onValueChange={(v) => setEditingProduct({ ...editingProduct, category: v as any })}><SelectTrigger className="rounded-lg p-3"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="marble">Marble</SelectItem><SelectItem value="granite">Granite</SelectItem></SelectContent></Select></div>
-              <div className="space-y-2"><Label className="font-semibold">Status</Label><Select value={editingProduct.status} onValueChange={(v) => setEditingProduct({ ...editingProduct, status: v as any })}><SelectTrigger className="rounded-lg p-3"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="draft">Draft</SelectItem><SelectItem value="active">Active</SelectItem><SelectItem value="archived">Architem"></SelectItem></SelectContent></Select></div>
+              <div className="space-y-2"><Label className="font-semibold">Status</Label><Select value={editingProduct.status} onValueChange={(v) => setEditingProduct({ ...editingProduct, status: v as any })}><SelectTrigger className="rounded-lg p-3"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="draft">Draft</SelectItem><SelectItem value="active">Active</SelectItem><SelectItem value="archived">Archived</SelectItem></SelectContent></Select></div>
             </div>
             <DialogFooter className="flex justify-end space-x-3 p-4 bg-muted/30 border-t rounded-b-xl">
                 <Button variant="outline" className="rounded-lg" onClick={() => setIsFormOpen(false)}>Cancel</Button>

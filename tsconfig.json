@@ -29,7 +29,7 @@
         "./*"
       ],
       "@/messages/*": [
-        "messages/*"
+        "./messages/*"
       ]
     },
     "types": ["react", "react-dom", "node"]

@@ -3,10 +3,12 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useTheme } from 'next-themes';
 import { useTranslations } from 'next-intl';
+import { useEffect, useState } from 'react';
 
 export default function Navigation() {
   const pathname = usePathname();
   const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
   const t = useTranslations('navigation');
 
   const switchLanguage = (newLocale: string) => {
@@ -17,6 +19,10 @@ export default function Navigation() {
   };
 
   const locale = pathname ? pathname.split('/')[1] || 'en' : 'en';
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   return (
     <nav className="bg-white dark:bg-gray-900 shadow-sm border-b border-gray-200 dark:border-gray-700">
@@ -44,7 +50,7 @@ export default function Navigation() {
               <Link href={switchLanguage('ar')} className={`px-3 py-1 rounded-md text-sm font-medium ${pathname && pathname.startsWith('/ar') ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm' : 'text-gray-600 dark:text-gray-400'}`}>AR</Link>
             </div>
             <button onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')} className="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
-              {theme === 'light' ? '🌙' : '☀️'}
+              {mounted ? (theme === 'light' ? '🌙' : '☀️') : '☀️'}
             </button>
           </div>
         </div>

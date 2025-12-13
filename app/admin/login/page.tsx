@@ -12,18 +12,28 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { login, googleLogin } from "./actions";
-import { useFormState, useFormStatus } from "react-dom";
+import { login } from "./actions";
 import Link from "next/link";
 import Image from "next/image";
+import { useState } from "react";
 
-export const dynamic = 'force-dynamic';
+// This page is a client component. Dynamic rendering is controlled by server wrapper components.
 
 export default function AdminLoginPage() {
   const router = useRouter();
-  const [state, formAction] = useFormState(login, null);
+  const [state, setState] = useState<{ message: string } | null>(null);
+  const [pending, setPending] = useState(false);
 
-  const { pending } = useFormStatus();
+  const handleSubmit = async (formData: FormData) => {
+    setPending(true);
+    const result = await login(formData);
+    if (result && 'message' in result) {
+      setState(result);
+    }
+    setPending(false);
+  };
+
+
 
   return (
     <div
@@ -68,7 +78,7 @@ export default function AdminLoginPage() {
             </div>
           </CardHeader>
           <CardContent>
-            <form action={formAction} className="space-y-4">
+            <form action={handleSubmit} className="space-y-4">
               <div className="space-y-2">
                 <Label
                   htmlFor="email"
@@ -123,21 +133,7 @@ export default function AdminLoginPage() {
                 {pending ? "Signing in..." : "Sign In"}
               </Button>
             </form>
-            <div className="relative my-4">
-              <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t" />
-              </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-card px-2 text-muted-foreground">
-                  Or continue with
-                </span>
-              </div>
-            </div>
-            <form action={googleLogin}>
-              <Button variant="outline" className="w-full" disabled={pending}>
-                {pending ? "..." : "Google"}
-              </Button>
-            </form>
+
           </CardContent>
         </Card>
       </div>

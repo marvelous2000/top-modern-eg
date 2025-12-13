@@ -1,14 +1,21 @@
 'use client'
 
 import { useTheme } from 'next-themes'
+import { useEffect, useState } from 'react'
 import { Toaster as Sonner, ToasterProps } from 'sonner'
 
 const Toaster = ({ ...props }: ToasterProps) => {
   const { theme = 'system' } = useTheme()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   return (
     <Sonner
-      theme={theme as ToasterProps['theme']}
+      // Only apply client-determined theme after mounted to avoid SSR mismatch
+      theme={(mounted ? (theme as ToasterProps['theme']) : 'system')}
       className="toaster group"
       style={
         {

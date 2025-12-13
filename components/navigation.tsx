@@ -3,13 +3,17 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useTheme } from 'next-themes';
 import { useTranslations } from 'next-intl';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Menu, X, Sun, Moon, Languages } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export default function Navigation() {
   const pathname = usePathname();
   const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   const t = useTranslations('navigation');
   const [isOpen, setIsOpen] = useState(false);
 
@@ -57,7 +61,8 @@ export default function Navigation() {
               className="text-white hover:bg-white/10 hover:text-accent"
               onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
             >
-              {theme === 'light' ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
+              {/* During SSR theme may be undefined; wait until mounted to avoid hydration mismatch */}
+              {mounted ? (theme === 'light' ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />) : <Sun className="h-5 w-5" />}
             </Button>
             <Button
               variant="ghost"

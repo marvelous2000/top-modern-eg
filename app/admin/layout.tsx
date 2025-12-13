@@ -1,6 +1,7 @@
 import { SupabaseProvider } from '@/components/providers/SupabaseProvider';
 import DashboardLayout from './dashboard-layout';
 import AdminThemeWrapper from '@/components/admin/AdminThemeWrapper';
+import AdminAuthWrapper from '@/components/admin/AdminAuthWrapper';
 import './admin.css';
 
 export default function AdminLayout({
@@ -11,8 +12,9 @@ export default function AdminLayout({
   return (
     <AdminThemeWrapper>
       <SupabaseProvider>
-        <div className="admin-panel">
-          <DashboardLayout>{children}</DashboardLayout>
+                  <div className="admin-panel admin-theme">          <DashboardLayout>
+            <AdminAuthWrapper>{children}</AdminAuthWrapper>
+          </DashboardLayout>
         </div>
       </SupabaseProvider>
     </AdminThemeWrapper>

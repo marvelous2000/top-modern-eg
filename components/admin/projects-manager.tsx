@@ -51,8 +51,8 @@ export function ProjectsManager() {
       (filterStatus === "all" || p.status === filterStatus) &&
       (p.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
        (p.description && p.description.toLowerCase().includes(searchTerm.toLowerCase())) ||
-       (p.titleAr && p.titleAr.toLowerCase().includes(searchTerm.toLowerCase())) ||
-       (p.descriptionAr && p.descriptionAr.toLowerCase().includes(searchTerm.toLowerCase())))
+       (p.title_ar && p.title_ar.toLowerCase().includes(searchTerm.toLowerCase())) ||
+       (p.description_ar && p.description_ar.toLowerCase().includes(searchTerm.toLowerCase())))
     )
   }, [projects, searchTerm, filterCategory, filterStatus])
 
@@ -61,7 +61,19 @@ export function ProjectsManager() {
       setEditingProject(project)
     } else {
       setEditingProject({
-        title: "", titleAr: "", category: "residential", slug: "", description: "", descriptionAr: "", location: "", locationAr: "", client: "", year: new Date().getFullYear(), images: [], status: "draft",
+        title: "",
+        title_ar: "",
+        category: "residential",
+        slug: "",
+        description: "",
+        description_ar: "",
+        location: "",
+        location_ar: "",
+        client: "",
+        client_ar: "",
+        year: String(new Date().getFullYear()),
+        images: [],
+        status: "draft",
       })
     }
     setActiveTab("en")
@@ -178,9 +190,9 @@ export function ProjectsManager() {
               </TabsContent>
               <TabsContent value="ar">
                 <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2" dir="rtl">
-                  <div className="space-y-2"><Label className="font-semibold">عنوان المشروع (العربية)</Label><Input className="rounded-lg p-3 text-right" value={editingProject.titleAr || ""} onChange={(e) => setEditingProject({ ...editingProject, titleAr: e.target.value })} /></div>
-                  <div className="space-y-2"><Label className="font-semibold">الوصف (العربية)</Label><Textarea value={editingProject.descriptionAr || ""} onChange={(e) => setEditingProject({ ...editingProject, descriptionAr: e.target.value })} className="min-h-[120px] rounded-lg p-3 text-right" /></div>
-                  <div className="space-y-2"><Label className="font-semibold">الموقع (العربية)</Label><Input className="rounded-lg p-3 text-right" value={editingProject.locationAr || ""} onChange={(e) => setEditingProject({ ...editingProject, locationAr: e.target.value })} /></div>
+                  <div className="space-y-2"><Label className="font-semibold">عنوان المشروع (العربية)</Label><Input className="rounded-lg p-3 text-right" value={(editingProject as any).title_ar || ""} onChange={(e) => setEditingProject({ ...editingProject, title_ar: e.target.value } as any)} /></div>
+                  <div className="space-y-2"><Label className="font-semibold">الوصف (العربية)</Label><Textarea value={(editingProject as any).description_ar || ""} onChange={(e) => setEditingProject({ ...editingProject, description_ar: e.target.value } as any)} className="min-h-[120px] rounded-lg p-3 text-right" /></div>
+                  <div className="space-y-2"><Label className="font-semibold">الموقع (العربية)</Label><Input className="rounded-lg p-3 text-right" value={(editingProject as any).location_ar || ""} onChange={(e) => setEditingProject({ ...editingProject, location_ar: e.target.value } as any)} /></div>
                 </div>
               </TabsContent>
             </Tabs>
