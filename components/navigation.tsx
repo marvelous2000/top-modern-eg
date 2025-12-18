@@ -24,12 +24,15 @@ export default function Navigation() {
   };
 
   const isActive = (href: string) => {
+    // Safely get the pathname, defaulting to empty string if undefined/null
+    const currentPath = typeof pathname === 'string' ? pathname : '';
+
     // Exact match for home page
     if (href === '/') {
-      return (typeof pathname === 'string' ? pathname : '') === '/';
+      return currentPath === '/';
     }
     // Check if the current path starts with the link's href for other pages
-    return (typeof pathname === 'string' ? pathname : '').startsWith(href);
+    return currentPath.startsWith(href);
   };
 
   const navLinks = [
