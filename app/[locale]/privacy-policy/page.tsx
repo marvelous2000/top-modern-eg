@@ -1,6 +1,5 @@
 import { useTranslations } from "next-intl";
 import { Navigation } from "@/components/navigation"
-import Footer from "@/components/footer"
 
 export default function PrivacyPolicyPage() {
   const t = useTranslations("privacyPolicy");

@@ -202,7 +202,7 @@ export function ContactSection() {
                             <button
                               key={lineIndex}
                               onClick={line.action}
-                              className={`text-muted-foreground hover:text-accent transition-colors block text-left w-full p-2 -ml-2 rounded-md hover:bg-accent/10 ${item.title === "Phone" ? "whitespace-nowrap" : ""}`}
+                              className={`text-muted-foreground hover:text-gold-600 transition-colors block text-left w-full p-2 -ml-2 rounded-md hover:bg-accent/10 ${item.title === "Phone" ? "whitespace-nowrap" : ""}`}
                             >
                               {line.text}
                             </button>

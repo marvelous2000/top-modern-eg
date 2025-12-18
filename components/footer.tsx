@@ -1,6 +1,6 @@
 "use client"
 
-import Link from "next/link"
+import Link from 'next/link'
 import { useState, useEffect } from "react"
 import { Mail, Phone, MapPin, Facebook, Instagram, MessageCircle } from "lucide-react"
 import { useTranslations } from 'next-intl';
@@ -52,6 +52,18 @@ export default function Footer() { // Removed isAdmin prop
     }
   }, [])
 
+  // Defensive checks for lucide-react icons to avoid runtime invalid element errors
+  const isValidIcon = (icon: any) => typeof icon === 'function' || (typeof icon === 'object' && icon !== null)
+
+  useEffect(() => {
+    const icons = { Mail, Phone, MapPin, Facebook, Instagram, MessageCircle }
+    Object.entries(icons).forEach(([name, val]) => {
+      if (!isValidIcon(val)) {
+        console.warn(`[Footer] Icon "${name}" is not a valid React component. It may be missing from 'lucide-react' or incorrectly imported.`)
+      }
+    })
+  }, [])
+
   return (
     <footer className="bg-black py-12">
       <div className="container mx-auto px-4">
@@ -68,16 +80,16 @@ export default function Footer() { // Removed isAdmin prop
           <div className="space-y-4">
             <h4 className="font-medium text-white">{safeT('quick_links')}</h4>
             <nav className="flex flex-col gap-2">
-              <Link href={`/${locale}`} className="text-sm text-white/70 transition-colors hover:text-accent">
+              <Link href={`/${locale}`} className="text-sm text-white/70 transition-colors relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-gold-500 after:transition-all after:duration-300 hover:after:w-full hover:text-gold-600">
                 {safeT('home')}
               </Link>
-              <Link href={`/${locale}/products`} className="text-sm text-white/70 transition-colors hover:text-accent">
+              <Link href={`/${locale}/products`} className="text-sm text-white/70 transition-colors relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-gold-500 after:transition-all after:duration-300 hover:after:w-full hover:text-gold-600">
                 {safeT('products')}
               </Link>
-              <Link href={`/${locale}/projects`} className="text-sm text-white/70 transition-colors hover:text-accent">
+              <Link href={`/${locale}/projects`} className="text-sm text-white/70 transition-colors relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-gold-500 after:transition-all after:duration-300 hover:after:w-full hover:text-gold-600">
                 {safeT('projects')}
               </Link>
-              <Link href={`/${locale}/about`} className="text-sm text-white/70 transition-colors hover:text-accent">
+              <Link href={`/${locale}/about`} className="text-sm text-white/70 transition-colors relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-gold-500 after:transition-all after:duration-300 hover:after:w-full hover:text-gold-600">
                 {safeT('about')}
               </Link>
             </nav>
@@ -89,20 +101,20 @@ export default function Footer() { // Removed isAdmin prop
             <div className="flex flex-col gap-3">
               <a
                 href={`tel:${settings.contact.phone1}`}
-                className="flex items-center gap-2 text-sm text-white/70 transition-colors hover:text-accent"
+                className="flex items-center gap-2 text-sm text-white/70 transition-colors relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-gold-500 after:transition-all after:duration-300 hover:after:w-full hover:text-gold-600"
               >
-                <Phone className="h-4 w-4" />
+                {isValidIcon(Phone) ? <Phone className="h-4 w-4" /> : <span className="h-4 w-4 inline-block" />}
                 <span>{settings.contact.phone1}</span>
               </a>
               <a
                 href={`mailto:${settings.contact.email1}`}
-                className="flex items-center gap-2 text-sm text-white/70 transition-colors hover:text-accent"
+                className="flex items-center gap-2 text-sm text-white/70 transition-colors relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-gold-500 after:transition-all after:duration-300 hover:after:w-full hover:text-gold-600"
               >
-                <Mail className="h-4 w-4" />
+                {isValidIcon(Mail) ? <Mail className="h-4 w-4" /> : <span className="h-4 w-4 inline-block" />}
                 <span>{settings.contact.email1}</span>
               </a>
               <div className="flex items-start gap-2 text-sm text-white/70">
-                <MapPin className="h-4 w-4 mt-0.5" />
+                {isValidIcon(MapPin) ? <MapPin className="h-4 w-4 mt-0.5" /> : <span className="h-4 w-4 inline-block mt-0.5" />}
                 <span>{settings.company.address}</span>
               </div>
             </div>
@@ -128,10 +140,10 @@ export default function Footer() { // Removed isAdmin prop
                   href={settings.social.facebook}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-white/70 hover:text-accent transition-colors"
+                  className="text-white/70 hover:text-gold-600 transition-colors"
                   aria-label="Facebook"
                 >
-                  <Facebook className="h-5 w-5" />
+                  {isValidIcon(Facebook) ? <Facebook className="h-5 w-5" /> : <span className="h-5 w-5 inline-block" />}
                 </a>
               )}
               {settings.social.instagram && (
@@ -139,10 +151,10 @@ export default function Footer() { // Removed isAdmin prop
                   href={settings.social.instagram}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-white/70 hover:text-accent transition-colors"
+                  className="text-white/70 hover:text-gold-600 transition-colors"
                   aria-label="Instagram"
                 >
-                  <Instagram className="h-5 w-5" />
+                  {isValidIcon(Instagram) ? <Instagram className="h-5 w-5" /> : <span className="h-5 w-5 inline-block" />}
                 </a>
               )}
               {settings.contact.whatsapp && (
@@ -150,10 +162,10 @@ export default function Footer() { // Removed isAdmin prop
                   href={`https://wa.me/${settings.contact.whatsapp.replace(/\D/g, '')}?text=Hello!%20I'm%20interested%20in%20your%20marble%20and%20granite%20services.`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 text-white/70 hover:text-accent transition-colors"
+                  className="flex items-center gap-2 text-white/70 hover:text-gold-600 transition-colors relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-gold-500 after:transition-all after:duration-300 hover:after:w-full"
                   aria-label={safeT('connect_whatsapp_aria', 'Connect on WhatsApp')}
                 >
-                  <MessageCircle className="h-5 w-5" />
+                    {isValidIcon(MessageCircle) ? <MessageCircle className="h-5 w-5" /> : <span className="h-5 w-5 inline-block" />}
                   <span className="text-sm">{safeT('connect_whatsapp', 'Connect on WhatsApp')}</span>
                 </a>
               )}
@@ -161,10 +173,10 @@ export default function Footer() { // Removed isAdmin prop
             <div className="flex flex-col items-center gap-4 md:flex-row md:gap-6">
               <p className="text-sm text-white/70">© {currentYear} {settings.company.name}. {safeT('all_rights_reserved', 'All rights reserved.')}</p>
               <div className="flex gap-6">
-                <Link href={`/${locale}/privacy-policy`} className="text-sm text-white/70 transition-colors hover:text-accent">
+                <Link href={`/${locale}/privacy-policy`} className="text-sm text-white/70 transition-colors relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-gold-500 after:transition-all after:duration-300 hover:after:w-full hover:text-gold-600">
                   {safeT('privacy_policy')}
                 </Link>
-                <Link href={`/${locale}/terms`} className="text-sm text-white/70 transition-colors hover:text-accent">
+                <Link href={`/${locale}/terms`} className="text-sm text-white/70 transition-colors relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-gold-500 after:transition-all after:duration-300 hover:after:w-full hover:text-gold-600">
                   {safeT('terms_of_service')}
                 </Link>
               </div>

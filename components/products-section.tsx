@@ -96,7 +96,7 @@ export function ProductsSection() {
           {products.map((product, index) => (
             <Card
               key={product.id || index}
-              className="card-container bg-card/80 backdrop-blur-sm border-primary/30 hover:border-primary/50 transition-all duration-300 group shadow-lg"
+              className="card-container bg-card/80 backdrop-blur-sm border-primary/30 hover:border-primary/50 transition-all duration-300 group"
             >
               <CardContent className="p-0">
                 <div className="relative overflow-hidden">

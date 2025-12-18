@@ -8,7 +8,10 @@ import { useTranslations } from "@/components/providers/TranslationsProvider"
 import { LanguageSwitcher } from "./language-switcher"
 import { useTheme } from "next-themes" // Import useTheme
 import { SiteSettings, defaultSettings } from "@/lib/types" // Import SiteSettings and defaultSettings
-import Link from "next/link"
+import Link from 'next/link'
+import { usePathname } from 'next/navigation' // Import usePathname
+import { cn } from '@/lib/utils' // Import cn
+
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -17,6 +20,7 @@ export function Header() {
   const { t } = useTranslations()
   const { theme, setTheme } = useTheme() // Use the useTheme hook
   const [mounted, setMounted] = useState(false)
+  const pathname = usePathname(); // Initialize pathname
   useEffect(() => {
     setMounted(true)
   }, [])
@@ -45,6 +49,9 @@ export function Header() {
     },
   }
 
+  // Determine locale from pathname and build links with locale prefix
+  const locale = pathname ? pathname.split('/')[1] || 'en' : 'en'
+
   // Define navigation links inside the component
   const navLinks = [
     { href: "/", label: t("home") },
@@ -53,6 +60,11 @@ export function Header() {
     { href: "/about", label: t("about") },
     { href: "/contact", label: t("contact") },
   ]
+
+  const withLocale = (href: string) => {
+    if (!href || href === '/') return `/${locale}`
+    return `/${locale}${href}`
+  }
 
   // ... (rest of useEffects and navLinks)
 
@@ -64,45 +76,45 @@ export function Header() {
         <div className="flex h-20 items-center justify-between">
           {/* Logo */}
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.2 }}>
-            <Link href="/" className="flex items-center">
+            <Link href={`/${locale}`} className="flex items-center">
               <img src={settings.logo.main} alt="Top Modern" className="h-16 w-auto" />
             </Link>
           </motion.div>
 
           {/* Desktop Navigation */}
-          <motion.nav
-            variants={navVariants}
-            initial="hidden"
-            animate="visible"
-            className="hidden md:flex md:items-center md:gap-8"
-          >
-            {navLinks.map((link) => (
-              <motion.div key={link.href} variants={navItemVariants}>
+          <nav className="hidden md:flex md:items-center md:gap-8">
+            {navLinks.map((link) => {
+              const localizedHref = withLocale(link.href)
+              const isActive = (link.href === '/' && (pathname === `/${locale}` || pathname === `/${locale}/` || pathname === '/')) ||
+                               (link.href !== '/' && (pathname === localizedHref || pathname?.startsWith(localizedHref + '/')))
+              return (
                 <Link
-                  href={link.href}
-                  className="text-sm font-medium text-white/90 transition-colors"
+                  key={link.href}
+                  href={localizedHref}
+                  className={cn(
+                    "text-sm font-medium transition-colors relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-gold-500 after:transition-all after:duration-300 hover:after:w-full",
+                    isActive
+                      ? "text-gold-500 after:w-full hover:text-gold-600"
+                      : "text-white/90 hover:text-gold-600"
+                  )}
                 >
                   {link.label}
                 </Link>
-              </motion.div>
-            ))}
-            <motion.div variants={navItemVariants}>
-              <LanguageSwitcher />
-            </motion.div>
+              )
+            })}
+            <LanguageSwitcher />
             {/* Theme Toggle for Desktop */}
-            <motion.div variants={navItemVariants}>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                className="text-white hover:bg-white/10 hover:text-accent"
-                aria-label="Toggle theme"
-              >
-                {/* Avoid rendering theme-specific icons during SSR to prevent hydration mismatch */}
-                {mounted ? (theme === 'dark' ? <Sun className="h-6 w-6" /> : <Moon className="h-6 w-6" />) : <Sun className="h-6 w-6" />}
-              </Button>
-            </motion.div>
-          </motion.nav>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              className="text-white hover:bg-white/10 hover:text-gold-600"
+              aria-label="Toggle theme"
+            >
+              {/* Avoid rendering theme-specific icons during SSR to prevent hydration mismatch */}
+              {mounted ? (theme === 'dark' ? <Sun className="h-6 w-6" /> : <Moon className="h-6 w-6" />) : <Sun className="h-6 w-6" />}
+            </Button>
+          </nav>
 
           {/* Mobile Menu Button */}
           <div className="flex items-center md:hidden">
@@ -110,8 +122,7 @@ export function Header() {
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              className="text-white hover:bg-white/10 hover:text-accent"
+              className="text-white hover:bg-white/10 hover:text-gold-600"
               aria-label="Toggle theme"
             >
               {mounted ? (theme === 'dark' ? <Sun className="h-6 w-6" /> : <Moon className="h-6 w-6" />) : <Sun className="h-6 w-6" />}
@@ -119,7 +130,7 @@ export function Header() {
             <Button
               variant="ghost"
               size="icon"
-              className="text-white hover:bg-white/10 hover:text-accent"
+              className="text-white hover:bg-white/10 hover:text-gold-600"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               aria-label="Toggle menu"
             >
@@ -135,22 +146,27 @@ export function Header() {
               // ... (mobile nav props)
             >
               <div className="flex flex-col gap-4 py-4">
-                {navLinks.map((link, index) => (
-                  <motion.div
-                    key={link.href}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                  >
+                {navLinks.map((link, index) => {
+                  const localizedHref = withLocale(link.href)
+                  const isActive = (link.href === '/' && (pathname === `/${locale}` || pathname === `/${locale}/` || pathname === '/')) ||
+                                   (link.href !== '/' && (pathname === localizedHref || pathname?.startsWith(localizedHref + '/')))
+                  return (
                     <Link
-                      href={link.href}
-                      className="text-sm font-medium text-white/90 transition-colors"
+                      key={link.href}
+                      href={localizedHref}
+                      className={cn(
+                        "text-sm font-medium transition-colors",
+                        "relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-gold-500 after:transition-all after:duration-300 hover:after:w-full",
+                        isActive
+                          ? "text-gold-500 after:w-full hover:text-gold-600"
+                          : "text-white/90 hover:text-gold-600"
+                      )}
                       onClick={() => setMobileMenuOpen(false)}
                     >
                       {link.label}
                     </Link>
-                  </motion.div>
-                ))}
+                  )
+                })}
                 {/* Theme Toggle for Mobile inside menu */}
                 <motion.div
                   initial={{ opacity: 0, x: -20 }}
@@ -159,7 +175,7 @@ export function Header() {
                 >
                   <Button
                     variant="ghost"
-                    className="w-full justify-start text-sm font-medium text-white/90 transition-colors hover:text-accent"
+                    className="w-full justify-start text-sm font-medium text-white/90 transition-colors hover:text-gold-600"
                     onClick={() => {
                       setTheme(theme === 'dark' ? 'light' : 'dark');
                       setMobileMenuOpen(false); // Close menu after theme change

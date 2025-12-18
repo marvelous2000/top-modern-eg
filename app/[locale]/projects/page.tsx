@@ -46,7 +46,7 @@ export default function ProjectsPage() {
                   const project = t.raw(`sampleProjects.${projectKey}`);
                   return (
                     <motion.div key={index} variants={itemVariants}>
-                      <Card className="group overflow-hidden border-border bg-card transition-shadow hover:shadow-lg">
+                      <Card className="group overflow-hidden border-border bg-card transition-shadow">
                         <motion.div
                           whileHover={{ scale: 1.05 }}
                           transition={{ duration: 0.3 }}
@@ -70,7 +70,7 @@ export default function ProjectsPage() {
                             <p className="mt-1 text-sm font-medium">{project.material}</p>
                           </div>
                           <div className="mt-4 flex justify-center">
-                            <Button asChild variant="link" className="p-0 text-accent hover:text-accent/80">
+                            <Button asChild variant="link" className="p-0 text-accent hover:text-gold-600">
                               <Link href={`/${t('locale')}/projects/${projectKey}`}>
                                 {t("viewDetails")}
                                 <ArrowRight className="ml-2 h-4 w-4" />

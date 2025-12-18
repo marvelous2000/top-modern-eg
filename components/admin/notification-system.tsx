@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
 import { createSupabaseBrowserClient } from "@/lib/supabase/client"
+import { normalizeInternalUrl } from '@/lib/url-utils'
 import { useToast } from "@/hooks/use-toast"
 
 interface Notification {
@@ -42,7 +43,12 @@ export function NotificationSystem({ className }: NotificationSystemProps) {
         .limit(50)
 
       if (error) throw error
-      setNotifications(data || [])
+      // Convert null to undefined for action_url
+      const normalized = (data || []).map((n: any) => ({
+        ...n,
+        action_url: n.action_url || undefined
+      })) as Notification[]
+      setNotifications(normalized)
     } catch (error) {
       console.error('Error loading notifications:', error)
     } finally {
@@ -64,7 +70,11 @@ export function NotificationSystem({ className }: NotificationSystemProps) {
         schema: 'public',
         table: 'notifications'
       }, (payload) => {
-        const newNotification = payload.new as Notification
+        const rawNotification = payload.new as any
+        const newNotification: Notification = {
+          ...rawNotification,
+          action_url: rawNotification.action_url || undefined
+        }
         setNotifications(prev => [newNotification, ...prev])
 
         // Show toast for new notification
@@ -148,6 +158,19 @@ export function NotificationSystem({ className }: NotificationSystemProps) {
     }
   }
 
+  // Normalize action URLs to avoid relative navigation (e.g., 'projects' -> '/en/projects')
+  const normalizeActionUrl = (raw?: string | null): string | undefined => {
+    if (!raw) return undefined
+    try {
+      const currentPath = typeof window !== 'undefined' ? window.location.pathname : undefined
+      const result = normalizeInternalUrl(raw, currentPath)
+      return result || undefined
+    } catch (err) {
+      console.warn('[notification-system] normalizeActionUrl failed, returning raw', err)
+      return raw || undefined
+    }
+  }
+
   const unreadCount = notifications.filter(n => !n.read).length
 
   return (
@@ -221,7 +244,14 @@ export function NotificationSystem({ className }: NotificationSystemProps) {
                             markAsRead(notification.id)
                           }
                           if (notification.action_url) {
-                            window.location.href = notification.action_url
+                            const url = notification.action_url
+                            if (url.startsWith('/') || /^(https?:|mailto:|tel:)/.test(url)) {
+                              window.location.href = url
+                            } else {
+                              // For relative URLs, normalize them
+                              const safe = normalizeActionUrl(url)
+                              if (safe) window.location.href = safe
+                            }
                           }
                         }}
                       >
@@ -260,7 +290,14 @@ export function NotificationSystem({ className }: NotificationSystemProps) {
                                 onClick={(e) => {
                                   e.stopPropagation()
                                   if (notification.action_url) {
-                                    window.location.href = notification.action_url
+                                    const url = notification.action_url
+                                    if (url.startsWith('/') || /^(https?:|mailto:|tel:)/.test(url)) {
+                                      window.location.href = url
+                                    } else {
+                                      // For relative URLs, normalize them
+                                      const safe = normalizeActionUrl(url)
+                                      if (safe) window.location.href = safe
+                                    }
                                   }
                                 }}
                               >

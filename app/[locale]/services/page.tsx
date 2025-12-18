@@ -141,7 +141,7 @@ export default function ServicesPage() {
                   className={`px-4 py-2 text-sm rounded-lg font-semibold transition-colors duration-300 ${
                     selectedCategory === "marble"
                       ? "bg-primary text-primary-foreground"
-                      : "border border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+                      : "border border-primary text-primary hover:bg-primary hover:text-gold-600"
                   }`}
                 >
                   {t("filters.marble")}
@@ -151,7 +151,7 @@ export default function ServicesPage() {
                   className={`px-4 py-2 text-sm rounded-lg font-semibold transition-colors duration-300 ${
                     selectedCategory === "granite"
                       ? "bg-primary text-primary-foreground"
-                      : "border border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+                      : "border border-primary text-primary hover:bg-primary hover:text-gold-600"
                   }`}
                 >
                   {t("filters.granite")}
@@ -177,7 +177,7 @@ export default function ServicesPage() {
                   className={`px-4 py-2 text-sm rounded-lg font-semibold transition-colors duration-300 ${
                     selectedType === "flooring"
                       ? "bg-primary text-primary-foreground"
-                      : "border border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+                      : "border border-primary text-primary hover:bg-primary hover:text-gold-600"
                   }`}
                 >
                   {t("filters.flooring")}
@@ -187,7 +187,7 @@ export default function ServicesPage() {
                   className={`px-4 py-2 text-sm rounded-lg font-semibold transition-colors duration-300 ${
                     selectedType === "wall"
                       ? "bg-primary text-primary-foreground"
-                      : "border border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+                      : "border border-primary text-primary hover:bg-primary hover:text-gold-600"
                   }`}
                 >
                   {t("filters.wall")}
@@ -197,7 +197,7 @@ export default function ServicesPage() {
                   className={`px-4 py-2 text-sm rounded-lg font-semibold transition-colors duration-300 ${
                     selectedType === "countertop"
                       ? "bg-primary text-primary-foreground"
-                      : "border border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+                      : "border border-primary text-primary hover:bg-primary hover:text-gold-600"
                   }`}
                 >
                   {t("filters.countertop")}
@@ -222,7 +222,7 @@ export default function ServicesPage() {
                     <div className="absolute bottom-6 left-6 right-6">
                       <a
                         href={`/${t('locale')}/products/${product.slug}`}
-                        className="bg-primary text-primary-foreground px-6 py-3 rounded-lg font-semibold inline-block hover:bg-primary/80 hover:text-primary-foreground transition-colors duration-300"
+                        className="bg-primary text-primary-foreground px-6 py-3 rounded-lg font-semibold inline-block hover:bg-primary/80 hover:text-gold-600 transition-colors duration-300"
                       >
                         {t("viewDetails")}
                       </a>

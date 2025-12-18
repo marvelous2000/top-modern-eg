@@ -191,7 +191,7 @@ export function UsersManager() {
                 onClick={() => handleOpenForm(user)}
               >
                 <CardHeader className="p-4">
-                  <CardTitle className="text-lg truncate group-hover:text-accent transition-colors duration-200">
+                  <CardTitle className="text-lg truncate group-hover:text-gold-600 transition-colors duration-200">
                     {user.name}
                   </CardTitle>
                   <p className="text-sm text-muted-foreground truncate">{user.email}</p>
@@ -220,7 +220,7 @@ export function UsersManager() {
                       <Button
                         size="sm"
                         variant="outline"
-                        className="w-full hover:bg-accent hover:text-accent-foreground transition-all duration-200"
+                        className="w-full hover:bg-accent hover:text-gold-600 transition-all duration-200"
                         onClick={(e) => {
                           e.stopPropagation()
                           handleOpenForm(user)

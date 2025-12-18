@@ -1,6 +1,5 @@
 import { useTranslations } from "next-intl";
 import { Navigation } from "@/components/navigation"
-import Footer from "@/components/footer"
 
 export default function TermsOfServicePage() {
   const t = useTranslations("terms");
@@ -65,7 +64,6 @@ export default function TermsOfServicePage() {
           </div>
         </div>
       </main>
-      <Footer />
     </div>
   )
 }

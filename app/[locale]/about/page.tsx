@@ -136,7 +136,7 @@ export default function AboutPage() {
                             transition={{ duration: 0.3 }}
                             className="flex h-12 w-12 items-center justify-center rounded-full bg-accent/20"
                           >
-                            <value.icon className="h-6 w-6 text-accent" />
+                            <value.icon className="h-6 w-6 text-gold-600" />
                           </motion.div>
                           <h3 className="mt-4 font-semibold text-lg">{value.title}</h3>
                           <p className="mt-2 text-sm leading-relaxed text-muted-foreground text-base">{value.description}</p>
@@ -190,7 +190,7 @@ export default function AboutPage() {
                         whileHover={{ scale: 1.1 }}
                         className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-accent/20"
                       >
-                        <span className="font-serif text-xl font-bold text-accent">{stat.number}</span>
+                        <span className="font-serif text-xl font-bold text-gold-600">{stat.number}</span>
                       </motion.div>
                       <div>
                         <h3 className="font-semibold text-lg">{stat.title}</h3>

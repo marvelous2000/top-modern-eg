@@ -19,7 +19,7 @@ export function LanguageSwitcher() {
             className={`text-xs px-2 py-1 h-7 ${
               locale === 'en'
                 ? 'bg-accent text-accent-foreground'
-                : 'text-white/70 hover:text-white hover:bg-white/10'
+                : 'text-white/70 hover:text-gold-600 hover:bg-white/10'
             }`}
           >
             EN
@@ -32,7 +32,7 @@ export function LanguageSwitcher() {
             className={`text-xs px-2 py-1 h-7 ${
               locale === 'ar'
                 ? 'bg-accent text-accent-foreground'
-                : 'text-white/70 hover:text-white hover:bg-white/10'
+                : 'text-white/70 hover:text-gold-600 hover:bg-white/10'
             }`}
           >
             العربية

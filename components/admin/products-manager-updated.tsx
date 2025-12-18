@@ -145,7 +145,7 @@ export function ProductsManager() {
             <p className="text-sm text-muted-foreground">Manage your material inventory.</p>
           </div>
           <div className="flex items-center gap-4">
-            <Button variant="outline" size="sm" onClick={() => document.body.classList.toggle('dark')} className="bg-background/80 backdrop-blur-sm border-border/50 hover:bg-accent hover:text-accent-foreground transition-all duration-200">
+            <Button variant="outline" size="sm" onClick={() => document.body.classList.toggle('dark')} className="bg-background/80 backdrop-blur-sm border-border/50 hover:bg-accent hover:text-gold-600 transition-all duration-200">
               {isClient && document.body.classList.contains('dark') ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
             </Button>
             <Button onClick={() => handleOpenForm()} className="bg-accent text-accent-foreground hover:bg-accent/90 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"><Plus className="h-4 w-4 mr-2" />Add Product</Button>
@@ -175,7 +175,7 @@ export function ProductsManager() {
           {filteredProducts.map((product) => (
             <Card key={product.id} className="shadow-sm hover:shadow-lg transition-all duration-300 border-0 bg-gradient-to-br from-card to-card/50 backdrop-blur-sm hover:scale-[1.02] cursor-pointer overflow-hidden group" onClick={() => handleOpenForm(product)}>
               <CardHeader className="p-4">
-                <CardTitle className="text-lg truncate group-hover:text-accent transition-colors duration-200">{product.name}</CardTitle>
+                <CardTitle className="text-lg truncate group-hover:text-gold-600 transition-colors duration-200">{product.name}</CardTitle>
                 <p className="text-sm text-muted-foreground capitalize">{product.category}</p>
               </CardHeader>
               <CardContent className="flex-grow flex flex-col p-4 pt-0">
@@ -186,7 +186,7 @@ export function ProductsManager() {
                     <p className="text-xs text-muted-foreground">Origin: {product.origin}</p>
                   </div>
                   <div className="flex gap-2 pt-2">
-                    <Button size="sm" variant="outline" className="w-full hover:bg-accent hover:text-accent-foreground transition-all duration-200" onClick={(e) => { e.stopPropagation(); handleOpenForm(product)}}><Edit className="h-4 w-4 mr-2" />Edit</Button>
+                    <Button size="sm" variant="outline" className="w-full hover:bg-accent hover:text-gold-600 transition-all duration-200" onClick={(e) => { e.stopPropagation(); handleOpenForm(product)}}><Edit className="h-4 w-4 mr-2" />Edit</Button>
                     <Button size="sm" variant="destructive" className="w-full hover:scale-105 transition-all duration-200" onClick={(e) => { e.stopPropagation(); handleDeleteProduct(product.id)}}><Trash2 className="h-4 w-4 mr-2" />Delete</Button>
                   </div>
                 </div>

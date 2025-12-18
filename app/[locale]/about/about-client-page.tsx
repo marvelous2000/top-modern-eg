@@ -2,7 +2,6 @@
 
 import { MarbleBackground } from "@/components/marble-background"
 import { Navigation } from "@/components/navigation"
-import Footer from "@/components/footer"
 import { ContactTracking } from "@/components/contact-tracking"
 import { motion } from "framer-motion"
 import { useInView } from "framer-motion"
@@ -366,8 +365,6 @@ export function AboutClientPage() {
           </motion.div>
         </section>
       </main>
-
-      <Footer />
     </div>
   )
 }

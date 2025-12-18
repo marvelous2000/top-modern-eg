@@ -4,7 +4,6 @@ import { useMemo, useState } from "react"
 import type { Project } from "@/lib/actions/projects"
 import { MarbleBackground } from "@/components/marble-background"
 import { Navigation } from "@/components/navigation"
-import Footer from "@/components/footer"
 import { ContactTracking } from "@/components/contact-tracking"
 
 type ProjectsPageClientProps = {
@@ -260,8 +259,6 @@ export function ProjectsPageClient({ projects }: ProjectsPageClientProps) {
           </div>
         </section>
       </main>
-
-      <Footer />
     </div>
   )
 }

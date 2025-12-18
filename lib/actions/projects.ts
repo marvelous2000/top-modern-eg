@@ -98,6 +98,28 @@ export async function getProjectBySlug(slug: string) {
   }
 }
 
+export async function getFeaturedProjects() {
+  try {
+    const supabase = createSupabaseServiceClient()
+    const { data, error } = await supabase
+      .from("projects")
+      .select("*")
+      .eq("featured", true)
+      .eq("status", "active") // Only fetch active featured projects
+      .order("created_at", { ascending: false })
+
+    if (error) {
+      console.error("[v0] Error fetching featured projects:", error)
+      return { success: false, error: error.message, data: [] }
+    }
+
+    return { success: true, data: data || [] }
+  } catch (error: any) {
+    console.error("[v0] Exception in getFeaturedProjects:", error)
+    return { success: false, error: error.message, data: [] }
+  }
+}
+
 export async function createProject(project: Omit<Project, "id" | "created_at" | "updated_at">) {
   try {
     const supabase = createSupabaseServiceClient()

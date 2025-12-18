@@ -11,7 +11,13 @@ import { useToast } from "@/hooks/use-toast"
 import { SiteSettings, defaultSettings } from "@/lib/types"
 
 export function SettingsManager() {
-  const [settings, setSettings] = useState<SiteSettings>(defaultSettings)
+  const [settings, setSettings] = useState<SiteSettings>({
+    ...defaultSettings,
+    logo: {
+      ...defaultSettings.logo,
+      background: "/adminbackground.jpg"
+    }
+  })
   const [isLoading, setIsLoading] = useState(false)
   const { toast } = useToast()
 

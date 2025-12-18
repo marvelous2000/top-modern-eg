@@ -136,7 +136,7 @@ export function ProjectsManager() {
           <Card key={project.id} className="overflow-hidden group transition-all duration-300 hover:shadow-lg hover:-translate-y-1 rounded-xl flex flex-col">
             <CardHeader className="flex flex-row justify-between items-start gap-4">
               <div>
-                <CardTitle className="text-lg truncate group-hover:text-accent">{project.title}</CardTitle>
+                <CardTitle className="text-lg truncate group-hover:text-gold-600">{project.title}</CardTitle>
                 <p className="text-sm text-muted-foreground capitalize">{project.category}</p>
               </div>
               {project.images?.[0] && <img src={project.images[0]} alt={project.title} className="w-16 h-16 object-cover rounded-lg border" />}

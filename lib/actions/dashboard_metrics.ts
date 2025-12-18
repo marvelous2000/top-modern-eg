@@ -36,11 +36,22 @@ export async function getDashboardMetrics(): Promise<{ success: boolean; data?: 
 
 export async function incrementPageViews(): Promise<{ success: boolean; error?: string }> {
   try {
+    // If the service role or URL are missing, avoid attempting the RPC which
+    // would throw. This can happen in local dev when env vars are not set.
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+      console.warn('[Dashboard Metrics] Supabase service config missing, skipping incrementPageViews')
+      return { success: false, error: 'missing_supabase_config' }
+    }
     const supabase = createSupabaseServiceClient();
     const { error } = await supabase.rpc('increment_page_views_function');
 
     if (error) {
-      console.error("[Dashboard Metrics] Error incrementing page views:", error);
+      // Helpful message for missing DB function or permission issues
+      if ((error as any)?.code === 'PGRST202') {
+        console.warn("[Dashboard Metrics] Supabase RPC error: missing function `increment_page_views_function`. Ensure DB migrations were run (see scripts/003_create_dashboard_metrics_table.sql).", error);
+      } else {
+        console.error("[Dashboard Metrics] Error incrementing page views:", error);
+      }
       return { success: false, error: error.message };
     }
 

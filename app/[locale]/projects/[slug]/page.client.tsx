@@ -3,7 +3,7 @@
 import { notFound } from "next/navigation"
 import { MarbleBackground } from "@/components/marble-background"
 import { Navigation } from "@/components/navigation"
-import Footer from "@/components/footer"
+// Footer is rendered by the layout; do not import here to avoid duplicate footer
 import { ContactTracking } from "@/components/contact-tracking"
 import type { Project } from "@/lib/actions/projects"
 import { cn } from "@/lib/utils"
@@ -178,7 +178,7 @@ export function ProjectPageClient({ project, slug }: ProjectPageProps) {
               </a>
               <a
                 href="tel:+201234567890"
-                className="border border-accent text-accent px-8 py-4 rounded-lg font-semibold text-lg hover:bg-accent hover:text-accent-foreground transition-colors duration-300"
+                className="border border-accent text-accent px-8 py-4 rounded-lg font-semibold text-lg hover:bg-accent hover:text-gold-600 transition-colors duration-300"
                 onClick={() =>
                   window.dispatchEvent(
                     new CustomEvent("contactClick", {
@@ -193,8 +193,6 @@ export function ProjectPageClient({ project, slug }: ProjectPageProps) {
           </div>
         </section>
       </main>
-
-      <Footer />
     </div>
   )
 }

@@ -123,7 +123,50 @@ async function authMiddleware(req: NextRequest) {
 
 export default async function middleware(request: NextRequest): Promise<NextResponse> {
   const pathname = request.nextUrl.pathname || '';
+  // Log path and referer for easier tracing of how requests are generated
   console.log('[middleware] request path:', pathname);
+  console.log('[middleware] referer:', request.headers.get('referer') || 'none');
+  console.log('[middleware] user-agent:', request.headers.get('user-agent') || 'none');
+
+  // Detect accidental concatenated paths like `/about/products` or `/contact/projects`
+  // which commonly happen when a relative link (e.g., `href="products"`) is
+  // clicked from another top-level page. If we detect two consecutive top-level
+  // route names, redirect to the normalized path (e.g., `/products...`) to
+  // reduce noisy 404s and provide a better UX.
+  try {
+    const rawSegments = pathname.split('/').filter(Boolean);
+    if (rawSegments.length >= 2) {
+      const [first, second, ...rest] = rawSegments;
+      const TOP_ROUTES = new Set([
+        'home', 'about', 'products', 'projects', 'services', 'contact', 'admin', 'privacy-policy', 'terms', 'terms-of-service'
+      ]);
+
+      if (TOP_ROUTES.has(first) && TOP_ROUTES.has(second)) {
+        // Determine whether to preserve a locale prefix based on referer
+        let prefix = '';
+        const referer = request.headers.get('referer');
+        if (referer) {
+          try {
+            const r = new URL(referer);
+            const maybeLocale = r.pathname.split('/').filter(Boolean)[0];
+            if (maybeLocale && ['en', 'ar'].includes(maybeLocale)) {
+              prefix = `/${maybeLocale}`;
+            }
+          } catch (err) {
+            // ignore malformed referer
+          }
+        }
+
+        const finalPath = `${prefix}/${[second, ...rest].join('/')}`;
+        console.log('[middleware] Detected concatenated path, redirecting', pathname, '->', finalPath);
+        const url = request.nextUrl.clone();
+        url.pathname = finalPath;
+        return NextResponse.redirect(url);
+      }
+    }
+  } catch (err) {
+    console.warn('[middleware] concatenated path normalization failed:', err);
+  }
 
   // If this is an admin path, run the auth middleware (if envs exist) and
   // skip the i18n middleware to avoid next-intl redirecting admin routes to

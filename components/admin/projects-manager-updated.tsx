@@ -146,7 +146,7 @@ export function ProjectsManager() {
             <p className="text-sm text-muted-foreground">Manage your portfolio of completed projects.</p>
           </div>
           <div className="flex items-center gap-4">
-            <Button variant="outline" size="sm" onClick={() => document.body.classList.toggle('dark')} className="bg-background/80 backdrop-blur-sm border-border/50 hover:bg-accent hover:text-accent-foreground transition-all duration-200">
+            <Button variant="outline" size="sm" onClick={() => document.body.classList.toggle('dark')} className="bg-background/80 backdrop-blur-sm border-border/50 hover:bg-accent hover:text-gold-600 transition-all duration-200">
               {isClient && document.body.classList.contains('dark') ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
             </Button>
             <Button onClick={() => handleOpenForm()} className="bg-accent text-accent-foreground hover:bg-accent/90 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"><Plus className="h-4 w-4 mr-2" />Add Project</Button>
@@ -179,7 +179,7 @@ export function ProjectsManager() {
                 <p className="text-sm text-muted-foreground line-clamp-3 flex-grow break-words">{project.description}</p>
                 <div className="space-y-3 pt-4 mt-4 border-t border-border/50">
                   <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2"><Badge className={cn("capitalize self-start", statusConfig[project.status]?.color)} style={{ color: statusConfig[project.status]?.textColor }}>{project.status}</Badge><p className="text-xs text-muted-foreground break-words">Location: {project.location}</p></div>
-                  <div className="flex flex-col sm:flex-row gap-2 pt-2"><Button size="sm" variant="outline" className="flex-1 hover:bg-accent hover:text-accent-foreground transition-all duration-200" onClick={(e) => { e.stopPropagation(); handleOpenForm(project) }}><Edit className="h-4 w-4 mr-2" />Edit</Button><Button size="sm" variant="destructive" className="flex-1 hover:scale-105 transition-all duration-200" onClick={(e) => { e.stopPropagation(); handleDeleteProject(project.id)}}><Trash2 className="h-4 w-4 mr-2" />Delete</Button></div>
+                  <div className="flex flex-col sm:flex-row gap-2 pt-2"><Button size="sm" variant="outline" className="flex-1 hover:bg-accent hover:text-gold-600 transition-all duration-200" onClick={(e) => { e.stopPropagation(); handleOpenForm(project) }}><Edit className="h-4 w-4 mr-2" />Edit</Button><Button size="sm" variant="destructive" className="flex-1 hover:scale-105 transition-all duration-200" onClick={(e) => { e.stopPropagation(); handleDeleteProject(project.id)}}><Trash2 className="h-4 w-4 mr-2" />Delete</Button></div>
                 </div>
               </CardContent>
             </Card>

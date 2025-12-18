@@ -4,7 +4,6 @@ import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
 import { getSafeLocale } from '@/lib/locale-utils';
 import { Button } from "@/components/ui/button"
-import Footer from "@/components/footer"
 import { Navigation } from "@/components/navigation"
 import { StoneCard } from "@/components/ui/stone-card"
 import { PageTransition } from "@/components/ui/page-transition"

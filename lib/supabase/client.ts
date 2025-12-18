@@ -32,8 +32,15 @@ export async function signInWithPassword(email: string, password: string) {
 
     const result = await response.json()
     return result
-  } catch (error) {
+  } catch (error: unknown) {
+    // Provide a clearer message if the fetch failed due to missing local
+    // auth endpoint (e.g., Netlify functions not running) or network issues.
     console.error('Sign in error:', error)
+    if (error && typeof error === 'object' && 'message' in error && typeof error.message === 'string' && /fetch failed|network|Failed to fetch/i.test(error.message)) {
+      throw new Error(
+        'Unable to contact the authentication backend. If you are running locally, ensure Netlify functions or your auth proxy is available, or perform server-side login from the admin page.'
+      )
+    }
     throw error
   }
 }

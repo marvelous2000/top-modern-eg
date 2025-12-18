@@ -3,6 +3,7 @@ export interface SiteSettings {
     main: string
     footer: string
     admin: string
+    background: string
   }
   contact: {
     phone1: string
@@ -28,6 +29,7 @@ export const defaultSettings: SiteSettings = {
     main: "/top-modern-logo-gold.png",
     footer: "/top-modern-logo-gold.png",
     admin: "/top-modern-logo-gold.png",
+    background: "/adminbackground.jpg",
   },
   contact: {
     phone1: "+20 123 456 7890",

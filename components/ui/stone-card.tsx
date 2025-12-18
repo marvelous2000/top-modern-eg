@@ -4,6 +4,7 @@ import { motion } from "framer-motion"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
+import { usePathname } from 'next/navigation'
 import { ArrowRight } from "lucide-react"
 import { useTranslations } from "next-intl";
 
@@ -58,10 +59,36 @@ const overlayVariants = {
 
 export function StoneCard({ image, title, description, href, badge }: StoneCardProps) {
   const t = useTranslations('stoneCard');
+  const pathname = usePathname();
+  const LOCALES = ['en', 'ar'];
+
+  // Normalize hrefs to avoid relative-link navigation (e.g., clicking "projects" from /contact -> /contact/projects)
+  const normalizeHref = (raw?: string) => {
+    if (!raw) return raw;
+    // Pass-through external links and special schemes
+    if (raw.startsWith('http') || raw.startsWith('mailto:') || raw.startsWith('tel:') || raw.startsWith('#')) return raw;
+
+    // Ensure it starts with '/'
+    let candidate = raw.startsWith('/') ? raw : `/${raw}`;
+
+    // If already locale-prefixed (/en/... or /ar/...), keep as-is
+    const parts = candidate.split('/');
+    if (parts[1] && LOCALES.includes(parts[1])) return candidate;
+
+    // Otherwise, try to prefix with current pathname locale if available
+    const currentLocale = pathname ? pathname.split('/')[1] : undefined;
+    if (currentLocale && LOCALES.includes(currentLocale)) {
+      return `/${currentLocale}${candidate}`;
+    }
+
+    return candidate;
+  };
+
+  const safeHref = normalizeHref(href);
 
   return (
     <motion.div initial="rest" whileHover="hover" animate="rest" variants={cardVariants}>
-      <Card className="group overflow-hidden border-border bg-card transition-shadow hover:shadow-xl hover:shadow-accent/20">
+      <Card className="group overflow-hidden border-border bg-card transition-shadow">
         <div className="relative aspect-[4/3] overflow-hidden bg-muted">
           <motion.img
             src={image || "/placeholder.svg"}
@@ -79,7 +106,7 @@ export function StoneCard({ image, title, description, href, badge }: StoneCardP
             className="absolute inset-0 flex items-center justify-center bg-primary/90"
           >
             {href ? (
-              <Link href={href} className="text-center text-primary-foreground hover:text-primary-foreground/80 transition-colors">
+                <Link href={safeHref!} className="text-center text-primary-foreground hover:text-gold-600 transition-colors">
                 <p className="text-sm font-medium">{t('view_details')}</p>
                 <ArrowRight className="mx-auto mt-2 h-5 w-5" />
               </Link>
@@ -96,8 +123,8 @@ export function StoneCard({ image, title, description, href, badge }: StoneCardP
           <p className="mt-2 text-sm leading-relaxed text-card-foreground/70 line-clamp-3">{description}</p>
           {href && (
             <div className="mt-4 flex justify-center">
-              <Button asChild variant="link" className="p-0 text-accent hover:text-accent/80">
-                <Link href={href}>
+              <Button asChild variant="link" className="p-0 text-accent hover:text-gold-600">
+                <Link href={safeHref!}>
                   {t('learn_more')}
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>

@@ -15,7 +15,8 @@ import { Label } from "@/components/ui/label";
 import { login } from "./actions";
 import Link from "next/link";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { SiteSettings, defaultSettings } from "@/lib/types";
 
 // This page is a client component. Dynamic rendering is controlled by server wrapper components.
 
@@ -23,6 +24,20 @@ export default function AdminLoginPage() {
   const router = useRouter();
   const [state, setState] = useState<{ message: string } | null>(null);
   const [pending, setPending] = useState(false);
+  const [settings, setSettings] = useState<SiteSettings>(defaultSettings);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const savedSettings = localStorage.getItem("siteSettings");
+      if (savedSettings) {
+        try {
+          setSettings(JSON.parse(savedSettings));
+        } catch (error) {
+          console.error("Error loading settings:", error);
+        }
+      }
+    }
+  }, []);
 
   const handleSubmit = async (formData: FormData) => {
     setPending(true);
@@ -39,7 +54,7 @@ export default function AdminLoginPage() {
     <div
       className="min-h-screen flex relative overflow-hidden"
       style={{
-        backgroundImage: 'url("/adminbackground.jpg")',
+        backgroundImage: `url("${settings.logo.background || '/adminbackground.jpg'}")`,
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
