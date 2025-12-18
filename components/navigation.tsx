@@ -1,5 +1,6 @@
 'use client';
 import { usePathname, useRouter } from '@/i18n/navigation';
+import Link from 'next/link';
 import { useLocale, useTranslations } from 'next-intl';
 import { useTheme } from 'next-themes';
 import { useState, useEffect } from 'react';
@@ -24,15 +25,16 @@ export default function Navigation() {
   };
 
   const isActive = (href: string) => {
-    // Safely get the pathname, defaulting to empty string if undefined/null
-    const currentPath = typeof pathname === 'string' ? pathname : '';
-
-    // Exact match for home page
-    if (href === '/') {
-      return currentPath === '/';
+    // Handle the case where pathname might not be a string initially
+    if (typeof pathname !== 'string') {
+      return false;
     }
-    // Check if the current path starts with the link's href for other pages
-    return currentPath.startsWith(href);
+    
+    if (href === '/') {
+      return pathname === '/';
+    }
+    
+    return pathname.startsWith(href);
   };
 
   const navLinks = [
@@ -48,7 +50,7 @@ export default function Navigation() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           <div className="flex items-center">
-            <Button variant="link" onClick={() => router.push('/')} className="flex items-center">
+            <Link href="/" className="flex items-center">
               <div className="h-16 w-auto">
                 <img
                   src="/top-modern-logo-primary.png"
@@ -56,22 +58,21 @@ export default function Navigation() {
                   className="h-full w-auto"
                 />
               </div>
-            </Button>
+            </Link>
           </div>
 
           <div className="hidden md:flex items-center gap-8">
             {navLinks.map((link) => (
-              <Button
+              <Link
                 key={link.href}
-                variant="link"
-                onClick={() => router.push(link.href)}
+                href={link.href}
                 className={cn(
                   "text-white/90 transition-colors relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-gold-500 after:transition-all after:duration-300 hover:after:w-full",
                   isActive(link.href) ? "text-gold-500 after:w-full" : "hover:text-gold-600"
                 )}
               >
                 {link.label}
-              </Button>
+              </Link>
             ))}
           </div>
 
@@ -97,30 +98,28 @@ export default function Navigation() {
               size="icon"
               className="md:hidden text-white hover:bg-white/10 hover:text-gold-600"
               onClick={() => setIsOpen(!isOpen)}
+              aria-controls="mobile-menu"
+              aria-expanded={isOpen}
             >
               {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </Button>
           </div>
         </div>
 
-        <div className={`md:hidden overflow-hidden transition-all duration-300 ${isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}>
+        <div id="mobile-menu" className={`md:hidden overflow-hidden transition-all duration-300 ${isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}>
           <div className="px-4 py-4 space-y-4">
             {navLinks.map((link) => (
-              <Button
+              <Link
                 key={link.href}
-                variant="link"
-                onClick={() => {
-                  router.push(link.href);
-
-                  setIsOpen(false);
-                }}
+                href={link.href}
+                onClick={() => setIsOpen(false)}
                 className={cn(
                   "block transition-colors",
                   isActive(link.href) ? 'text-gold-500' : 'text-white/90 hover:text-gold-600'
                 )}
               >
                 {link.label}
-              </Button>
+              </Link>
             ))}
           </div>
         </div>
