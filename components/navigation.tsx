@@ -26,10 +26,10 @@ export default function Navigation() {
   const isActive = (href: string) => {
     // Exact match for home page
     if (href === '/') {
-      return pathname === '/';
+      return (typeof pathname === 'string' ? pathname : '') === '/';
     }
     // Check if the current path starts with the link's href for other pages
-    return pathname.startsWith(href);
+    return (typeof pathname === 'string' ? pathname : '').startsWith(href);
   };
 
   const navLinks = [
