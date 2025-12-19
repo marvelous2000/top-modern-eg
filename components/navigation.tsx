@@ -25,16 +25,18 @@ export default function Navigation() {
   };
 
   const isActive = (href: string) => {
-    // Handle the case where pathname might not be a string initially
-    if (typeof pathname !== 'string') {
+    // Convert pathname to string safely - this is the key fix
+    const currentPath = pathname ? String(pathname) : '';
+    
+    if (!currentPath) {
       return false;
     }
     
     if (href === '/') {
-      return pathname === '/';
+      return currentPath === '/';
     }
     
-    return pathname.startsWith(href);
+    return currentPath.startsWith(href);
   };
 
   const navLinks = [
