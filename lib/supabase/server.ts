@@ -3,6 +3,8 @@ import { cookies } from 'next/headers'
 import fs from 'fs'
 import path from 'path'
 
+export const runtime = "nodejs"
+
 export async function createSupabaseServerClient() {
   const cookieStore = cookies()
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
