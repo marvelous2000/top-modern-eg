@@ -11,7 +11,13 @@
  *   command = "pnpm build && node scripts/setup-netlify-db.js"
  */
 
-require("dotenv").config()
+try {
+  // dotenv is optional in production builds (Netlify provides env vars via project settings).
+  // Wrap in try/catch so the script doesn't crash if dotenv isn't installed in a production environment.
+  require("dotenv").config()
+} catch (err) {
+  // dotenv not present — continue and rely on environment variables provided by the host
+}
 
 const { createClient } = require("@supabase/supabase-js")
 const fs = require("fs")

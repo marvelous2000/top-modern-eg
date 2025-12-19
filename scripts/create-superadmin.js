@@ -11,7 +11,11 @@
  *   - Never commit the service role key. Keep it secret.
  */
 
-require("dotenv").config({ path: ".env.local" })
+try {
+  require("dotenv").config({ path: ".env.local" })
+} catch (err) {
+  // dotenv not available locally — assume environment variables are present in shell
+}
 
 const { createClient } = require("@supabase/supabase-js")
 

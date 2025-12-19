@@ -12,6 +12,16 @@ BEGIN
 END;
 $$;
 
+-- Backwards-compatible RPC name used by setup scripts
+CREATE OR REPLACE FUNCTION exec_sql(sql_query text)
+RETURNS void
+LANGUAGE plpgsql
+AS $$
+BEGIN
+  EXECUTE sql_query;
+END;
+$$;
+
 -- Enable UUID extension
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
