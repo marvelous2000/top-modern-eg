@@ -67,7 +67,8 @@
     "react-hook-form": "7.51.4",
     "@supabase/auth-js": "^2.0.0",
     "@supabase/functions-js": "^2.0.0",
-    "@supabase/postgrest-js": "^1.0.0"
+    "@supabase/postgrest-js": "^1.0.0",
+    "@supabase/storage-js": "^2.0.0"
   },
   "devDependencies": {
     "dotenv": "^17.2.3",
