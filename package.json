@@ -68,7 +68,8 @@
     "@supabase/auth-js": "^2.0.0",
     "@supabase/functions-js": "^2.0.0",
     "@supabase/postgrest-js": "^1.0.0",
-    "@supabase/storage-js": "^2.0.0"
+    "@supabase/storage-js": "^2.0.0",
+    "@supabase/realtime-js": "^2.8.0"
   },
   "devDependencies": {
     "dotenv": "^17.2.3",
