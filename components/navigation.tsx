@@ -69,8 +69,8 @@ export default function Navigation() {
                 key={link.href}
                 href={link.href}
                 className={cn(
-                  "text-white/90 transition-colors relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-gold-500 after:transition-all after:duration-300 hover:after:w-full",
-                  isActive(link.href) ? "text-gold-500 after:w-full" : "hover:text-gold-600"
+                  "text-white/90 transition-colors relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-accent after:transition-all after:duration-300 hover:after:w-full",
+                  isActive(link.href) ? "text-accent after:w-full" : "hover:text-accent"
                 )}
               >
                 {link.label}
@@ -82,7 +82,7 @@ export default function Navigation() {
             <Button
               variant="ghost"
               size="icon"
-              className="text-white hover:bg-white/10 hover:text-gold-600"
+              className="text-white hover:bg-white/10 hover:text-accent"
               onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}
             >
               {mounted ? (theme === 'light' ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />) : <Sun className="h-5 w-5" />}
@@ -98,7 +98,7 @@ export default function Navigation() {
             <Button
               variant="ghost"
               size="icon"
-              className="md:hidden text-white hover:bg-white/10 hover:text-gold-600"
+              className="md:hidden text-white hover:bg-white/10 hover:text-accent"
               onClick={() => setIsOpen(!isOpen)}
               aria-controls="mobile-menu"
               aria-expanded={isOpen}
@@ -117,7 +117,7 @@ export default function Navigation() {
                 onClick={() => setIsOpen(false)}
                 className={cn(
                   "block transition-colors",
-                  isActive(link.href) ? 'text-gold-500' : 'text-white/90 hover:text-gold-600'
+                  isActive(link.href) ? 'text-accent' : 'text-white/90 hover:text-accent'
                 )}
               >
                 {link.label}

@@ -115,6 +115,27 @@ async function authMiddleware(req: NextRequest) {
         return NextResponse.redirect(url);
       }
     }
+
+    // --- Inactivity / Idle Timeout Enforcement ---
+    // If the user has been inactive for more than 5 minutes, force a logout
+    try {
+      const lastActivity = req.cookies.get('tm_last_activity')?.value;
+      if (lastActivity) {
+        const last = Number.parseInt(lastActivity, 10);
+        if (!Number.isNaN(last) && Date.now() - last > 5 * 60 * 1000) {
+          console.log('[authMiddleware] session expired due to inactivity, redirecting to login');
+          const redirectUrl = req.nextUrl.clone();
+          redirectUrl.pathname = '/admin/login';
+          redirectUrl.searchParams.set('expired', '1');
+          const res = NextResponse.redirect(redirectUrl);
+          // clear the last activity cookie
+          res.cookies.set('tm_last_activity', '', { maxAge: 0, path: '/' });
+          return res;
+        }
+      }
+    } catch (err) {
+      console.warn('[authMiddleware] failed to enforce inactivity timeout:', err);
+    }
   }
 
   return NextResponse.next();

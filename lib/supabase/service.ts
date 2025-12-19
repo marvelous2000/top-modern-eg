@@ -5,7 +5,25 @@ export function createSupabaseServiceClient() {
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
   if (!url || !serviceRoleKey) {
-    throw new Error("Missing Supabase service role configuration")
+    // Return a mock client that throws network errors for all operations
+    // This prevents the app from crashing when env vars are missing
+    return {
+      from: () => ({
+        select: () => Promise.reject(new Error("Network error: Supabase configuration missing")),
+        insert: () => Promise.reject(new Error("Network error: Supabase configuration missing")),
+        update: () => Promise.reject(new Error("Network error: Supabase configuration missing")),
+        delete: () => Promise.reject(new Error("Network error: Supabase configuration missing")),
+        eq: () => ({
+          select: () => Promise.reject(new Error("Network error: Supabase configuration missing")),
+          update: () => Promise.reject(new Error("Network error: Supabase configuration missing")),
+          delete: () => Promise.reject(new Error("Network error: Supabase configuration missing")),
+        }),
+        maybeSingle: () => Promise.reject(new Error("Network error: Supabase configuration missing")),
+      }),
+      auth: {
+        getUser: () => Promise.reject(new Error("Network error: Supabase configuration missing")),
+      },
+    } as any
   }
 
   return createClient(url, serviceRoleKey, {

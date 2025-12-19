@@ -7,8 +7,8 @@ import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts"
 import { Calendar, FileText, MessageSquare, Users, Eye, TrendingUp, Package, Briefcase, Clock, RefreshCw } from "lucide-react"
-import { getProducts } from "@/lib/actions/products"
-import { getProjects } from "@/lib/actions/projects"
+import { getProducts, Product } from "@/lib/actions/products"
+import { getProjects, Project } from "@/lib/actions/projects"
 
 interface ActivityItem {
   id: string
@@ -65,12 +65,12 @@ export function DashboardOverview() {
       ])
 
       if (productsResult.success) {
-        const activeProducts = productsResult.data.filter(p => p.status === "active")
+        const activeProducts = productsResult.data.filter((p: Product) => p.status === "active")
         setPublishedProducts(activeProducts.length)
       }
 
       if (projectsResult.success) {
-        const activeProjects = projectsResult.data.filter(p => p.status === "active")
+        const activeProjects = projectsResult.data.filter((p: Project) => p.status === "active")
         setPublishedProjects(activeProjects.length)
       }
 

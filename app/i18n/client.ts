@@ -2,6 +2,8 @@
 
 import { useTranslations as useTranslationsOriginal } from 'next-intl';
 
-export function useTranslation(...args: Parameters<typeof useTranslationsOriginal>) {
-  return useTranslationsOriginal(...args);
+export function useTranslation<TNamespace extends Parameters<typeof useTranslationsOriginal>[0] | undefined = undefined>(
+  ...args: Parameters<typeof useTranslationsOriginal<TNamespace>>
+) {
+  return useTranslationsOriginal<TNamespace>(...args);
 }

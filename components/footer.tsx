@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useState, useEffect } from "react"
 import { Mail, Phone, MapPin, Facebook, Instagram, MessageCircle } from "lucide-react"
-import { useTranslations } from 'next-intl';
+import { useTranslation } from '@/app/i18n/client';
 import { useParams } from 'next/navigation'; // Added import
 import { getSafeLocale } from '@/lib/locale-utils'; // Added import
 
@@ -13,16 +13,7 @@ export default function Footer() { // Removed isAdmin prop
   const params = useParams(); // Added
   const locale = getSafeLocale(params.locale); // Added
 
-  const t = useTranslations('footer');
-
-  const safeT = (key: string, fallback = key) => {
-    try {
-      return t(key);
-    } catch (e) {
-      console.warn(`[Footer] Missing translation: footer.${key}`, e);
-      return fallback;
-    }
-  };
+  const t = useTranslation('footer');
 
   const [settings, setSettings] = useState<SiteSettings>(defaultSettings)
   const currentYear = new Date().getFullYear()
@@ -72,46 +63,46 @@ export default function Footer() { // Removed isAdmin prop
           <div className="space-y-4">
             <img src={settings.logo.main} alt="Top Modern" className="h-16 w-auto" />
             <p className="text-sm leading-relaxed text-white/70">
-              {safeT('company_description', settings.company.description)}
+              {t('company_description', { defaultValue: settings.company.description })}
             </p>
           </div>
 
           {/* Quick Links */}
           <div className="space-y-4">
-            <h4 className="font-medium text-white">{safeT('quick_links')}</h4>
+            <h4 className="font-medium text-white">{t('quick_links')}</h4>
             <nav className="flex flex-col gap-2">
-              <Link href={`/${locale}`} className="text-sm text-white/70 transition-colors relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-gold-500 after:transition-all after:duration-300 hover:after:w-full hover:text-gold-600">
-                {safeT('home')}
+              <Link href={`/${locale}`} className="text-sm text-white/70 transition-colors hover:text-gold-600">
+                <span className="relative inline-block after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-gold-500 after:transition-all after:duration-300 hover:after:w-full">{t('home')}</span>
               </Link>
-              <Link href={`/${locale}/products`} className="text-sm text-white/70 transition-colors relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-gold-500 after:transition-all after:duration-300 hover:after:w-full hover:text-gold-600">
-                {safeT('products')}
+              <Link href={`/${locale}/products`} className="text-sm text-white/70 transition-colors hover:text-gold-600">
+                <span className="relative inline-block after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-gold-500 after:transition-all after:duration-300 hover:after:w-full">{t('products')}</span>
               </Link>
-              <Link href={`/${locale}/projects`} className="text-sm text-white/70 transition-colors relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-gold-500 after:transition-all after:duration-300 hover:after:w-full hover:text-gold-600">
-                {safeT('projects')}
+              <Link href={`/${locale}/projects`} className="text-sm text-white/70 transition-colors hover:text-gold-600">
+                <span className="relative inline-block after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-gold-500 after:transition-all after:duration-300 hover:after:w-full">{t('projects')}</span>
               </Link>
-              <Link href={`/${locale}/about`} className="text-sm text-white/70 transition-colors relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-gold-500 after:transition-all after:duration-300 hover:after:w-full hover:text-gold-600">
-                {safeT('about')}
+              <Link href={`/${locale}/about`} className="text-sm text-white/70 transition-colors hover:text-gold-600">
+                <span className="relative inline-block after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-gold-500 after:transition-all after:duration-300 hover:after:w-full">{t('about')}</span>
               </Link>
             </nav>
           </div>
 
           {/* Contact Info */}
           <div className="space-y-4">
-            <h4 className="font-medium text-white">{safeT('contact')}</h4>
+            <h4 className="font-medium text-white">{t('contact')}</h4>
             <div className="flex flex-col gap-3">
               <a
                 href={`tel:${settings.contact.phone1}`}
-                className="flex items-center gap-2 text-sm text-white/70 transition-colors relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-gold-500 after:transition-all after:duration-300 hover:after:w-full hover:text-gold-600"
+                className="flex items-center gap-2 text-sm text-white/70 transition-colors hover:text-gold-600"
               >
                 {isValidIcon(Phone) ? <Phone className="h-4 w-4" /> : <span className="h-4 w-4 inline-block" />}
-                <span>{settings.contact.phone1}</span>
+                <span className="relative inline-block after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-gold-500 after:transition-all after:duration-300 hover:after:w-full">{settings.contact.phone1}</span>
               </a>
               <a
                 href={`mailto:${settings.contact.email1}`}
-                className="flex items-center gap-2 text-sm text-white/70 transition-colors relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-gold-500 after:transition-all after:duration-300 hover:after:w-full hover:text-gold-600"
+                className="flex items-center gap-2 text-sm text-white/70 transition-colors hover:text-gold-600"
               >
                 {isValidIcon(Mail) ? <Mail className="h-4 w-4" /> : <span className="h-4 w-4 inline-block" />}
-                <span>{settings.contact.email1}</span>
+                <span className="relative inline-block after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-gold-500 after:transition-all after:duration-300 hover:after:w-full">{settings.contact.email1}</span>
               </a>
               <div className="flex items-start gap-2 text-sm text-white/70">
                 {isValidIcon(MapPin) ? <MapPin className="h-4 w-4 mt-0.5" /> : <span className="h-4 w-4 inline-block mt-0.5" />}
@@ -122,11 +113,11 @@ export default function Footer() { // Removed isAdmin prop
 
           {/* Business Hours */}
           <div className="space-y-4">
-            <h4 className="font-medium text-white">{safeT('business_hours')}</h4>
+            <h4 className="font-medium text-white">{t('business_hours')}</h4>
             <div className="space-y-2 text-sm text-white/70">
-              <p>{safeT('monday_friday')}</p>
-              <p>{safeT('saturday')}</p>
-              <p>{safeT('sunday')}</p>
+              <p>{t('monday_friday')}</p>
+              <p>{t('saturday')}</p>
+              <p>{t('sunday')}</p>
             </div>
           </div>
         </div>
@@ -162,22 +153,22 @@ export default function Footer() { // Removed isAdmin prop
                   href={`https://wa.me/${settings.contact.whatsapp.replace(/\D/g, '')}?text=Hello!%20I'm%20interested%20in%20your%20marble%20and%20granite%20services.`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 text-white/70 hover:text-gold-600 transition-colors relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-gold-500 after:transition-all after:duration-300 hover:after:w-full"
-                  aria-label={safeT('connect_whatsapp_aria', 'Connect on WhatsApp')}
+                  className="flex items-center gap-2 text-white/70 hover:text-gold-600 transition-colors"
+                  aria-label={t('connect_whatsapp_aria', { defaultValue: 'Connect on WhatsApp' })}
                 >
                     {isValidIcon(MessageCircle) ? <MessageCircle className="h-5 w-5" /> : <span className="h-5 w-5 inline-block" />}
-                  <span className="text-sm">{safeT('connect_whatsapp', 'Connect on WhatsApp')}</span>
+                  <span className="text-sm relative inline-block after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-gold-500 after:transition-all after:duration-300 hover:after:w-full">{t('connect_whatsapp', { defaultValue: 'Connect on WhatsApp' })}</span>
                 </a>
               )}
             </div>
             <div className="flex flex-col items-center gap-4 md:flex-row md:gap-6">
-              <p className="text-sm text-white/70">© {currentYear} {settings.company.name}. {safeT('all_rights_reserved', 'All rights reserved.')}</p>
+              <p className="text-sm text-white/70">© {currentYear} {settings.company.name}. {t('all_rights_reserved', { defaultValue: 'All rights reserved.' })}</p>
               <div className="flex gap-6">
-                <Link href={`/${locale}/privacy-policy`} className="text-sm text-white/70 transition-colors relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-gold-500 after:transition-all after:duration-300 hover:after:w-full hover:text-gold-600">
-                  {safeT('privacy_policy')}
+                <Link href={`/${locale}/privacy-policy`} className="text-sm text-white/70 transition-colors hover:text-gold-600">
+                  <span className="relative inline-block after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-gold-500 after:transition-all after:duration-300 hover:after:w-full">{t('privacy_policy')}</span>
                 </Link>
-                <Link href={`/${locale}/terms`} className="text-sm text-white/70 transition-colors relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-gold-500 after:transition-all after:duration-300 hover:after:w-full hover:text-gold-600">
-                  {safeT('terms_of_service')}
+                <Link href={`/${locale}/terms`} className="text-sm text-white/70 transition-colors hover:text-gold-600">
+                  <span className="relative inline-block after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-gold-500 after:transition-all after:duration-300 hover:after:w-full">{t('terms_of_service')}</span>
                 </Link>
               </div>
             </div>

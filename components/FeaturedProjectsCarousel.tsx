@@ -11,15 +11,16 @@ import {
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-  useCarousel,
 } from "@/components/ui/carousel"
 import type { CarouselApi } from '@/components/ui/carousel'
-import { getFeaturedProjects } from "@/lib/actions/projects" // Will create this
-import type { Project } from "@/lib/actions/projects" // Assuming Project type is here
+import { getFeaturedProjects } from "@/lib/actions/projects"
+import type { Project } from "@/lib/actions/projects"
 import { Button } from "@/components/ui/button"
-import { ArrowRight } from "lucide-react"
+import { ArrowRight, MapPin, Calendar, User } from "lucide-react"
+import { useTranslations } from "next-intl"
 
 export function FeaturedProjectsCarousel() {
+  const t = useTranslations('home')
   const [featuredProjects, setFeaturedProjects] = useState<Project[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -29,7 +30,7 @@ export function FeaturedProjectsCarousel() {
   useEffect(() => {
     const fetchFeatured = async () => {
       try {
-        const result = await getFeaturedProjects() // Fetch featured projects
+        const result = await getFeaturedProjects()
         if (result.success && result.data) {
           setFeaturedProjects(result.data)
         } else {
@@ -45,28 +46,18 @@ export function FeaturedProjectsCarousel() {
     fetchFeatured()
   }, [])
 
-  // Listen for carousel select events when API is available
   useEffect(() => {
     if (!api) return
-
     const onSelect = () => setCurrentProjectIndex(api.selectedScrollSnap())
-
-    // initialize
-    setCurrentProjectIndex(api.selectedScrollSnap())
     api.on('select', onSelect)
-
     return () => {
-      try {
-        api.off('select', onSelect)
-      } catch (err) {
-        console.warn('Failed to remove carousel select listener', err)
-      }
+      api.off('select', onSelect)
     }
   }, [api])
 
   if (loading) {
     return (
-      <section className="py-20 relative bg-gray-900 text-white">
+      <section className="py-20 relative bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 text-center">
           <p className="text-xl">Loading featured projects...</p>
         </div>
@@ -76,7 +67,7 @@ export function FeaturedProjectsCarousel() {
 
   if (error) {
     return (
-      <section className="py-20 relative bg-gray-900 text-white">
+      <section className="py-20 relative bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 text-center">
           <p className="text-xl text-red-500">{error}</p>
         </div>
@@ -86,95 +77,85 @@ export function FeaturedProjectsCarousel() {
 
   if (featuredProjects.length === 0) {
     return (
-      <section className="py-20 relative bg-gray-900 text-white">
+      <section className="py-20 relative bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 text-center">
-          <p className="text-xl">No featured projects available at the moment.</p>
+          <p className="text-xl">No featured projects available.</p>
         </div>
       </section>
     )
   }
 
-  const currentProject = featuredProjects[currentProjectIndex];
-
   return (
-    <section className="relative w-full h-[600px] md:h-[700px] lg:h-[800px] overflow-hidden bg-black">
-      {/* Background Image Carousel */}
-      <Carousel
-        className="w-full h-full"
-        opts={{ loop: true }}
-        setApi={setApi}
-      >
-        <CarouselContent className="h-full">
-          {featuredProjects.map((project, index) => (
-            <CarouselItem key={project.id || index} className="h-full">
-              <div className="relative h-full w-full">
-                <Image
-                  src={project.images?.[0] || "/placeholder.svg"}
-                  alt={project.title}
-                  fill
-                  priority={index === 0} // Prioritize loading the first image
-                  className="object-cover transition-opacity duration-1000 ease-in-out"
-                  style={{ opacity: index === currentProjectIndex ? 1 : 0.5 }} // Dim non-active images
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
-              </div>
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-        {/* Navigation buttons can be placed here if desired */}
-      </Carousel>
-
-      {/* Project Details Overlay */}
-      <div className="absolute inset-0 flex items-center justify-center p-4">
-        <div className="relative z-20 text-center text-white max-w-3xl mx-auto space-y-6">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={currentProject.id} // Key to enable AnimatePresence transitions
-              initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -50 }}
-              transition={{ duration: 0.5 }}
-            >
-              <span className="text-sm uppercase tracking-widest text-gold-500 mb-2 block">
-                Featured Project
-              </span>
-              <h2 className="text-4xl md:text-6xl font-bold font-serif mb-4 leading-tight">
-                {currentProject.title}
-              </h2>
-              <p className="text-lg md:text-xl text-white/80 mb-6 line-clamp-3">
-                {currentProject.description}
-              </p>
-              <Link href={`/projects/${currentProject.slug || currentProject.id}`} passHref>
-                <Button size="lg" className="btn btn-primary">
-                  View Project <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
-              </Link>
-            </motion.div>
-          </AnimatePresence>
+    <section className="py-20 bg-gray-50">
+      <div className="max-w-7xl mx-auto px-4">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            {t("featured_projects_title")}
+          </h2>
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            {t("featured_projects_description")}
+          </p>
         </div>
-      </div>
 
-      {/* Dot Navigation */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex space-x-2 z-20">
-        {featuredProjects.map((_, index) => (
-          <button
-            key={index}
-            className={`h-2 w-2 rounded-full transition-all duration-300 ${
-              index === currentProjectIndex ? "bg-gold-500 w-6" : "bg-white/50 hover:bg-white/80"
-            }`}
-            onClick={() => {
-              setCurrentProjectIndex(index)
-              if (api && typeof api.scrollTo === 'function') {
-                try {
-                  api.scrollTo(index)
-                } catch (err) {
-                  console.warn('Failed to scroll carousel to index', err)
-                }
-              }
+        <div className="relative group max-w-4xl mx-auto">
+          <Carousel
+            className="w-full"
+            opts={{
+              loop: true,
+              align: "center"
             }}
-            aria-label={`Go to project ${index + 1}`}
-          />
-        ))}
+            setApi={setApi}
+          >
+            <CarouselContent>
+              {featuredProjects.map((project, index) => (
+                <CarouselItem key={project.id || index} className="flex justify-center">
+                  <div className="bg-white rounded-lg shadow-lg overflow-hidden max-w-md w-full">
+                    {/* Photo Box */}
+                    <div className="relative h-96 bg-gray-100 border-b border-gray-200">
+                       <Image
+                        src={project.images?.[0] || "/placeholder.svg"}
+                        alt={project.title}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+
+                    {/* Details Box */}
+                    <div className="p-6 bg-white">
+                      <h3 className="text-2xl font-bold text-gray-900 mb-2">{project.title}</h3>
+                      <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-gray-600 mb-4">
+                        <div className="flex items-center gap-2">
+                          <MapPin className="h-4 w-4 text-accent" />
+                          <span>{project.location}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Calendar className="h-4 w-4 text-accent" />
+                          <span>{project.year}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <User className="h-4 w-4 text-accent" />
+                          <span>{project.client}</span>
+                        </div>
+                      </div>
+                      <p className="text-gray-700 text-sm line-clamp-2 mb-4">
+                        {project.description}
+                      </p>
+                      <Link href={`/projects/${project.slug || project.id}`} className="inline-block">
+                        <Button className="bg-gold-500 hover:bg-gold-600 text-white">
+                          {t("view_project")}
+                          <ArrowRight className="ml-2 h-4 w-4" />
+                        </Button>
+                      </Link>
+                    </div>
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+
+            <CarouselPrevious className="absolute top-1/2 -translate-y-1/2 left-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white/80 hover:bg-white text-gray-800 h-10 w-10 rounded-full shadow-md" />
+            <CarouselNext className="absolute top-1/2 -translate-y-1/2 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white/80 hover:bg-white text-gray-800 h-10 w-10 rounded-full shadow-md" />
+          </Carousel>
+        </div>
       </div>
     </section>
   )

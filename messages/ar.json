@@ -131,11 +131,6 @@
       "description": "الأداء الحديث يلتقي بالجمال الطبيعي"
     }
   },
-    "cta": {
-      "readyToTransform": "مستعد لتحويل مساحتك؟",
-      "scheduleConsultation": "حدد موعداً للاستشارة مع خبراء الحجر لدينا اليوم",
-      "getStarted": "ابدأ الآن"
-    },
   "about": {
     "title": "من نحن",
     "subtitle": "ثلاثة عقود من التميز في صناعة الحجر الطبيعي",
@@ -513,6 +508,42 @@
     "getStarted": "ابدأ الآن",
     "needHelpChoosing": "تحتاج مساعدة في الاختيار؟",
     "expertsGuide": "خبراؤنا في الحجر هنا لإرشادك خلال عملية الاختيار"
+  },
+  "Projects": {
+    "client_label": "العميل",
+    "materials_label": "المواد",
+    "location_label": "الموقع",
+    "year_label": "السنة",
+    "category_label": "الفئة",
+    "project_details_title": "تفاصيل المشروع",
+    "project_highlights_title": "أبرز المشروع",
+    "our_solution_title": "حلنا",
+    "project_challenge_title": "تحدي المشروع",
+    "project_gallery_title": "معرض المشروع",
+    "client_testimonial_title": "شهادة العميل",
+    "cta_title_project_detail": "مستعد لبدء مشروعك؟",
+    "cta_subtitle_project_detail": "دعونا نحيي رؤيتك بالحجر الطبيعي المتميز",
+    "start_your_project": "ابدأ مشروعك",
+    "call_expert": "اتصل بخبير",
+    "materials_used_title": "المواد المستخدمة",
+    "signature_projects_title": "مشاريعنا المميزة",
+    "signature_projects_subtitle": "استكشف محفظتنا من تركيبات الحجر الاستثنائية.",
+    "filter_by_category": "تصفية حسب الفئة",
+    "all_projects": "جميع المشاريع",
+    "filter_by_location": "تصفية حسب الموقع",
+    "all_locations": "جميع المواقع",
+    "why_choose_us_title": "لماذا تختارنا؟",
+    "why_choose_us_item_1": "30+ عاماً من الخبرة",
+    "why_choose_us_item_2": "حرفيون رئيسيون",
+    "why_choose_us_item_3": "مواد متميزة الجودة",
+    "why_choose_us_item_4": "ضمان رضا 100%",
+    "no_projects_found_heading": "لم يتم العثور على مشاريع",
+    "no_projects_found_text": "لا توجد مشاريع تطابق إعدادات التصفية الحالية.",
+    "cta_title_projects": "مستعد لبدء مشروعك التالي؟",
+    "cta_subtitle_projects": "اتصل بنا اليوم للحصول على استشارة مجانية.",
+    "request_consultation": "طلب استشارة",
+    "email_our_team": "راسل فريقنا",
+    "view_case_study": "عرض دراسة الحالة"
   },
   "terms": {
     "title": "شروط الخدمة",

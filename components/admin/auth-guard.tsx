@@ -98,5 +98,9 @@ export function AuthGuard({ children }: AuthGuardProps) {
     return null
   }
 
-  return <>{children}</>
+  // Track activity only once authorized — avoids creating cookies during login flows
+  // and ensures the auto-logout only applies to authenticated admin users.
+  const AdminActivityTracker = require('./AdminActivityTracker').default
+
+  return <><AdminActivityTracker />{children}</>
 }

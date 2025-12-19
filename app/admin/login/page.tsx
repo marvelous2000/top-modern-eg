@@ -1,7 +1,7 @@
 
 "use client"
 
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   Card,
   CardContent,
@@ -25,6 +25,13 @@ export default function AdminLoginPage() {
   const [state, setState] = useState<{ message: string } | null>(null);
   const [pending, setPending] = useState(false);
   const [settings, setSettings] = useState<SiteSettings>(defaultSettings);
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    if (searchParams?.get('expired') === '1') {
+      setState({ message: 'You were logged out due to inactivity. Please sign in again.' });
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
