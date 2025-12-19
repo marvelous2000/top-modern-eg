@@ -92,6 +92,9 @@ importers:
       '@supabase/auth-js':
         specifier: ^2.0.0
         version: 2.86.2
+      '@supabase/functions-js':
+        specifier: ^2.0.0
+        version: 2.86.2
       '@supabase/ssr':
         specifier: ^0.7.0
         version: 0.7.0(@supabase/supabase-js@2.86.2)
