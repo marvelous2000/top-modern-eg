@@ -47,15 +47,21 @@ CREATE TABLE IF NOT EXISTS profiles (
 CREATE TABLE IF NOT EXISTS products (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   name TEXT NOT NULL,
+  name_ar TEXT,
   category TEXT NOT NULL CHECK (category IN ('marble', 'granite')),
   slug TEXT UNIQUE NOT NULL,
   description TEXT,
+  description_ar TEXT,
   origin TEXT,
+  origin_ar TEXT,
   finish TEXT,
+  finish_ar TEXT,
   thickness TEXT,
-  applications TEXT[], -- Array of application types
+  applications TEXT[] DEFAULT '{}', -- Array of application types
+  applications_ar TEXT[] DEFAULT '{}',
   images TEXT[], -- Array of image URLs
   specifications JSONB DEFAULT '{}', -- Flexible key-value specifications
+  specifications_ar JSONB DEFAULT '{}',
   status TEXT NOT NULL DEFAULT 'draft' CHECK (status IN ('active', 'draft', 'archived')),
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW(),
@@ -69,18 +75,28 @@ CREATE TABLE IF NOT EXISTS products (
 CREATE TABLE IF NOT EXISTS projects (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   title TEXT NOT NULL,
+  title_ar TEXT,
   category TEXT NOT NULL,
+  category_ar TEXT,
   location TEXT,
+  location_ar TEXT,
   year TEXT,
   client TEXT,
+  client_ar TEXT,
   slug TEXT UNIQUE NOT NULL,
   description TEXT,
+  description_ar TEXT,
   challenge TEXT,
+  challenge_ar TEXT,
   solution TEXT,
-  results TEXT[], -- Array of result bullet points
-  materials TEXT[], -- Array of materials used
+  solution_ar TEXT,
+  results TEXT[] DEFAULT '{}', -- Array of result bullet points
+  results_ar TEXT[] DEFAULT '{}',
+  materials TEXT[] DEFAULT '{}', -- Array of materials used
+  materials_ar TEXT[] DEFAULT '{}',
   images TEXT[], -- Array of image URLs
   testimonial JSONB, -- {quote, author, position}
+  testimonial_ar JSONB,
   status TEXT NOT NULL DEFAULT 'draft' CHECK (status IN ('active', 'draft', 'archived')),
   featured BOOLEAN DEFAULT FALSE,
   created_at TIMESTAMPTZ DEFAULT NOW(),

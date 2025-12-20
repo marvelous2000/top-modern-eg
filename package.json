@@ -72,7 +72,8 @@
     "@supabase/storage-js": "^2.0.0",
     "@supabase/realtime-js": "^2.8.0",
     "tslib": "^2.6.2",
-    "ws": "^8.18.3"
+    "ws": "^8.18.3",
+    "iceberg-js": "^1.0.0"
   },
   "devDependencies": {
     "@types/node": "20.2.0",
