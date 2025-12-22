@@ -4,7 +4,6 @@
 import { createClient } from "@supabase/supabase-js";
 import { readFileSync } from 'fs';
 import { join } from 'path';
-import { Client } from 'pg';
 
 // Helper to create Supabase client with service role for server actions
 const createServiceRoleSupabaseClient = () => {
@@ -23,53 +22,46 @@ const createServiceRoleSupabaseClient = () => {
   });
 };
 
-// Helper to create direct PostgreSQL client for schema setup
-const createPgClient = () => {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-  if (!supabaseUrl || !serviceKey) {
-    throw new Error("Missing Supabase environment variables for PostgreSQL client");
-  }
-
-  // Extract database connection details from Supabase URL
-  const url = new URL(supabaseUrl);
-  const host = url.hostname;
-  const port = 5432; // Default PostgreSQL port
-  const database = url.pathname.slice(1); // Remove leading slash
-
-  return new Client({
-    host,
-    port,
-    database,
-    user: 'postgres', // Supabase uses 'postgres' as the user
-    password: serviceKey,
-    ssl: { rejectUnauthorized: false }, // Required for Supabase
-  });
-};
-
 export async function setupDatabaseSchema() {
-  let client: Client | null = null;
   try {
-    // Use direct PostgreSQL client for schema setup
-    client = createPgClient();
-    await client.connect();
+    const supabase = createServiceRoleSupabaseClient();
 
-    // Read the schema SQL file
+    // First, create the exec function directly using a simple SQL statement
+    const createExecFunctionSql = `
+      CREATE OR REPLACE FUNCTION exec(sql_query text)
+      RETURNS void
+      LANGUAGE plpgsql
+      AS $$
+      BEGIN
+        EXECUTE sql_query;
+      END;
+      $$;
+    `;
+
+    // Execute the function creation directly
+    const { error: createFuncError } = await supabase.rpc('exec', { sql_query: createExecFunctionSql });
+
+    if (createFuncError) {
+      // If the function already exists, that's fine - continue
+      console.log("Exec function creation attempted:", createFuncError.message);
+    }
+
+    // Now read the full schema and execute it using the exec function
     const schemaPath = join(process.cwd(), 'scripts', 'supabase-schema.sql');
-    const schemaSql = readFileSync(schemaPath, 'utf8');
+    const fullSchemaSql = readFileSync(schemaPath, 'utf8');
 
-    // Execute the schema SQL directly
-    await client.query(schemaSql);
+    // Execute the full schema using the exec function
+    const { error } = await supabase.rpc('exec', { sql_query: fullSchemaSql });
+
+    if (error) {
+      console.error("Supabase schema setup error:", error);
+      return { success: false, message: `Failed to set up database schema: ${error.message}` };
+    }
 
     return { success: true, message: "Database schema set up successfully" };
   } catch (error: any) {
     console.error("setupDatabaseSchema Server Action error:", error);
-    return { success: false, message: `Failed to set up database schema: ${error.message}` };
-  } finally {
-    if (client) {
-      await client.end();
-    }
+    return { success: false, message: error.message || "An unknown error occurred during database schema setup" };
   }
 }
 
