@@ -50,7 +50,7 @@ export function Header() {
   // const locale = pathname ? pathname.split('/')[1] || 'en' : 'en'
 
   // Define navigation links inside the component
-  const navLinks = [
+  const navLinks: Array<{ href: "/" | "/products" | "/projects" | "/about" | "/contact", label: string }> = [
     { href: "/", label: t("home") },
     { href: "/products", label: t("products") },
     { href: "/projects", label: t("projects") },
@@ -82,7 +82,7 @@ export function Header() {
           {/* Desktop Navigation */}
           <nav className="hidden md:flex md:items-center md:gap-8">
             {navLinks.map((link) => {
-              const isActive = (link.href === '/' && (pathname === '/' || pathname === '')) ||
+              const isActive = (link.href === '/' && pathname === '/') ||
                                (link.href !== '/' && (pathname === link.href || pathname?.startsWith(link.href + '/')))
               return (
                 <Link
@@ -144,7 +144,7 @@ export function Header() {
             >
               <div className="flex flex-col gap-4 py-4">
                 {navLinks.map((link, index) => {
-                  const isActive = (link.href === '/' && (pathname === '/' || pathname === '')) ||
+                  const isActive = (link.href === '/' && pathname === '/') ||
                                    (link.href !== '/' && (pathname === link.href || pathname?.startsWith(link.href + '/')))
                   return (
                     <Link

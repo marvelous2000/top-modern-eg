@@ -20,7 +20,7 @@ export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
 
   const switchLanguage = (newLocale: string) => {
-    router.replace(pathname, { locale: newLocale });
+    router.replace(pathname as any, { locale: newLocale });
   };
 
   const isActive = (href: string) => {
@@ -66,7 +66,7 @@ export default function Navigation() {
             {navLinks.map((link) => (
               <Link
                 key={link.href}
-                href={link.href}
+                href={link.href as any}
                 className={cn(
                   "text-white/90 transition-colors relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-accent after:transition-all after:duration-300 hover:after:w-full",
                   isActive(link.href) ? "text-accent after:w-full" : "hover:text-accent"
@@ -122,7 +122,7 @@ export default function Navigation() {
             {navLinks.map((link) => (
               <Link
                 key={link.href}
-                href={link.href}
+                href={link.href as any}
                 onClick={() => setIsOpen(false)}
                 className={cn(
                   "text-lg transition-colors",
