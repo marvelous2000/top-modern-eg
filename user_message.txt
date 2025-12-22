@@ -1,0 +1,6 @@
+I have fixed the issue where navigation links were not taking the locale path.
+- I have disabled the `NormalizeLinks` component in `app/[locale]/layout.tsx`, as it was interfering with `next-intl`'s link handling.
+- I have updated `components/footer.tsx` and `components/header.tsx` to use the `Link` component and `usePathname` from `@/i18n/navigation` and removed all manual locale prefixing from the `href` attributes.
+- I have updated `components/language-switcher.tsx` to use the `Link` component and `usePathname` from `@/i18n/navigation` and correctly passing the `locale` prop to the `Link` component.
+
+This ensures that `next-intl` automatically handles the locale prefixing based on the middleware configuration. This should definitively resolve the issue of navigation links not taking the correct locale path and the 404 errors.

@@ -17,6 +17,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { SiteSettings, defaultSettings } from "@/lib/types";
+import "../admin.css";
 
 // This page is a client component. Dynamic rendering is controlled by server wrapper components.
 
@@ -25,6 +26,7 @@ export default function AdminLoginPage() {
   const [state, setState] = useState<{ message: string } | null>(null);
   const [pending, setPending] = useState(false);
   const [settings, setSettings] = useState<SiteSettings>(defaultSettings);
+  const [bgImage, setBgImage] = useState('/adminbackground.jpg'); // Default background
   const searchParams = useSearchParams();
 
   useEffect(() => {
@@ -34,11 +36,16 @@ export default function AdminLoginPage() {
   }, [searchParams]);
 
   useEffect(() => {
+    // This effect runs only on the client
     if (typeof window !== 'undefined') {
       const savedSettings = localStorage.getItem("siteSettings");
       if (savedSettings) {
         try {
-          setSettings(JSON.parse(savedSettings));
+          const parsedSettings = JSON.parse(savedSettings);
+          setSettings(parsedSettings);
+          if (parsedSettings.logo.background) {
+            setBgImage(parsedSettings.logo.background);
+          }
         } catch (error) {
           console.error("Error loading settings:", error);
         }
@@ -61,7 +68,7 @@ export default function AdminLoginPage() {
     <div
       className="min-h-screen flex relative overflow-hidden"
       style={{
-        backgroundImage: `url("${settings.logo.background || '/adminbackground.jpg'}")`,
+        backgroundImage: `url("${bgImage}")`, // Use state for background image
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
@@ -69,17 +76,18 @@ export default function AdminLoginPage() {
       <div className="absolute inset-0 bg-black/80 z-0" />{" "}
       {/* Black overlay */}
       <div className="relative z-10 flex-1 flex items-center justify-center p-8 lg:p-12">
-        <div className="text-center text-white font-serif tracking-widest leading-none">
-          <h1 className="text-6xl md:text-8xl lg:text-9xl font-bold font-serif mb-4">
-            TOP
-          </h1>
-          <h1 className="text-6xl md:text-8xl lg:text-9xl font-bold font-serif">
-            MODERN
-          </h1>
+        <div className="text-center">
+          <Image
+            src="/top-modern-final-logo.png"
+            alt="Top Modern Logo"
+            width={300} // Added width
+            height={300} // Added height
+            className="h-auto w-auto max-w-full"
+          />
         </div>
       </div>
       <div className="relative z-10 flex-1 flex items-center justify-center p-8 lg:p-12">
-        <Card className="w-full max-w-md bg-card/90 backdrop-blur-sm border border-border/50 shadow-2xl">
+        <Card className="w-full max-w-md bg-slate-800 backdrop-blur-sm border border-border/50 shadow-2xl">
           <CardHeader className="space-y-4 text-center">
             <div className="flex justify-center">
               <Image
@@ -91,10 +99,10 @@ export default function AdminLoginPage() {
               />
             </div>
             <div>
-              <CardTitle className="text-foreground text-2xl font-serif">
+              <CardTitle className="text-white text-2xl font-serif">
                 Admin Login
               </CardTitle>
-              <CardDescription className="text-muted-foreground">
+              <CardDescription className="text-white">
                 Sign in to access the admin dashboard
               </CardDescription>
             </div>
@@ -104,7 +112,7 @@ export default function AdminLoginPage() {
               <div className="space-y-2">
                 <Label
                   htmlFor="email"
-                  className="text-foreground font-medium"
+                  className="text-yellow-500 font-medium"
                 >
                   Email
                 </Label>
@@ -122,13 +130,13 @@ export default function AdminLoginPage() {
                 <div className="flex items-center justify-between">
                   <Label
                     htmlFor="password"
-                    className="text-foreground font-medium"
+                    className="text-yellow-500 font-medium"
                   >
                     Password
                   </Label>
                   <Link
-                    href="/admin/reset-password"
-                    className="text-sm text-primary hover:underline"
+                    href="/auth/reset-password"
+                    className="text-sm text-yellow-500 hover:underline"
                   >
                     Forgot password?
                   </Link>

@@ -1,6 +1,5 @@
 'use client';
-import { usePathname, useRouter } from '@/i18n/navigation';
-import Link from 'next/link';
+import { Link, usePathname, useRouter } from '@/i18n/navigation';
 import { useLocale, useTranslations } from 'next-intl';
 import { useTheme } from 'next-themes';
 import { useState, useEffect } from 'react';
@@ -108,15 +107,25 @@ export default function Navigation() {
           </div>
         </div>
 
-        <div id="mobile-menu" className={`md:hidden overflow-hidden transition-all duration-300 ${isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}>
-          <div className="px-4 py-4 space-y-4">
+        <div id="mobile-menu" className={`md:hidden fixed top-0 left-0 w-full h-screen bg-gray-800/80 z-60 transition-all duration-300 ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+          <div className={`absolute top-4 ${locale === 'ar' ? 'left-4' : 'right-4'}`}>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="text-white hover:bg-white/10 hover:text-accent"
+              onClick={() => setIsOpen(false)}
+            >
+              <X className="h-5 w-5" />
+            </Button>
+          </div>
+          <div className="flex flex-col justify-center items-center h-full px-4 py-4 space-y-4">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
                 onClick={() => setIsOpen(false)}
                 className={cn(
-                  "block transition-colors",
+                  "text-lg transition-colors",
                   isActive(link.href) ? 'text-accent' : 'text-white/90 hover:text-accent'
                 )}
               >

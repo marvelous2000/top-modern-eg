@@ -1,12 +1,12 @@
 "use client"
 
-import { SetPasswordForm } from '@/components/admin/set-password-form';
+import { ResetPasswordForm } from '@/components/admin/reset-password-form';
 import '../../admin/admin.css';
 import Image from 'next/image';
 
 export const dynamic = 'force-dynamic';
 
-export default function SetPasswordPage() {
+export default function ResetPasswordPage() {
   return (
     <div
       className="min-h-screen flex relative overflow-hidden"
@@ -29,7 +29,7 @@ export default function SetPasswordPage() {
         </div>
       </div>
       <div className="relative z-10 flex-1 flex items-center justify-center p-8 lg:p-12">
-        <SetPasswordForm />
+        <ResetPasswordForm />
       </div>
     </div>
   );

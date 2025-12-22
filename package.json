@@ -46,6 +46,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
+    "cross-fetch": "^4.0.0",
     "embla-carousel-autoplay": "^8.6.0",
     "embla-carousel-react": "^8.6.0",
     "framer-motion": "^10.18.0",
@@ -73,8 +74,11 @@
     "@supabase/storage-js": "^2.0.0",
     "@supabase/realtime-js": "^2.8.0",
     "tslib": "^2.6.2",
+    "websocket": "^1.0.35",
+    "whatwg-url": "^14.0.0",
     "ws": "^8.18.3",
-    "iceberg-js": "^0.8.1"
+    "iceberg-js": "^0.8.1",
+    "@supabase/auth-helpers-nextjs": "^0.7.0"
   },
   "devDependencies": {
     "@types/node": "20.2.0",

@@ -26,110 +26,69 @@ const timeoutHandle = setTimeout(() => {
   process.exit(1)
 }, TIMEOUT_MS)
 
-const email = process.argv[2] ?? "admin@topmodern.com"
-const password = process.argv[3]
-const role = process.argv[4] ?? "super_admin"
+const email = process.argv[2] ?? 'admin@topmodern.com'
+    const password = process.argv[3]
+    const role = process.argv[4] ?? 'super_admin'
 
-async function main() {
-  if (!password) {
-    console.error(
-      "Missing password argument.\nRun: node scripts/create-superadmin.js admin@example.com \"SuperSecure123!\" super_admin",
-    )
-    clearTimeout(timeoutHandle)
-    process.exit(1)
-  }
+    // 1. FIRST, check if a user with this email exists in Auth
+    const { data: { users }, error: listError } = await supabase.auth.admin.listUsers()
+    if (listError) throw listError
 
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+    const existingAuthUser = users.find(u => u.email === email)
+    let userId = existingAuthUser?.id
 
-  console.log("🔍 Validating superadmin script environment variables...")
-  if (!url) {
-    console.error("❌ NEXT_PUBLIC_SUPABASE_URL is not set")
-    clearTimeout(timeoutHandle)
-    process.exit(1)
-  }
-
-  if (!serviceKey) {
-    console.error("❌ SUPABASE_SERVICE_ROLE_KEY is not set")
-    clearTimeout(timeoutHandle)
-    process.exit(1)
-  }
-
-  console.log("✅ Superadmin script environment variables validated")
-
-  const supabase = createClient(url, serviceKey, {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false,
-    },
-  })
-
-  try {
-    let userId
-
-    const { data: created, error: createError } = await supabase.auth.admin.createUser({
-      email,
-      password,
-      email_confirm: true,
-    })
-
-    if (createError) {
-      if (createError.message?.toLowerCase().includes("already been registered")) {
-        const lowerEmail = email.toLowerCase()
-        const perPage = 100
-        let page = 1
-        let foundUser = null
-        let listError = null
-
-        while (!foundUser) {
-          const { data: listed, error: pageError } = await supabase.auth.admin.listUsers({
-            page,
-            perPage,
-          })
-
-          if (pageError) {
-            listError = pageError
-            break
-          }
-
-          foundUser =
-            listed?.users?.find((user) => user.email?.toLowerCase() === lowerEmail) ?? null
-
-          if (foundUser || !listed?.nextPage) {
-            break
-          }
-
-          page = listed.nextPage
-        }
-
-        if (listError) {
-          throw listError
-        }
-
-        if (!foundUser) {
-          throw createError
-        }
-
-        userId = foundUser.id
-
-        const { error: updateError } = await supabase.auth.admin.updateUserById(userId, {
-          password,
-          email_confirm: true,
+    // 2. Determine if we need to create the auth user or just the profile
+    if (!existingAuthUser) {
+        // Create the auth user (new user)
+        const { data: newUser, error: createError } = await supabase.auth.admin.createUser({
+            email,
+            password,
+            email_confirm: true,
         })
-
-        if (updateError) {
-          throw updateError
-        }
-      } else {
-        throw createError
-      }
+        if (createError) throw createError
+        userId = newUser.user.id
+        console.log('✅ Auth user created')
     } else {
-      userId = created?.user?.id
+        console.log('ℹ️ Auth user already exists')
     }
 
-    if (!userId) {
-      throw new Error("Unable to resolve user id.")
+    // 3. NOW, check the public 'profiles' table for this user
+    const { data: existingProfile } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', userId)
+        .maybeSingle()
+
+    if (existingProfile && existingProfile.role === role) {
+        console.log('✅ Super admin already fully set up')
+        return
     }
+
+    // 4. Upsert the profile
+    const timestamp = new Date().toISOString()
+    const profilePayload = {
+        id: userId,
+        username: email,
+        email,
+        first_name: email.split('@')[0],
+        role,
+        status: 'active',
+        created_at: timestamp,
+        updated_at: timestamp,
+    }
+
+    const { error: upsertError } = await supabase
+        .from('profiles')
+        .upsert(profilePayload, { onConflict: 'id' })
+
+    if (upsertError) throw upsertError
+    console.log('✅ Profile upserted')
+
+    console.log({
+        message: existingAuthUser ? 'Super admin profile updated' : 'Super admin created successfully',
+        email,
+        userId
+    })
 
     const timestamp = new Date().toISOString()
     const profilePayload = {

@@ -5,31 +5,68 @@ import { Separator } from "@/components/ui/separator";
 import { Star } from "lucide-react";
 import Image from "next/image";
 import { Navigation } from "@/components/navigation";
+import { getTranslations } from "next-intl/server";
 
-export default function ProductPage({ params }: { params: { slug: string } }) {
-  const { slug } = params;
+export default async function ProductPage({ params }: { params: { slug: string; locale: string } }) {
+  const { slug, locale } = params;
+  const t = await getTranslations();
 
-  // Mock product data
-  const product = {
-    name: "Calacatta Gold Marble",
-    slug: "calacatta-gold-marble",
-    description: "A luxurious and timeless choice, Calacatta Gold marble features a creamy white background with dramatic, thick veins in gray and gold. Its bold patterning makes it a focal point in any application, from kitchen countertops to statement walls.",
-    category: "Marble",
-    price: 150.00,
-    rating: 4.8,
-    reviews: 72,
-    images: [
-      "/carrara-marble-kitchen-countertop-with-gold-fixtur.jpg",
-      "/luxurious-calacatta-gold-marble-with-golden-veinin.jpg",
-      "/calacatta-gold-marble-bold-veining-luxury.jpg",
-    ],
-    features: [
-      "Distinctive gold and gray veining",
-      "Sourced from the Apuan Alps in Italy",
-      "Polished finish for a high-gloss look",
-      "Ideal for high-impact applications"
-    ]
+  // Product data mapping
+  const getProductData = (slug: string) => {
+    const productDetails = t.raw('products.productDetails');
+
+    // Find the product key that matches the slug
+    const productKey = Object.keys(productDetails).find(key => {
+      const product = productDetails[key];
+      if (!product || !product.name) {
+        return false;
+      }
+      const productName = product.name;
+      return productName.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') === slug;
+    });
+
+    if (!productKey) {
+      return null;
+    }
+
+    const product = productDetails[productKey];
+
+    // Mock images based on product type (you can replace with actual images)
+    const getProductImages = (category: string, name: string) => {
+      const baseName = name.toLowerCase().replace(/\s+/g, '-');
+      return [
+        `/${baseName}-1.jpg`,
+        `/${baseName}-2.jpg`,
+        `/${baseName}-3.jpg`,
+      ];
+    };
+
+    return {
+      name: product.name,
+      slug: slug,
+      description: product.description,
+      category: product.category,
+      price: 150.00, // You can customize pricing per product
+      rating: 4.8,
+      reviews: 72,
+      images: getProductImages(product.category, product.name),
+      features: product.features
+    };
   };
+
+  const product = getProductData(slug);
+
+  if (!product) {
+    return (
+      <>
+        <Navigation />
+        <div className="container mx-auto px-4 py-12 md:py-20">
+          <h1 className="text-4xl font-bold text-center">Product Not Found</h1>
+          <p className="text-center mt-4">The product you're looking for doesn't exist.</p>
+        </div>
+      </>
+    );
+  }
 
   return (
     <>
@@ -79,7 +116,7 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
             <div className="mb-6">
               <h3 className="text-xl font-semibold mb-4">Key Features</h3>
               <ul className="list-disc list-inside space-y-2 text-muted-foreground">
-                {product.features.map((feature, index) => (
+                {product.features.map((feature: string, index: number) => (
                   <li key={index}>{feature}</li>
                 ))}
               </ul>

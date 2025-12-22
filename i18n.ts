@@ -15,6 +15,7 @@ export default getRequestConfig(async ({ requestLocale }) => {
   if (!LOCALES.includes(locale as any)) notFound();
 
   return {
+    locale,
     messages: (await import(`./messages/${locale}.json`)).default,
     // Add timeZone or other configurations if needed
     // timeZone: 'Europe/Vienna'

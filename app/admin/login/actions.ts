@@ -62,3 +62,29 @@ export async function logout() {
   await supabase.auth.signOut();
   redirect('/admin/login');
 }
+
+export async function doesUserExist(email: string): Promise<boolean> {
+  const supabase = await createSupabaseServerClient();
+  const { data: user, error } = await supabase
+    .from('users')
+    .select('id')
+    .eq('email', email)
+    .single();
+
+  if (error || !user) {
+    return false;
+  }
+
+  const { data: profile, error: profileError } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single();
+
+  if (profileError || !profile) {
+    return false;
+  }
+
+  const allowedRoles = ['admin', 'super_admin'];
+  return allowedRoles.includes(profile.role);
+}

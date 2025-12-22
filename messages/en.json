@@ -290,6 +290,140 @@
         "description": "White quartz with broad, elegant grey veins inspired by natural Calacatta marble",
         "category": "Premium"
       }
+    },
+    "productDetails": {
+      "calacattaGold": {
+        "name": "Calacatta Gold Marble",
+        "description": "A luxurious and timeless choice, Calacatta Gold marble features a creamy white background with dramatic, thick veins in gray and gold. Its bold patterning makes it a focal point in any application, from kitchen countertops to statement walls.",
+        "category": "Marble",
+        "features": [
+          "Distinctive gold and gray veining",
+          "Sourced from the Apuan Alps in Italy",
+          "Polished finish for a high-gloss look",
+          "Ideal for high-impact applications"
+        ]
+      },
+      "carraraWhite": {
+        "name": "Carrara White Marble",
+        "description": "Classic Italian marble with subtle gray veining, perfect for elegant and sophisticated spaces.",
+        "category": "Marble",
+        "features": [
+          "Subtle gray veining",
+          "Timeless elegance",
+          "Versatile for various applications",
+          "Premium quality from Italy"
+        ]
+      },
+      "neroMarquina": {
+        "name": "Nero Marquina Marble",
+        "description": "Dramatic black marble with striking white veining, creating a bold and sophisticated look.",
+        "category": "Marble",
+        "features": [
+          "Dramatic black background",
+          "Striking white veining",
+          "High contrast design",
+          "Perfect for modern interiors"
+        ]
+      },
+      "absoluteBlack": {
+        "name": "Absolute Black Granite",
+        "description": "Deep black granite with consistent color, offering a sleek and modern appearance.",
+        "category": "Granite",
+        "features": [
+          "Consistent deep black color",
+          "Durable and scratch-resistant",
+          "Low maintenance",
+          "Ideal for contemporary designs"
+        ]
+      },
+      "kashmirWhite": {
+        "name": "Kashmir White Granite",
+        "description": "Light granite with burgundy and gray flecks, adding warmth and character to any space.",
+        "category": "Granite",
+        "features": [
+          "Light background with colorful flecks",
+          "Natural variation",
+          "Durable surface",
+          "Adds warmth to interiors"
+        ]
+      },
+      "ubatuba": {
+        "name": "Ubatuba Granite",
+        "description": "Dark green granite with gold and white specks, providing a unique and exotic look.",
+        "category": "Granite",
+        "features": [
+          "Dark green base",
+          "Gold and white specks",
+          "Exotic appearance",
+          "High durability"
+        ]
+      },
+      "statuario": {
+        "name": "Statuario Quartz",
+        "description": "Engineered quartz mimicking Statuario marble, offering beauty without the maintenance.",
+        "category": "Quartz",
+        "features": [
+          "Marble-like appearance",
+          "Low maintenance",
+          "Stain-resistant",
+          "Consistent quality"
+        ]
+      },
+      "concreteGray": {
+        "name": "Concrete Gray Quartz",
+        "description": "Modern industrial-style gray quartz, perfect for contemporary and urban designs.",
+        "category": "Quartz",
+        "features": [
+          "Industrial gray finish",
+          "Contemporary style",
+          "Durable and practical",
+          "Easy to maintain"
+        ]
+      },
+      "pureWhite": {
+        "name": "Pure White Quartz",
+        "description": "Pristine white quartz for contemporary spaces, offering a clean and modern aesthetic.",
+        "category": "Quartz",
+        "features": [
+          "Pure white color",
+          "Contemporary design",
+          "Stain-resistant",
+          "Versatile applications"
+        ]
+      },
+      "pietraGrey": {
+        "name": "Pietra Grey Marble",
+        "description": "Sophisticated dark grey marble with delicate white veins, perfect for creating elegant and modern spaces.",
+        "category": "Marble",
+        "features": [
+          "Dark grey background",
+          "Delicate white veining",
+          "Sophisticated appearance",
+          "Ideal for contemporary designs"
+        ]
+      },
+      "gialloVeneziano": {
+        "name": "Giallo Veneziano Granite",
+        "description": "Golden yellow granite with brown and black specks, adding warmth and character to any space.",
+        "category": "Granite",
+        "features": [
+          "Golden yellow base",
+          "Brown and black specks",
+          "Warm appearance",
+          "Durable and elegant"
+        ]
+      },
+      "calacattaNuvo": {
+        "name": "Calacatta Nuvo Quartz",
+        "description": "White quartz with broad, elegant grey veins inspired by natural Calacatta marble, offering beauty without the maintenance.",
+        "category": "Quartz",
+        "features": [
+          "White background with grey veins",
+          "Inspired by Calacatta marble",
+          "Low maintenance",
+          "Stain-resistant and durable"
+        ]
+      }
     }
   },
   "projects": {

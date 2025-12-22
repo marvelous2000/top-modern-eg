@@ -1,5 +1,3 @@
-"use client"
-
 import { useState, useEffect } from "react"
 import { Menu, X, Sun, Moon } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -8,8 +6,7 @@ import { useTranslations } from "@/components/providers/TranslationsProvider"
 import { LanguageSwitcher } from "./language-switcher"
 import { useTheme } from "next-themes" // Import useTheme
 import { SiteSettings, defaultSettings } from "@/lib/types" // Import SiteSettings and defaultSettings
-import Link from 'next/link'
-import { usePathname } from 'next/navigation' // Import usePathname
+import { Link, usePathname } from '@/i18n/navigation'
 import { cn } from '@/lib/utils' // Import cn
 
 
@@ -49,8 +46,8 @@ export function Header() {
     },
   }
 
-  // Determine locale from pathname and build links with locale prefix
-  const locale = pathname ? pathname.split('/')[1] || 'en' : 'en'
+  // Determine locale from pathname (no longer used for manual prefixing)
+  // const locale = pathname ? pathname.split('/')[1] || 'en' : 'en'
 
   // Define navigation links inside the component
   const navLinks = [
@@ -61,10 +58,11 @@ export function Header() {
     { href: "/contact", label: t("contact") },
   ]
 
-  const withLocale = (href: string) => {
-    if (!href || href === '/') return `/${locale}`
-    return `/${locale}${href}`
-  }
+  // withLocale function is no longer needed as next-intl Link handles it
+  // const withLocale = (href: string) => {
+  //   if (!href || href === '/') return `/${locale}`
+  //   return `/${locale}${href}`
+  // }
 
   // ... (rest of useEffects and navLinks)
 
@@ -76,7 +74,7 @@ export function Header() {
         <div className="flex h-20 items-center justify-between">
           {/* Logo */}
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.2 }}>
-            <Link href={`/${locale}`} className="flex items-center">
+            <Link href="/" className="flex items-center">
               <img src={settings.logo.main} alt="Top Modern" className="h-16 w-auto" />
             </Link>
           </motion.div>
@@ -84,13 +82,12 @@ export function Header() {
           {/* Desktop Navigation */}
           <nav className="hidden md:flex md:items-center md:gap-8">
             {navLinks.map((link) => {
-              const localizedHref = withLocale(link.href)
-              const isActive = (link.href === '/' && (pathname === `/${locale}` || pathname === `/${locale}/` || pathname === '/')) ||
-                               (link.href !== '/' && (pathname === localizedHref || pathname?.startsWith(localizedHref + '/')))
+              const isActive = (link.href === '/' && (pathname === '/' || pathname === '')) ||
+                               (link.href !== '/' && (pathname === link.href || pathname?.startsWith(link.href + '/')))
               return (
                 <Link
                   key={link.href}
-                  href={localizedHref}
+                  href={link.href} // Use base href
                   className={cn(
                     "text-sm font-medium transition-colors relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-gold-500 after:transition-all after:duration-300 hover:after:w-full",
                     isActive
@@ -147,13 +144,12 @@ export function Header() {
             >
               <div className="flex flex-col gap-4 py-4">
                 {navLinks.map((link, index) => {
-                  const localizedHref = withLocale(link.href)
-                  const isActive = (link.href === '/' && (pathname === `/${locale}` || pathname === `/${locale}/` || pathname === '/')) ||
-                                   (link.href !== '/' && (pathname === localizedHref || pathname?.startsWith(localizedHref + '/')))
+                  const isActive = (link.href === '/' && (pathname === '/' || pathname === '')) ||
+                                   (link.href !== '/' && (pathname === link.href || pathname?.startsWith(link.href + '/')))
                   return (
                     <Link
                       key={link.href}
-                      href={localizedHref}
+                      href={link.href} // Use base href
                       className={cn(
                         "text-sm font-medium transition-colors",
                         "relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-gold-500 after:transition-all after:duration-300 hover:after:w-full",

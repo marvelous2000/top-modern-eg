@@ -5,13 +5,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { CheckCircle, XCircle, Loader2, Database, FileText, User } from "lucide-react"
+import { setupDatabaseSchema, seedInitialContent, createSuperAdmin } from "@/lib/actions/admin-setup" // Import server actions
 
 interface SetupStep {
   id: string
   title: string
   description: string
   icon: React.ComponentType<any>
-  endpoint: string
+  // endpoint: string; // No longer needed with server actions
   status: 'pending' | 'running' | 'success' | 'error'
   message?: string
 }
@@ -23,7 +24,7 @@ export function DatabaseSetupManager() {
       title: 'Setup Database Schema',
       description: 'Create all required tables and relationships',
       icon: Database,
-      endpoint: '/.netlify/functions/setup-database',
+      // endpoint: '/.netlify/functions/setup-database', // Remove or ignore
       status: 'pending'
     },
     {
@@ -31,7 +32,7 @@ export function DatabaseSetupManager() {
       title: 'Seed Initial Content',
       description: 'Populate database with sample products and projects',
       icon: FileText,
-      endpoint: '/.netlify/functions/seed-content',
+      // endpoint: '/.netlify/functions/seed-content', // Remove or ignore
       status: 'pending'
     },
     {
@@ -39,7 +40,7 @@ export function DatabaseSetupManager() {
       title: 'Create Super Admin',
       description: 'Setup the first admin user account',
       icon: User,
-      endpoint: '/.netlify/functions/create-superadmin',
+      // endpoint: '/.netlify/functions/create-superadmin', // Remove or ignore
       status: 'pending'
     }
   ])
@@ -55,34 +56,40 @@ export function DatabaseSetupManager() {
         : step
     ))
 
+    let result: { success: boolean; message: string };
+
     try {
-      const step = steps[stepIndex]
-      const response = await fetch(step.endpoint, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      })
+      switch (stepId) {
+        case 'database':
+          result = await setupDatabaseSchema();
+          break;
+        case 'content':
+          result = await seedInitialContent();
+          break;
+        case 'admin':
+          result = await createSuperAdmin();
+          break;
+        default:
+          result = { success: false, message: "Unknown setup step" };
+      }
 
-      const data = await response.json()
-
-      if (response.ok) {
+      if (result.success) {
         setSteps(prev => prev.map((step, index) =>
           index === stepIndex
-            ? { ...step, status: 'success' as const, message: data.message }
+            ? { ...step, status: 'success' as const, message: result.message }
             : step
         ))
       } else {
         setSteps(prev => prev.map((step, index) =>
           index === stepIndex
-            ? { ...step, status: 'error' as const, message: data.error || 'Unknown error' }
+            ? { ...step, status: 'error' as const, message: result.message }
             : step
         ))
       }
-    } catch (error) {
+    } catch (error: any) {
       setSteps(prev => prev.map((step, index) =>
         index === stepIndex
-          ? { ...step, status: 'error' as const, message: error instanceof Error ? error.message : 'Network error' }
+          ? { ...step, status: 'error' as const, message: error.message || 'An unexpected error occurred' }
           : step
       ))
     }

@@ -6,24 +6,23 @@
   NODE_VERSION = "20"
   SECRETS_SCAN_OMIT_KEYS = "SUPABASE_SERVICE_ROLE_KEY"
 
+# Redirect API requests (if you have other API functions)
 [[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/:splat"
   status = 200
 
+# ✅ FIXED: All /auth/* requests go to the auth.js function
 [[redirects]]
   from = "/auth/*"
-  to = "/.netlify/functions/:splat"
+  to = "/.netlify/functions/auth"
   status = 200
 
 [functions]
   directory = "netlify/functions"
-
-
-
-# [[build.hooks]]
-#   command = "node scripts/setup-netlify-db.js"
+  node_bundler = "esbuild"
 
 [dev]
   command = "pnpm dev"
-  port = 3000
+  port = 8888
+  targetPort = 3000

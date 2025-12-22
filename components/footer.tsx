@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import Link from 'next/link'
+import { Link } from '@/i18n/navigation';
 import { useState, useEffect } from "react"
 import { Mail, Phone, MapPin, Facebook, Instagram, MessageCircle } from "lucide-react"
 import { useTranslation } from '@/app/i18n/client';
@@ -71,16 +71,16 @@ export default function Footer() { // Removed isAdmin prop
           <div className="space-y-4">
             <h4 className="font-medium text-white">{t('quick_links')}</h4>
             <nav className="flex flex-col gap-2">
-              <Link href={`/${locale}`} className="text-sm text-white/70 transition-colors hover:text-gold-600">
+              <Link href="/" className="text-sm text-white/70 transition-colors hover:text-gold-600">
                 <span className="relative inline-block after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-gold-500 after:transition-all after:duration-300 hover:after:w-full">{t('home')}</span>
               </Link>
-              <Link href={`/${locale}/products`} className="text-sm text-white/70 transition-colors hover:text-gold-600">
+              <Link href="/products" className="text-sm text-white/70 transition-colors hover:text-gold-600">
                 <span className="relative inline-block after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-gold-500 after:transition-all after:duration-300 hover:after:w-full">{t('products')}</span>
               </Link>
-              <Link href={`/${locale}/projects`} className="text-sm text-white/70 transition-colors hover:text-gold-600">
+              <Link href="/projects" className="text-sm text-white/70 transition-colors hover:text-gold-600">
                 <span className="relative inline-block after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-gold-500 after:transition-all after:duration-300 hover:after:w-full">{t('projects')}</span>
               </Link>
-              <Link href={`/${locale}/about`} className="text-sm text-white/70 transition-colors hover:text-gold-600">
+              <Link href="/about" className="text-sm text-white/70 transition-colors hover:text-gold-600">
                 <span className="relative inline-block after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-gold-500 after:transition-all after:duration-300 hover:after:w-full">{t('about')}</span>
               </Link>
             </nav>
@@ -164,10 +164,10 @@ export default function Footer() { // Removed isAdmin prop
             <div className="flex flex-col items-center gap-4 md:flex-row md:gap-6">
               <p className="text-sm text-white/70">© {currentYear} {settings.company.name}. {t('all_rights_reserved', { defaultValue: 'All rights reserved.' })}</p>
               <div className="flex gap-6">
-                <Link href={`/${locale}/privacy-policy`} className="text-sm text-white/70 transition-colors hover:text-gold-600">
+                <Link href="/privacy-policy" className="text-sm text-white/70 transition-colors hover:text-gold-600">
                   <span className="relative inline-block after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-gold-500 after:transition-all after:duration-300 hover:after:w-full">{t('privacy_policy')}</span>
                 </Link>
-                <Link href={`/${locale}/terms`} className="text-sm text-white/70 transition-colors hover:text-gold-600">
+                <Link href="/terms" className="text-sm text-white/70 transition-colors hover:text-gold-600">
                   <span className="relative inline-block after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-gold-500 after:transition-all after:duration-300 hover:after:w-full">{t('terms_of_service')}</span>
                 </Link>
               </div>

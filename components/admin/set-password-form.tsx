@@ -9,7 +9,7 @@ import { createSupabaseBrowserClient } from "@/lib/supabase/index";
 import { useRouter, useSearchParams } from "next/navigation";
 import { AuthFormContainer } from "./auth-form-container";
 
-export function UpdatePasswordForm() {
+export function SetPasswordForm() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
@@ -24,11 +24,11 @@ export function UpdatePasswordForm() {
     setSupabase(createSupabaseBrowserClient());
 
     if (!accessToken) {
-      setError("No access token found. Please use the password reset link from your email.");
+      setError("No access token found. Please use the invitation link from your email.");
     }
   }, [accessToken]);
 
-  const handleUpdatePassword = async (e: React.FormEvent) => {
+  const handleSetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setMessage("");
@@ -41,7 +41,7 @@ export function UpdatePasswordForm() {
     }
 
     if (!accessToken) {
-      setError("Missing access token. Please try resetting your password again.");
+      setError("Missing access token. Please try setting your password again.");
       setLoading(false);
       return;
     }
@@ -72,15 +72,15 @@ export function UpdatePasswordForm() {
         throw updateError;
       }
 
-      setMessage("Your password has been updated successfully. You can now sign in.");
+      setMessage("Your password has been set successfully. You can now sign in.");
       setPassword("");
       setConfirmPassword("");
       setTimeout(() => {
         router.push("/admin/login");
       }, 3000);
     } catch (err: any) {
-      console.error("Password update error:", err);
-      setError(err.message || "Failed to update password.");
+      console.error("Password set error:", err);
+      setError(err.message || "Failed to set password.");
     } finally {
       setLoading(false);
     }
@@ -88,13 +88,13 @@ export function UpdatePasswordForm() {
 
   return (
     <AuthFormContainer
-      title="Set New Password"
+      title="Set Your Password"
       description="Enter and confirm your new password."
       footerText="Back to"
       footerLink="/admin/login"
       footerLinkText="Sign In"
     >
-      <form onSubmit={handleUpdatePassword} className="space-y-4">
+      <form onSubmit={handleSetPassword} className="space-y-4">
         {error && (
           <Alert variant="destructive" className="bg-destructive/10 border-destructive/20">
             <AlertDescription className="text-destructive">{error}</AlertDescription>
@@ -135,7 +135,7 @@ export function UpdatePasswordForm() {
         </div>
 
         <Button type="submit" className="w-full bg-accent hover:bg-accent/90 text-accent-foreground font-medium transition-all duration-200" disabled={loading}>
-          {loading ? "Updating..." : "Update Password"}
+          {loading ? "Setting Password..." : "Set Password"}
         </Button>
       </form>
     </AuthFormContainer>
