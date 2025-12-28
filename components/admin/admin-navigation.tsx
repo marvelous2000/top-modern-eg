@@ -36,10 +36,15 @@ export function AdminNavigation({ onMenuClick }: AdminNavigationProps) {
       if (user) {
         const { data: profile } = await supabase
           .from("profiles")
-          .select(`full_name, email`)
+          .select(`first_name, last_name, email`)
           .eq("id", user.id)
           .single();
-        setUserName(profile?.full_name || profile?.email || "Admin");
+
+        // Create full name from first and last name, or use email as fallback
+        const firstName = profile?.first_name || "";
+        const lastName = profile?.last_name || "";
+        const fullName = firstName && lastName ? `${firstName} ${lastName}` : firstName || lastName || profile?.email || "Admin";
+        setUserName(fullName);
       }
     };
     fetchUser();

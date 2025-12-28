@@ -4,19 +4,21 @@ import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
-import { Checkbox } from "@/components/ui/checkbox"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { getSettings, updateSettings, type Settings } from "@/lib/actions/settings"
-import { Save, Loader2, Settings as SettingsIcon, Palette, Globe, Mail, Shield, Database } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { getSettings, updateSettings, type SiteSettings } from "@/lib/actions/settings"
+import { SingleImageUpload } from "./SingleImageUpload" // Import the new component
+import { Save, Loader2, Upload, Phone, Facebook, Instagram, Linkedin, Building } from "lucide-react"
+import { toast } from "sonner"
 
 export function SettingsManager() {
-  const [settings, setSettings] = useState<Partial<Settings>>({})
+  const [settings, setSettings] = useState<SiteSettings>({
+    logo: { main: "", footer: "", admin: "", background: "" },
+    contact: { phone1: "", phone2: "", email1: "", email2: "", whatsapp: "" },
+    social: { facebook: "", instagram: "", linkedin: "" },
+    company: { name: "", description: "", address: "" }
+  })
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -27,8 +29,8 @@ export function SettingsManager() {
       setError(null)
       try {
         const result = await getSettings()
-        if (result.success) {
-          setSettings(result.data as Settings)
+        if (result.success && result.data) {
+          setSettings(result.data)
         } else {
           setError(result.error || "Failed to fetch settings")
         }
@@ -44,18 +46,32 @@ export function SettingsManager() {
   const handleSaveSettings = async () => {
     setSaving(true)
     try {
-      const result = await updateSettings(settings as Settings)
+      const result = await updateSettings(settings)
       if (result.success) {
-        setSettings(result.data as Settings)
-        alert("Settings saved successfully!")
+        toast.success("Settings saved successfully!")
+        
+        // Update local storage and notify other components
+        localStorage.setItem("siteSettings", JSON.stringify(settings));
+        window.dispatchEvent(new CustomEvent("settingsUpdated", { detail: settings }));
+
       } else {
         throw new Error(result.error)
       }
     } catch (err: any) {
-      alert(`Error saving settings: ${err.message}`)
+      toast.error(`Error saving settings: ${err.message}`)
     } finally {
       setSaving(false)
     }
+  }
+
+  const updateSetting = (section: keyof SiteSettings, field: string, value: string | null) => {
+    setSettings((prev) => ({
+      ...prev,
+      [section]: {
+        ...prev[section],
+        [field]: value || "",
+      },
+    }))
   }
 
   if (loading) {
@@ -75,327 +91,220 @@ export function SettingsManager() {
   }
 
   return (
-    <div className="space-y-6" style={{ fontFamily: "'Segoe UI', sans-serif", animation: "slideIn 0.5s ease-out" }}>
-      <Card className="shadow-sm border-0 bg-gradient-to-br from-card to-card/50 backdrop-blur-sm">
-        <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <CardTitle className="text-2xl font-serif text-foreground">Settings</CardTitle>
-            <p className="text-sm text-muted-foreground">Configure your application settings.</p>
-          </div>
-          <Button
-            onClick={handleSaveSettings}
-            disabled={saving}
-            className="bg-accent text-accent-foreground hover:bg-accent/90 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
-          >
-            {saving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
-            Save Settings
-          </Button>
-        </CardHeader>
-      </Card>
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="font-serif text-3xl font-bold text-foreground mb-2">Site Settings</h1>
+          <p className="text-muted-foreground">Configure your website settings and branding</p>
+        </div>
+        <Button onClick={handleSaveSettings} disabled={saving}>
+          {saving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
+          {saving ? "Saving..." : "Save Changes"}
+        </Button>
+      </div>
 
-      <Tabs defaultValue="general" className="w-full">
-        <TabsList className="grid w-full grid-cols-5 bg-muted/50">
-          <TabsTrigger value="general" className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground transition-all duration-200">
-            <SettingsIcon className="h-4 w-4 mr-2" />
-            General
-          </TabsTrigger>
-          <TabsTrigger value="appearance" className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground transition-all duration-200">
-            <Palette className="h-4 w-4 mr-2" />
-            Appearance
-          </TabsTrigger>
-          <TabsTrigger value="seo" className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground transition-all duration-200">
-            <Globe className="h-4 w-4 mr-2" />
-            SEO
-          </TabsTrigger>
-          <TabsTrigger value="email" className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground transition-all duration-200">
-            <Mail className="h-4 w-4 mr-2" />
-            Email
-          </TabsTrigger>
-          <TabsTrigger value="security" className="data-[state=active]:bg-accent data-[state=active]:text-accent-foreground transition-all duration-200">
-            <Shield className="h-4 w-4 mr-2" />
-            Security
-          </TabsTrigger>
+      <Tabs defaultValue="company" className="w-full">
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="company">Company</TabsTrigger>
+          <TabsTrigger value="contact">Contact</TabsTrigger>
+          <TabsTrigger value="social">Social Media</TabsTrigger>
+          <TabsTrigger value="logo">Logo</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="general" className="space-y-6 mt-6">
-          <Card className="shadow-sm border-0 bg-gradient-to-br from-card to-card/50 backdrop-blur-sm">
+        <TabsContent value="company" className="space-y-6 mt-6">
+          <Card>
             <CardHeader>
-              <CardTitle className="text-lg font-serif">General Settings</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <Building className="h-5 w-5" />
+                Company Information
+              </CardTitle>
             </CardHeader>
-            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <CardContent className="space-y-4">
               <div className="space-y-2">
-                <Label className="text-sm font-semibold text-foreground">Site Name</Label>
+                <Label htmlFor="companyName">Company Name</Label>
                 <Input
-                  value={settings.siteName || ""}
-                  onChange={(e) => setSettings({ ...settings, siteName: e.target.value })}
-                  className="bg-background border-border/50 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200"
-                  placeholder="Your Site Name"
+                  id="companyName"
+                  value={settings.company.name}
+                  onChange={(e) => updateSetting("company", "name", e.target.value)}
+                  placeholder="Top Modern"
                 />
               </div>
               <div className="space-y-2">
-                <Label className="text-sm font-semibold text-foreground">Site Description</Label>
-                <Input
-                  value={settings.siteDescription || ""}
-                  onChange={(e) => setSettings({ ...settings, siteDescription: e.target.value })}
-                  className="bg-background border-border/50 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200"
-                  placeholder="Brief description of your site"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label className="text-sm font-semibold text-foreground">Contact Email</Label>
-                <Input
-                  type="email"
-                  value={settings.contactEmail || ""}
-                  onChange={(e) => setSettings({ ...settings, contactEmail: e.target.value })}
-                  className="bg-background border-border/50 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200"
-                  placeholder="contact@yourdomain.com"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label className="text-sm font-semibold text-foreground">Contact Phone</Label>
-                <Input
-                  value={settings.contactPhone || ""}
-                  onChange={(e) => setSettings({ ...settings, contactPhone: e.target.value })}
-                  className="bg-background border-border/50 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200"
-                  placeholder="+1 (555) 123-4567"
-                />
-              </div>
-              <div className="space-y-2 md:col-span-2">
-                <Label className="text-sm font-semibold text-foreground">Address</Label>
+                <Label htmlFor="description">Company Description</Label>
                 <Textarea
-                  value={settings.address || ""}
-                  onChange={(e) => setSettings({ ...settings, address: e.target.value })}
-                  className="min-h-[80px] bg-background border-border/50 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200 resize-none"
-                  placeholder="Your business address"
+                  id="description"
+                  value={settings.company.description}
+                  onChange={(e) => updateSetting("company", "description", e.target.value)}
+                  placeholder="Premium marble and granite solutions..."
+                  rows={4}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="address">Business Address</Label>
+                <Input
+                  id="address"
+                  value={settings.company.address}
+                  onChange={(e) => updateSetting("company", "address", e.target.value)}
+                  placeholder="MENA Region"
                 />
               </div>
             </CardContent>
           </Card>
         </TabsContent>
 
-        <TabsContent value="appearance" className="space-y-6 mt-6">
-          <Card className="shadow-sm border-0 bg-gradient-to-br from-card to-card/50 backdrop-blur-sm">
+        <TabsContent value="contact" className="space-y-6 mt-6">
+          <Card>
             <CardHeader>
-              <CardTitle className="text-lg font-serif">Appearance Settings</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <Phone className="h-5 w-5" />
+                Contact Information
+              </CardTitle>
             </CardHeader>
-            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <Label className="text-sm font-semibold text-foreground">Primary Color</Label>
-                <Input
-                  type="color"
-                  value={settings.primaryColor || "#000000"}
-                  onChange={(e) => setSettings({ ...settings, primaryColor: e.target.value })}
-                  className="bg-background border-border/50 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label className="text-sm font-semibold text-foreground">Secondary Color</Label>
-                <Input
-                  type="color"
-                  value={settings.secondaryColor || "#ffffff"}
-                  onChange={(e) => setSettings({ ...settings, secondaryColor: e.target.value })}
-                  className="bg-background border-border/50 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label className="text-sm font-semibold text-foreground">Logo URL</Label>
-                <Input
-                  value={settings.logoUrl || ""}
-                  onChange={(e) => setSettings({ ...settings, logoUrl: e.target.value })}
-                  className="bg-background border-border/50 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200"
-                  placeholder="https://example.com/logo.png"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label className="text-sm font-semibold text-foreground">Favicon URL</Label>
-                <Input
-                  value={settings.faviconUrl || ""}
-                  onChange={(e) => setSettings({ ...settings, faviconUrl: e.target.value })}
-                  className="bg-background border-border/50 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200"
-                  placeholder="https://example.com/favicon.ico"
-                />
-              </div>
-              <div className="space-y-2 md:col-span-2">
-                <Label className="text-sm font-semibold text-foreground">Custom CSS</Label>
-                <Textarea
-                  value={settings.customCss || ""}
-                  onChange={(e) => setSettings({ ...settings, customCss: e.target.value })}
-                  className="min-h-[120px] font-mono text-sm bg-background border-border/50 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200 resize-none"
-                  placeholder="Add custom CSS here..."
-                />
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="phone1">Primary Phone</Label>
+                  <Input
+                    id="phone1"
+                    value={settings.contact.phone1}
+                    onChange={(e) => updateSetting("contact", "phone1", e.target.value)}
+                    placeholder="+20 123 456 7890"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="phone2">Secondary Phone</Label>
+                  <Input
+                    id="phone2"
+                    value={settings.contact.phone2}
+                    onChange={(e) => updateSetting("contact", "phone2", e.target.value)}
+                    placeholder="+971 50 123 4567"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="email1">Primary Email</Label>
+                  <Input
+                    id="email1"
+                    type="email"
+                    value={settings.contact.email1}
+                    onChange={(e) => updateSetting("contact", "email1", e.target.value)}
+                    placeholder="info@topmodern.com"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="email2">Sales Email</Label>
+                  <Input
+                    id="email2"
+                    type="email"
+                    value={settings.contact.email2}
+                    onChange={(e) => updateSetting("contact", "email2", e.target.value)}
+                    placeholder="sales@topmodern.com"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="whatsapp">WhatsApp Number</Label>
+                  <Input
+                    id="whatsapp"
+                    value={settings.contact.whatsapp}
+                    onChange={(e) => updateSetting("contact", "whatsapp", e.target.value)}
+                    placeholder="+201234567890"
+                  />
+                </div>
               </div>
             </CardContent>
           </Card>
         </TabsContent>
 
-        <TabsContent value="seo" className="space-y-6 mt-6">
-          <Card className="shadow-sm border-0 bg-gradient-to-br from-card to-card/50 backdrop-blur-sm">
+        <TabsContent value="social" className="space-y-6 mt-6">
+          <Card>
             <CardHeader>
-              <CardTitle className="text-lg font-serif">SEO Settings</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <Facebook className="h-5 w-5" />
+                Social Media Links
+              </CardTitle>
             </CardHeader>
-            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <Label className="text-sm font-semibold text-foreground">Meta Title</Label>
-                <Input
-                  value={settings.metaTitle || ""}
-                  onChange={(e) => setSettings({ ...settings, metaTitle: e.target.value })}
-                  className="bg-background border-border/50 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200"
-                  placeholder="Default page title"
-                />
+            <CardContent className="space-y-4">
+              <div className="flex items-center gap-3">
+                <Facebook className="h-5 w-5 text-muted-foreground" />
+                <div className="flex-1">
+                  <Label htmlFor="facebook">Facebook Page URL</Label>
+                  <Input
+                    id="facebook"
+                    value={settings.social.facebook}
+                    onChange={(e) => updateSetting("social", "facebook", e.target.value)}
+                    placeholder="https://facebook.com/topmodern"
+                  />
+                </div>
               </div>
-              <div className="space-y-2">
-                <Label className="text-sm font-semibold text-foreground">Meta Description</Label>
-                <Input
-                  value={settings.metaDescription || ""}
-                  onChange={(e) => setSettings({ ...settings, metaDescription: e.target.value })}
-                  className="bg-background border-border/50 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200"
-                  placeholder="Default page description"
-                />
+              <div className="flex items-center gap-3">
+                <Instagram className="h-5 w-5 text-muted-foreground" />
+                <div className="flex-1">
+                  <Label htmlFor="instagram">Instagram Profile URL</Label>
+                  <Input
+                    id="instagram"
+                    value={settings.social.instagram}
+                    onChange={(e) => updateSetting("social", "instagram", e.target.value)}
+                    placeholder="https://instagram.com/topmodern"
+                  />
+                </div>
               </div>
-              <div className="space-y-2">
-                <Label className="text-sm font-semibold text-foreground">Meta Keywords</Label>
-                <Input
-                  value={settings.metaKeywords || ""}
-                  onChange={(e) => setSettings({ ...settings, metaKeywords: e.target.value })}
-                  className="bg-background border-border/50 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200"
-                  placeholder="keyword1, keyword2, keyword3"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label className="text-sm font-semibold text-foreground">Open Graph Image</Label>
-                <Input
-                  value={settings.ogImage || ""}
-                  onChange={(e) => setSettings({ ...settings, ogImage: e.target.value })}
-                  className="bg-background border-border/50 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200"
-                  placeholder="https://example.com/og-image.jpg"
-                />
-              </div>
-              <div className="space-y-2 md:col-span-2">
-                <Label className="text-sm font-semibold text-foreground">Google Analytics ID</Label>
-                <Input
-                  value={settings.googleAnalyticsId || ""}
-                  onChange={(e) => setSettings({ ...settings, googleAnalyticsId: e.target.value })}
-                  className="bg-background border-border/50 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200"
-                  placeholder="GA-XXXXXXXXXX"
-                />
+              <div className="flex items-center gap-3">
+                <Linkedin className="h-5 w-5 text-muted-foreground" />
+                <div className="flex-1">
+                  <Label htmlFor="linkedin">LinkedIn Company URL</Label>
+                  <Input
+                    id="linkedin"
+                    value={settings.social.linkedin}
+                    onChange={(e) => updateSetting("social", "linkedin", e.target.value)}
+                    placeholder="https://linkedin.com/company/topmodern"
+                  />
+                </div>
               </div>
             </CardContent>
           </Card>
         </TabsContent>
 
-        <TabsContent value="email" className="space-y-6 mt-6">
-          <Card className="shadow-sm border-0 bg-gradient-to-br from-card to-card/50 backdrop-blur-sm">
+        <TabsContent value="logo" className="space-y-6 mt-6">
+          <Card>
             <CardHeader>
-              <CardTitle className="text-lg font-serif">Email Settings</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <Upload className="h-5 w-5" />
+                Logo Management
+              </CardTitle>
             </CardHeader>
-            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <Label className="text-sm font-semibold text-foreground">SMTP Host</Label>
-                <Input
-                  value={settings.smtpHost || ""}
-                  onChange={(e) => setSettings({ ...settings, smtpHost: e.target.value })}
-                  className="bg-background border-border/50 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200"
-                  placeholder="smtp.example.com"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label className="text-sm font-semibold text-foreground">SMTP Port</Label>
-                <Input
-                  type="number"
-                  value={settings.smtpPort || ""}
-                  onChange={(e) => setSettings({ ...settings, smtpPort: e.target.value })}
-                  className="bg-background border-border/50 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200"
-                  placeholder="587"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label className="text-sm font-semibold text-foreground">SMTP Username</Label>
-                <Input
-                  value={settings.smtpUsername || ""}
-                  onChange={(e) => setSettings({ ...settings, smtpUsername: e.target.value })}
-                  className="bg-background border-border/50 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200"
-                  placeholder="your-email@example.com"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label className="text-sm font-semibold text-foreground">SMTP Password</Label>
-                <Input
-                  type="password"
-                  value={settings.smtpPassword || ""}
-                  onChange={(e) => setSettings({ ...settings, smtpPassword: e.target.value })}
-                  className="bg-background border-border/50 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200"
-                  placeholder="Your SMTP password"
-                />
-              </div>
-              <div className="space-y-2 md:col-span-2">
-                <Label className="text-sm font-semibold text-foreground">Email Templates</Label>
-                <Textarea
-                  value={settings.emailTemplates || ""}
-                  onChange={(e) => setSettings({ ...settings, emailTemplates: e.target.value })}
-                  className="min-h-[120px] bg-background border-border/50 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200 resize-none"
-                  placeholder="JSON configuration for email templates"
-                />
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="security" className="space-y-6 mt-6">
-          <Card className="shadow-sm border-0 bg-gradient-to-br from-card to-card/50 backdrop-blur-sm">
-            <CardHeader>
-              <CardTitle className="text-lg font-serif">Security Settings</CardTitle>
-            </CardHeader>
-            <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <Label className="text-sm font-semibold text-foreground">Enable Two-Factor Authentication</Label>
-                <Checkbox
-                  checked={settings.enable2FA || false}
-                  onCheckedChange={(checked) => setSettings({ ...settings, enable2FA: !!checked })}
-                  className="border-border/50 data-[state=checked]:bg-accent data-[state=checked]:border-accent"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label className="text-sm font-semibold text-foreground">Session Timeout (minutes)</Label>
-                <Input
-                  type="number"
-                  value={settings.sessionTimeout || ""}
-                  onChange={(e) => setSettings({ ...settings, sessionTimeout: e.target.value })}
-                  className="bg-background border-border/50 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200"
-                  placeholder="30"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label className="text-sm font-semibold text-foreground">Password Policy</Label>
-                <Select
-                  value={settings.passwordPolicy || "medium"}
-                  onValueChange={(value) => setSettings({ ...settings, passwordPolicy: value })}
-                >
-                  <SelectTrigger className="bg-background border-border/50 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="low">Low</SelectItem>
-                    <SelectItem value="medium">Medium</SelectItem>
-                    <SelectItem value="high">High</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label className="text-sm font-semibold text-foreground">Enable Rate Limiting</Label>
-                <Checkbox
-                  checked={settings.enableRateLimiting || false}
-                  onCheckedChange={(checked) => setSettings({ ...settings, enableRateLimiting: !!checked })}
-                  className="border-border/50 data-[state=checked]:bg-accent data-[state=checked]:border-accent"
-                />
-              </div>
-              <div className="space-y-2 md:col-span-2">
-                <Label className="text-sm font-semibold text-foreground">Allowed IP Addresses</Label>
-                <Textarea
-                  value={settings.allowedIPs || ""}
-                  onChange={(e) => setSettings({ ...settings, allowedIPs: e.target.value })}
-                  className="min-h-[80px] bg-background border-border/50 focus:border-ring focus:ring-2 focus:ring-ring/20 transition-all duration-200 resize-none"
-                  placeholder="192.168.1.0/24, 10.0.0.0/8"
-                />
+            <CardContent className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-3">
+                  <Label>Main Navigation Logo</Label>
+                  <SingleImageUpload
+                    value={settings.logo.main}
+                    onChange={(url) => updateSetting("logo", "main", url)}
+                    disabled={saving}
+                  />
+                </div>
+                <div className="space-y-3">
+                  <Label>Footer Logo</Label>
+                  <SingleImageUpload
+                    value={settings.logo.footer}
+                    onChange={(url) => updateSetting("logo", "footer", url)}
+                    disabled={saving}
+                  />
+                </div>
+                <div className="space-y-3">
+                  <Label>Admin Panel Logo</Label>
+                  <SingleImageUpload
+                    value={settings.logo.admin}
+                    onChange={(url) => updateSetting("logo", "admin", url)}
+                    disabled={saving}
+                  />
+                </div>
+                <div className="space-y-3">
+                  <Label>Admin Background Image</Label>
+                  <SingleImageUpload
+                    value={settings.logo.background}
+                    onChange={(url) => updateSetting("logo", "background", url)}
+                    disabled={saving}
+                  />
+                </div>
               </div>
             </CardContent>
           </Card>

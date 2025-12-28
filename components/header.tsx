@@ -2,22 +2,22 @@ import { useState, useEffect } from "react"
 import { Menu, X, Sun, Moon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { motion, AnimatePresence } from "framer-motion"
-import { useTranslations } from "@/components/providers/TranslationsProvider"
+import { useTranslations } from 'next-intl';
+import { useSettings } from "@/components/providers/SettingsProvider"
+import { useTheme } from "next-themes"
 import { LanguageSwitcher } from "./language-switcher"
-import { useTheme } from "next-themes" // Import useTheme
-import { SiteSettings, defaultSettings } from "@/lib/types" // Import SiteSettings and defaultSettings
 import { Link, usePathname } from '@/i18n/navigation'
-import { cn } from '@/lib/utils' // Import cn
-
+import { cn } from '@/lib/utils'
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
-  const [settings, setSettings] = useState<SiteSettings>(defaultSettings)
-  const { t } = useTranslations()
-  const { theme, setTheme } = useTheme() // Use the useTheme hook
+  const { settings } = useSettings()
+  const t = useTranslations('navigation');
+  const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
-  const pathname = usePathname(); // Initialize pathname
+  const pathname = usePathname();
+  
   useEffect(() => {
     setMounted(true)
   }, [])
@@ -46,9 +46,6 @@ export function Header() {
     },
   }
 
-  // Determine locale from pathname (no longer used for manual prefixing)
-  // const locale = pathname ? pathname.split('/')[1] || 'en' : 'en'
-
   // Define navigation links inside the component
   const navLinks: Array<{ href: "/" | "/products" | "/projects" | "/about" | "/contact", label: string }> = [
     { href: "/", label: t("home") },
@@ -57,6 +54,7 @@ export function Header() {
     { href: "/about", label: t("about") },
     { href: "/contact", label: t("contact") },
   ]
+
 
   // withLocale function is no longer needed as next-intl Link handles it
   // const withLocale = (href: string) => {

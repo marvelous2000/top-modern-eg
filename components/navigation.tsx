@@ -6,6 +6,7 @@ import { useState, useEffect } from 'react';
 import { Menu, X, Sun, Moon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { SiteSettings, defaultSettings } from '@/lib/types';
 
 export default function Navigation() {
   const pathname = usePathname();
@@ -17,7 +18,35 @@ export default function Navigation() {
     setMounted(true);
   }, []);
   const t = useTranslations('navigation');
+  const [settings, setSettings] = useState<SiteSettings>(defaultSettings);
+  const [isNavMounted, setIsNavMounted] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    // Mark as mounted after component mounts
+    setIsNavMounted(true);
+
+    // Load settings from localStorage after component mounts
+    const savedSettings = localStorage.getItem("siteSettings")
+    if (savedSettings) {
+      try {
+        setSettings(JSON.parse(savedSettings))
+      } catch (error) {
+        console.error("Error loading settings:", error)
+      }
+    }
+
+    // Listen for settings updates
+    const handleSettingsUpdate = (event: CustomEvent<SiteSettings>) => {
+      setSettings(event.detail)
+    }
+
+    window.addEventListener("settingsUpdated", handleSettingsUpdate as EventListener)
+
+    return () => {
+      window.removeEventListener("settingsUpdated", handleSettingsUpdate as EventListener)
+    }
+  }, [])
 
   const switchLanguage = (newLocale: string) => {
     router.replace(pathname as any, { locale: newLocale });
@@ -26,15 +55,15 @@ export default function Navigation() {
   const isActive = (href: string) => {
     // Convert pathname to string safely - this is the key fix
     const currentPath = pathname ? String(pathname) : '';
-    
+
     if (!currentPath) {
       return false;
     }
-    
+
     if (href === '/') {
       return currentPath === '/';
     }
-    
+
     return currentPath.startsWith(href);
   };
 
@@ -46,6 +75,29 @@ export default function Navigation() {
     { href: '/contact', label: t('contact') },
   ];
 
+  // Show fallback while not mounted to prevent hydration issues
+  if (!isNavMounted) {
+    return (
+      <header className="sticky top-0 z-50 h-20 bg-black/95 backdrop-blur supports-backdrop-blur border-b border-white/10 transition-colors duration-300">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-20">
+            <div className="flex items-center">
+              <Link href="/" className="flex items-center">
+                <div className="h-16 w-auto">
+                  <img
+                    src="/top-modern-logo-primary.png"
+                    alt="Top Modern"
+                    className="h-full w-auto"
+                  />
+                </div>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </header>
+    );
+  }
+
   return (
     <header className="sticky top-0 z-50 h-20 bg-black/95 backdrop-blur supports-backdrop-blur border-b border-white/10 transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -54,7 +106,7 @@ export default function Navigation() {
             <Link href="/" className="flex items-center">
               <div className="h-16 w-auto">
                 <img
-                  src="/top-modern-logo-primary.png"
+                  src={settings.logo.main || "/top-modern-logo-primary.png"}
                   alt="Top Modern"
                   className="h-full w-auto"
                 />

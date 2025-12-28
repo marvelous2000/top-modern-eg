@@ -28,14 +28,22 @@ export function ProjectsPageClient({
   const categories = useMemo(
     () =>
       Array.from(
-        new Set(projects.map((project) => project.category))
+        new Set(
+          projects
+            .map((project) => project.category)
+            .filter((category) => category && category.trim() !== "")
+        )
       ),
     [projects]
   );
   const locations = useMemo(
     () =>
       Array.from(
-        new Set(projects.map((project) => project.location))
+        new Set(
+          projects
+            .map((project) => project.location)
+            .filter((location) => location && location.trim() !== "")
+        )
       ),
     [projects]
   );
@@ -47,9 +55,11 @@ export function ProjectsPageClient({
     () =>
       projects.filter((project) => {
         const categoryMatch =
-          selectedCategory === "all" || project.category === selectedCategory;
+          selectedCategory === "all" ||
+          project.category?.toLowerCase().trim() === selectedCategory.toLowerCase().trim();
         const locationMatch =
-          selectedLocation === "all" || project.location === selectedLocation;
+          selectedLocation === "all" ||
+          project.location?.toLowerCase().trim() === selectedLocation.toLowerCase().trim();
         return categoryMatch && locationMatch;
       }),
     [projects, selectedCategory, selectedLocation]
@@ -97,7 +107,7 @@ export function ProjectsPageClient({
                       key={category}
                       onClick={() => setSelectedCategory(category)}
                       variant={
-                        selectedCategory === category ? "default" : "outline"
+                        selectedCategory.toLowerCase().trim() === category.toLowerCase().trim() ? "default" : "outline"
                       }
                     >
                       {category}
@@ -122,7 +132,7 @@ export function ProjectsPageClient({
                       key={location}
                       onClick={() => setSelectedLocation(location)}
                       variant={
-                        selectedLocation === location ? "default" : "outline"
+                        selectedLocation.toLowerCase().trim() === location.toLowerCase().trim() ? "default" : "outline"
                       }
                     >
                       {location}

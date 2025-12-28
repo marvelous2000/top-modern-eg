@@ -1,7 +1,6 @@
 "use client"
 
 import { UpdatePasswordForm } from '@/components/admin/update-password-form';
-import '../../admin/admin.css';
 import Image from 'next/image';
 
 export const dynamic = 'force-dynamic';

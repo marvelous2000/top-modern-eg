@@ -1,5 +1,10 @@
+const createNextIntlPlugin = require('next-intl/plugin');
+
+const withNextIntl = createNextIntlPlugin('./i18n.js');
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  reactStrictMode: true,
   output: 'standalone',
   typescript: {
     ignoreBuildErrors: true,
@@ -19,6 +24,9 @@ const nextConfig = {
   generateBuildId: async () => {
     return 'build-' + Date.now()
   },
-}
+  experimental: {
+    serverComponentsExternalPackages: ['@supabase/supabase-js'],
+  },
+};
 
-module.exports = nextConfig
+module.exports = withNextIntl(nextConfig);

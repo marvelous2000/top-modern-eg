@@ -1,7 +1,8 @@
 'use client';
 
-import { Suspense } from 'react';
+import { Suspense, useEffect } from 'react';
 import { useSearchParams } from "next/navigation";
+import { getSupabaseClient } from '@/lib/supabase/client-utils';
 import { AdminStats } from "@/components/admin/admin-stats";
 import { ContactsTable } from "@/components/admin/contacts-table";
 import { LegalPagesManager } from "@/components/admin/legal-pages-manager";

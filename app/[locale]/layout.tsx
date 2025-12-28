@@ -5,6 +5,8 @@ import Footer from '@/components/footer';
 import NormalizeLinks from '@/components/NormalizeLinks';
 import clsx from 'clsx';
 import { ThemeProvider } from '@/components/theme-provider';
+import { getSettings } from '@/lib/actions/settings';
+import { SettingsProvider } from '@/components/providers/SettingsProvider';
 import { incrementPageViews } from '@/lib/actions/dashboard_metrics'; // Import the function
 
 export default async function LocaleLayout({
@@ -16,6 +18,7 @@ export default async function LocaleLayout({
 }) {
   const messages = await getMessages({ locale });
   const direction = locale === 'ar' ? 'rtl' : 'ltr';
+  const settingsResult = await getSettings(); // Fetch settings
 
   // Increment page views on every page load
   try {
@@ -34,11 +37,13 @@ export default async function LocaleLayout({
       "ltr": direction === "ltr",
     })}>
       <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
-        <NextIntlClientProvider locale={locale} messages={messages}>
-          {/* <NormalizeLinks /> */ }
-          {children}
-          <Footer />
-        </NextIntlClientProvider>
+        <SettingsProvider initialSettings={settingsResult.data}>
+          <NextIntlClientProvider locale={locale} messages={messages}>
+            {/* <NormalizeLinks /> */ }
+            {children}
+            <Footer />
+          </NextIntlClientProvider>
+        </SettingsProvider>
       </ThemeProvider>
     </div>
   );

@@ -1,86 +1,141 @@
 "use server"
 
-import { createSupabaseServiceClient } from "@/lib/supabase/service"
+import { createServerClient } from '@supabase/ssr'
+import { cookies } from 'next/headers'
 import { revalidatePath } from "next/cache"
 
-export interface Settings {
-  id?: string
-  siteName: string
-  siteDescription: string
-  contactEmail: string
-  contactPhone: string
-  address: string
-  primaryColor: string
-  secondaryColor: string
-  logoUrl: string
-  faviconUrl: string
-  customCss: string
-  metaTitle: string
-  metaDescription: string
-  metaKeywords: string
-  ogImage: string
-  googleAnalyticsId: string
-  smtpHost: string
-  smtpPort: string
-  smtpUsername: string
-  smtpPassword: string
-  emailTemplates: string
-  enable2FA: boolean
-  sessionTimeout: string
-  passwordPolicy: string
-  enableRateLimiting: boolean
-  allowedIPs: string
-  created_at?: string
-  updated_at?: string
+export interface SiteSettings {
+  logo: {
+    main: string
+    footer: string
+    admin: string
+    background: string
+  }
+  contact: {
+    phone1: string
+    phone2: string
+    email1: string
+    email2: string
+    whatsapp: string
+  }
+  social: {
+    facebook: string
+    instagram: string
+    linkedin: string
+  }
+  company: {
+    name: string
+    description: string
+    address: string
+  }
+}
+
+// Helper to flatten nested settings for database storage
+function flattenSettings(settings: Partial<SiteSettings>): Record<string, string> {
+  const flattened: Record<string, string> = {}
+  if (settings.logo) Object.entries(settings.logo).forEach(([key, value]) => { flattened[`logo.${key}`] = value || "" });
+  if (settings.contact) Object.entries(settings.contact).forEach(([key, value]) => { flattened[`contact.${key}`] = value || "" });
+  if (settings.social) Object.entries(settings.social).forEach(([key, value]) => { flattened[`social.${key}`] = value || "" });
+  if (settings.company) Object.entries(settings.company).forEach(([key, value]) => { flattened[`company.${key}`] = value || "" });
+  return flattened
+}
+
+// Helper to unflatten database records to nested settings
+function unflattenSettings(records: Array<{key: string, value: string}>): SiteSettings {
+  const settings: SiteSettings = {
+    logo: { main: "", footer: "", admin: "", background: "" },
+    contact: { phone1: "", phone2: "", email1: "", email2: "", whatsapp: "" },
+    social: { facebook: "", instagram: "", linkedin: "" },
+    company: { name: "", description: "", address: "" }
+  }
+  records.forEach(({ key, value }) => {
+    const parts = key.split('.')
+    if (parts.length === 2) {
+      const [section, field] = parts as [keyof SiteSettings, string]
+      if (section in settings && field in (settings[section] as any)) {
+        ;(settings[section] as any)[field] = value || ""
+      }
+    }
+  })
+  return settings
 }
 
 export async function getSettings() {
   try {
-    const supabase = createSupabaseServiceClient()
-    const { data, error } = await supabase.from("settings").select("*").maybeSingle()
+    const cookieStore = cookies()
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          get(name: string) { return cookieStore.get(name)?.value },
+        },
+      }
+    )
 
-    if (error && error.code !== "PGRST116") {
-      console.error("[v0] Error fetching settings:", error)
-      return { success: false, error: error.message, data: null }
+    const { data, error } = await supabase.from("site_settings").select("key, value").order("key")
+    if (error) throw new Error(error.message);
+
+    if (!data || data.length === 0) {
+      return { success: true, data: {
+        logo: { main: "", footer: "", admin: "", background: "" },
+        contact: { phone1: "", phone2: "", email1: "", email2: "", whatsapp: "" },
+        social: { facebook: "", instagram: "", linkedin: "" },
+        company: { name: "", description: "", address: "" }
+      }}
     }
-
-    return { success: true, data: data || {} }
+    
+    return { success: true, data: unflattenSettings(data) }
   } catch (error: any) {
-    console.error("[v0] Exception in getSettings:", error)
     return { success: false, error: error.message, data: null }
   }
 }
 
-export async function updateSettings(settings: Partial<Settings>) {
+export async function updateSettings(settings: Partial<SiteSettings>) {
   try {
-    const supabase = createSupabaseServiceClient()
+    const cookieStore = cookies()
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          get(name: string) { return cookieStore.get(name)?.value },
+          set(name: string, value: string, options) { cookieStore.set({ name, value, ...options }) },
+          remove(name: string, options) { cookieStore.set({ name, value: '', ...options }) },
+        },
+      }
+    )
 
-    // Check authentication
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
-    if (!user) {
-      return { success: false, error: "Unauthorized" }
-    }
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return { success: false, error: "Unauthorized" };
 
-    const { data, error } = await supabase
-      .from("settings")
-      .upsert({
-        ...settings,
+    const flattenedSettings = flattenSettings(settings)
+    const upsertPromises = Object.entries(flattenedSettings).map(([key, value]) =>
+      supabase.from("site_settings").upsert({
+        key,
+        value: value || "",
         updated_at: new Date().toISOString(),
-      })
-      .select()
-      .single()
+        updated_by: user.id
+      }, { onConflict: 'key' })
+    );
 
-    if (error) {
-      console.error("[v0] Error updating settings:", error)
-      return { success: false, error: error.message }
+    const results = await Promise.all(upsertPromises);
+    const firstError = results.find(res => res.error);
+
+    if (firstError?.error) {
+      console.error("Error updating settings:", firstError.error);
+      if (firstError.error.message.includes("violates row-level security policy")) {
+        return { success: false, error: "Permission Denied: You do not have the required role to modify settings." };
+      }
+      return { success: false, error: firstError.error.message };
     }
 
-    revalidatePath("/admin")
-    return { success: true, data }
+    revalidatePath("/admin/settings");
+    revalidatePath("/", "layout");
+
+    return { success: true, data: settings }
   } catch (error: any) {
-    console.error("[v0] Exception in updateSettings:", error)
+    console.error("Exception in updateSettings:", error)
     return { success: false, error: error.message }
   }
 }

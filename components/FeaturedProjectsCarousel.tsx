@@ -55,6 +55,17 @@ export function FeaturedProjectsCarousel() {
     }
   }, [api])
 
+  // Auto-play functionality
+  useEffect(() => {
+    if (!api || featuredProjects.length <= 1) return
+
+    const interval = setInterval(() => {
+      api.scrollNext()
+    }, 5000) // Change slide every 5 seconds
+
+    return () => clearInterval(interval)
+  }, [api, featuredProjects.length])
+
   if (loading) {
     return (
       <section className="py-20 relative bg-gray-50">

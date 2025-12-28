@@ -4,6 +4,8 @@ import Link from "next/link"
 import { usePathname, useSearchParams } from "next/navigation"
 import { Home, Users, BarChart3, FileText, Settings, LifeBuoy, Package, FolderOpen, ShieldCheck, Target } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { useState, useEffect } from "react"
+import { SiteSettings, defaultSettings } from "@/lib/types"
 
 const navigationGroups = [
   {
@@ -62,11 +64,71 @@ const NavLink = ({ page, label, icon: Icon }: { page: string | null; label: stri
 }
 
 export function AdminSidebar({ className }: { className?: string }) {
+  const [settings, setSettings] = useState<SiteSettings>(defaultSettings)
+  const [isMounted, setIsMounted] = useState(false)
+
+  useEffect(() => {
+    // Mark as mounted after component mounts
+    setIsMounted(true);
+
+    // Load settings from localStorage after component mounts
+    const savedSettings = localStorage.getItem("siteSettings")
+    if (savedSettings) {
+      try {
+        setSettings(JSON.parse(savedSettings))
+      } catch (error) {
+        console.error("Error loading settings:", error)
+      }
+    }
+
+    // Listen for settings updates
+    const handleSettingsUpdate = (event: CustomEvent<SiteSettings>) => {
+      setSettings(event.detail)
+    }
+
+    window.addEventListener("settingsUpdated", handleSettingsUpdate as EventListener)
+
+    return () => {
+      window.removeEventListener("settingsUpdated", handleSettingsUpdate as EventListener)
+    }
+  }, [])
+
+  // Render a fallback while not mounted to prevent hydration issues
+  if (!isMounted) {
+    return (
+      <aside className={cn("flex flex-col bg-cream-50 dark:bg-charcoal-950 border-r border-cream-200 dark:border-charcoal-800", className)}>
+        <div className="flex h-16 items-center justify-center border-b border-gold-500 px-4">
+          <Link href="/admin" className="flex items-center gap-3 font-bold text-lg">
+            <img src="/top-modern-logo-gold.png" alt="Top Modern" className="h-8 w-auto" />
+            <span className="font-serif text-gold-500">Admin</span>
+          </Link>
+        </div>
+        <nav className="flex-1 space-y-4 p-4">
+          {navigationGroups.map((group) => (
+            <div key={group.title}>
+              <h3 className="mb-2 px-3 text-xs font-semibold uppercase text-sidebar-accent-foreground/50 tracking-wider">{group.title}</h3>
+              <div className="space-y-1">
+                {group.items.map((item) => (
+                  <NavLink key={item.label} {...item} />
+                ))}
+              </div>
+            </div>
+          ))}
+        </nav>
+        <nav className="p-4 mt-auto border-t border-sidebar-border space-y-1">
+          {footerNav.map((item) => (
+            <NavLink key={item.label} {...item} />
+          ))}
+        </nav>
+      </aside>
+    );
+  }
+
   return (
     <aside className={cn("flex flex-col bg-cream-50 dark:bg-charcoal-950 border-r border-cream-200 dark:border-charcoal-800", className)}>
       <div className="flex h-16 items-center justify-center border-b border-gold-500 px-4">
         <Link href="/admin" className="flex items-center gap-3 font-bold text-lg">
-          <img src="/top-modern-logo-gold.png" alt="Top Modern" className="h-8 w-auto" />
+          <img src={settings.logo.admin || "/top-modern-logo-gold.png"} alt="Top Modern" className="h-8 w-auto" />
           <span className="font-serif text-gold-500">Admin</span>
         </Link>
       </div>

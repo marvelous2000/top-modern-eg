@@ -158,20 +158,29 @@ CREATE TABLE IF NOT EXISTS form_submissions (
 -- 8. SITE_SETTINGS TABLE (Global Configuration)
 -- =====================================================
 CREATE TABLE IF NOT EXISTS site_settings (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  key TEXT UNIQUE NOT NULL,
-  value JSONB NOT NULL,
-  description TEXT,
+  key TEXT PRIMARY KEY,
+  value TEXT NOT NULL,
   updated_at TIMESTAMPTZ DEFAULT NOW(),
   updated_by UUID REFERENCES profiles(id)
 );
 
 -- Insert default settings
-INSERT INTO site_settings (key, value, description) VALUES
-  ('logo', '{"main": "/top-modern-logo-gold.png", "footer": "/top-modern-logo-gold.png", "admin": "/top-modern-logo-gold.png"}', 'Site logos'),
-  ('contact', '{"phone1": "+20 123 456 7890", "phone2": "+971 50 123 4567", "email1": "info@topmodern.com", "email2": "sales@topmodern.com", "whatsapp": "+201234567890"}', 'Contact information'),
-  ('social', '{"facebook": "https://facebook.com/topmodern", "instagram": "https://instagram.com/topmodern", "linkedin": "https://linkedin.com/company/topmodern"}', 'Social media links'),
-  ('company', '{"name": "Top Modern", "description": "Premium marble and granite solutions", "address": "MENA Region"}', 'Company information')
+INSERT INTO site_settings (key, value) VALUES
+  ('logo.main', '/top-modern-logo-gold.png'),
+  ('logo.footer', '/top-modern-logo-gold.png'),
+  ('logo.admin', '/top-modern-logo-gold.png'),
+  ('logo.background', ''),
+  ('contact.phone1', '+20 123 456 7890'),
+  ('contact.phone2', '+971 50 123 4567'),
+  ('contact.email1', 'info@topmodern.com'),
+  ('contact.email2', 'sales@topmodern.com'),
+  ('contact.whatsapp', '+201234567890'),
+  ('social.facebook', 'https://facebook.com/topmodern'),
+  ('social.instagram', 'https://instagram.com/topmodern'),
+  ('social.linkedin', 'https://linkedin.com/company/topmodern'),
+  ('company.name', 'Top Modern'),
+  ('company.description', 'Premium marble and granite solutions'),
+  ('company.address', 'MENA Region')
 ON CONFLICT (key) DO NOTHING;
 
 -- =====================================================
@@ -339,7 +348,7 @@ CREATE POLICY "Admins can update settings" ON site_settings
   FOR UPDATE USING (
     EXISTS (
       SELECT 1 FROM profiles
-      WHERE id = auth.uid() AND role = 'admin'
+      WHERE id = auth.uid() AND role IN ('admin', 'super_admin')
     )
   );
 

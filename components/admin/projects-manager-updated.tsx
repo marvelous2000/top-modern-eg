@@ -93,9 +93,11 @@ export function ProjectsManager() {
           const fileExtension = file.name.split(".").pop();
           const fileName = `${Date.now()}-${Math.random().toString(36).substring(2, 15)}.${fileExtension}`;
           const filePath = `project-images/${fileName}`;
-          const { error: uploadError } = await supabase.storage.from("project-images").upload(filePath, file, { cacheControl: "3600", upsert: false });
-          if (uploadError) throw new Error(`Failed to upload image: ${file.name} - ${uploadError.message}`);
-          const { data: publicUrlData } = supabase.storage.from("project-images").getPublicUrl(filePath);
+          const { error: uploadError } = await supabase.storage.from("uploads").upload(filePath, file, { cacheControl: "3600", upsert: false });
+        if (uploadError) {
+          throw new Error(`Upload failed: ${uploadError.message}`);
+        }
+        const { data: publicUrlData } = supabase.storage.from("uploads").getPublicUrl(filePath);
           if (publicUrlData && publicUrlData.publicUrl) imageUrlsToSave.push(publicUrlData.publicUrl);
           else throw new Error(`Failed to get public URL for image: ${file.name}`);
         }

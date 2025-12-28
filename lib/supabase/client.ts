@@ -9,7 +9,13 @@ export function createSupabaseBrowserClient() {
     return createSupabaseClientFromSsr("https://placeholder.supabase.co", "placeholder-key")
   }
 
-  return createSupabaseClientFromSsr(url, anonKey)
+  return createSupabaseClientFromSsr(url, anonKey, {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true,
+    }
+  })
 }
 
 export async function signInWithPassword(email: string, password: string) {

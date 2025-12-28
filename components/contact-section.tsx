@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { useTranslations } from 'next-intl';
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -11,9 +11,12 @@ import { Phone, Mail, MapPin, Clock, CheckCircle, X } from "lucide-react"
 import { useContactTracking } from "@/components/contact-tracking"
 import { WhatsAppButton } from "@/components/ui/whatsapp-button"
 import { incrementTotalContacts } from '@/lib/actions/dashboard_metrics'; // Import the function
+import { SiteSettings, defaultSettings } from "@/lib/types";
 
 export function ContactSection() {
   const t = useTranslations('contact');
+  const [settings, setSettings] = useState<SiteSettings>(defaultSettings);
+  const [isMounted, setIsMounted] = useState(false);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -25,6 +28,74 @@ export function ContactSection() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showSuccessModal, setShowSuccessModal] = useState(false)
   const { trackContact, trackForm } = useContactTracking()
+
+  useEffect(() => {
+    // Mark as mounted after component mounts
+    setIsMounted(true);
+
+    // Load settings from localStorage after component mounts
+    const savedSettings = localStorage.getItem("siteSettings")
+    if (savedSettings) {
+      try {
+        setSettings(JSON.parse(savedSettings))
+      } catch (error) {
+        console.error("Error loading settings:", error)
+      }
+    }
+
+    // Listen for settings updates
+    const handleSettingsUpdate = (event: CustomEvent<SiteSettings>) => {
+      setSettings(event.detail)
+    }
+
+    window.addEventListener("settingsUpdated", handleSettingsUpdate as EventListener)
+
+    return () => {
+      window.removeEventListener("settingsUpdated", handleSettingsUpdate as EventListener)
+    }
+  }, [])
+
+  // Show fallback while not mounted to prevent hydration issues
+  if (!isMounted) {
+    return (
+      <Card className="bg-card border-accent/30 shadow-lg">
+        <CardContent className="p-8">
+          <div className="space-y-8">
+            <div className="flex items-start">
+              <Phone className="h-7 w-7 text-accent mr-5 mt-1 flex-shrink-0" />
+              <div>
+                <h3 className="text-h4 text-card-foreground mb-2">{t('info.phone')}</h3>
+                <div className="space-y-1">
+                  <p className="text-muted-foreground p-2 -ml-2">+20 123 456 7890</p>
+                  <p className="text-muted-foreground p-2 -ml-2">+971 50 123 4567</p>
+                </div>
+              </div>
+            </div>
+            <div className="flex items-start">
+              <Mail className="h-7 w-7 text-accent mr-5 mt-1 flex-shrink-0" />
+              <div>
+                <h3 className="text-h4 text-card-foreground mb-2">{t('info.email')}</h3>
+                <div className="space-y-1">
+                  <p className="text-muted-foreground p-2 -ml-2">info@topmodern.com</p>
+                  <p className="text-muted-foreground p-2 -ml-2">sales@topmodern.com</p>
+                </div>
+              </div>
+            </div>
+            <div className="flex items-start">
+              <MapPin className="h-7 w-7 text-accent mr-5 mt-1 flex-shrink-0" />
+              <div>
+                <h3 className="text-h4 text-card-foreground mb-2">{t('info.address')}</h3>
+                <div className="space-y-1">
+                  <p className="text-muted-foreground p-2 -ml-2">{t('info.address1')}</p>
+                  <p className="text-muted-foreground p-2 -ml-2">{t('info.address2')}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -75,23 +146,23 @@ export function ContactSection() {
       icon: Phone,
       title: t('info.phone'),
       lines: [
-        { text: t('info.phone1'), action: () => handlePhoneClick("+20 123 456 7890") },
-        { text: t('info.phone2'), action: () => handlePhoneClick("+971 50 123 4567") },
+        { text: settings.contact.phone1 || t('info.phone1'), action: () => handlePhoneClick(settings.contact.phone1 || "+20 123 456 7890") },
+        { text: settings.contact.phone2 || t('info.phone2'), action: () => handlePhoneClick(settings.contact.phone2 || "+971 50 123 4567") },
       ],
     },
     {
       icon: Mail,
       title: t('info.email'),
       lines: [
-        { text: t('info.email1'), action: () => handleEmailClick("info@topmodern.com") },
-        { text: t('info.email2'), action: () => handleEmailClick("sales@topmodern.com") },
+        { text: settings.contact.email1 || t('info.email1'), action: () => handleEmailClick(settings.contact.email1 || "info@topmodern.com") },
+        { text: settings.contact.email2 || t('info.email2'), action: () => handleEmailClick(settings.contact.email2 || "sales@topmodern.com") },
       ],
     },
     {
       icon: MapPin,
       title: t('info.address'),
       lines: [
-        { text: t('info.address1') },
+        { text: settings.company.address || t('info.address1') },
         { text: t('info.address2') },
       ],
     },
